@@ -29,9 +29,9 @@ public class EmploymentInformationSalaryOverride {
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false, updatable = false)
     @UpdateTimestamp
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 }
