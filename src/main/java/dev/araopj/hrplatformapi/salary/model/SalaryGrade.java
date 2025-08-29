@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity(name = "salary_grade")
 @NoArgsConstructor
@@ -33,7 +34,10 @@ public class SalaryGrade {
 
     @Column(nullable = false)
     @Size(min = 1, max = 33, message = "Salary grade must be between 1 and 33")
-    byte salary_grade;
+    byte salaryGrade;
+
+    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Set<SalaryData> salaryData;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

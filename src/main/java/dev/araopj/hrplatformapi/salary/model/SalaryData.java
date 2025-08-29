@@ -29,6 +29,10 @@ public class SalaryData {
     @Column(nullable = false)
     Double amount;
 
+    @ManyToOne
+    @JoinColumn(name = "salary_grade_id", nullable = false)
+    SalaryGrade salaryGrade;
+
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
