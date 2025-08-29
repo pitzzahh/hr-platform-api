@@ -1,10 +1,10 @@
-package com.araopeterj.hrcore;
+package com.araopj.hrcoreapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class HrCoreApplicationTests {
+class HrCoreApiApplicationTests {
 
     @Test
     void contextLoads() {
