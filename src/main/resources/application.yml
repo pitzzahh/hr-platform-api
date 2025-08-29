@@ -1,3 +1,5 @@
 spring:
   application:
-    name: hr-core
+    name: hr-platform-api
+    version: 0.0.1-SNAPSHOT
+
