@@ -1,4 +1,4 @@
-${AnsiColor.GREEN}
+${AnsiColor.BLUE}
 ██╗  ██╗██████╗     ██████╗ ██╗      █████╗ ████████╗███████╗ ██████╗ ██████╗ ███╗   ███╗     █████╗ ██████╗ ██╗
 ██║  ██║██╔══██╗    ██╔══██╗██║     ██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗██╔══██╗████╗ ████║    ██╔══██╗██╔══██╗██║
 ███████║██████╔╝    ██████╔╝██║     ███████║   ██║   █████╗  ██║   ██║██████╔╝██╔████╔██║    ███████║██████╔╝██║
@@ -7,5 +7,5 @@ ${AnsiColor.GREEN}
 ╚═╝  ╚═╝╚═╝  ╚═╝    ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝
 ${AnsiColor.DEFAULT}
 
-${AnsiColor.BLUE}${spring.application.name} - ${spring.application.version}${AnsiColor.DEFAULT}
+${AnsiColor.GREEN}${spring.application.name} - ${spring.application.version}${AnsiColor.DEFAULT}
 ${AnsiColor.YELLOW}::SpringBoot:: ${spring-boot.version}${AnsiColor.DEFAULT}
