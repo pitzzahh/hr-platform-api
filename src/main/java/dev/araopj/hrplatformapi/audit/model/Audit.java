@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 
 @Entity(name = "audits")
@@ -28,12 +30,15 @@ public class Audit {
     @Column(nullable = false)
     String entity_id;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column
     Object oldData;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column
     Object newData;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column
     Object changes;
 
