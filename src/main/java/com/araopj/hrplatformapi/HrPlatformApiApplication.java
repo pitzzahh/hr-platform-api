@@ -1,13 +1,13 @@
-package com.araopj.hrcoreapi;
+package com.araopj.hrplatformapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HrCoreApiApplication {
+public class HrPlatformApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(HrCoreApiApplication.class, args);
+        SpringApplication.run(HrPlatformApiApplication.class, args);
     }
 
 }

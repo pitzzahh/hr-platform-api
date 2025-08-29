@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.araopj</groupId>
-    <artifactId>hr-core-api</artifactId>
+    <artifactId>hr-platform-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>hr-core-api</name>
-    <description>hr-core-api</description>
+    <name>hr-platform-api</name>
+    <description>hr-platform-api</description>
     <url/>
     <licenses>
         <license/>
