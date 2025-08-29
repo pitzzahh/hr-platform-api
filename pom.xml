@@ -8,7 +8,7 @@
         <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.araopj</groupId>
+    <groupId>dev.araopj</groupId>
     <artifactId>hr-platform-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>hr-platform-api</name>

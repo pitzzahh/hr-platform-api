@@ -1,4 +1,4 @@
-package com.araopj.hrplatformapi;
+package dev.araopj.hrplatformapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

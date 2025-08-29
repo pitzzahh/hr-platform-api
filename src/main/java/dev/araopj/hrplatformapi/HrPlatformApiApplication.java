@@ -1,4 +1,4 @@
-package com.araopj.hrplatformapi;
+package dev.araopj.hrplatformapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
