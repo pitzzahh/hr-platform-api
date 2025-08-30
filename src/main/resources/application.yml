@@ -2,4 +2,11 @@ spring:
   application:
     name: hr-platform-api
     version: 0.0.1-SNAPSHOT
-
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

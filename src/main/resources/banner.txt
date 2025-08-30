@@ -7,5 +7,5 @@ ${AnsiColor.BLUE}
 ╚═╝  ╚═╝╚═╝  ╚═╝    ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝
 ${AnsiColor.DEFAULT}
 
-${AnsiColor.GREEN}${spring.application.name} - ${spring.application.version}${AnsiColor.DEFAULT}
-${AnsiColor.YELLOW}::SpringBoot:: ${spring-boot.version}${AnsiColor.DEFAULT}
+${AnsiColor.GREEN}${spring.application.name} | v${spring.application.version}${AnsiColor.DEFAULT}
+${AnsiColor.YELLOW}::SpringBoot:: v${spring-boot.version}${AnsiColor.DEFAULT}
