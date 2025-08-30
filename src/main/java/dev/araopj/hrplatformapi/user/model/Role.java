@@ -19,6 +19,7 @@ public class Role extends EntityTimestamp implements Serializable {
     @Uuid
     String id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     UserRole role = UserRole.EMPLOYEE;
 
