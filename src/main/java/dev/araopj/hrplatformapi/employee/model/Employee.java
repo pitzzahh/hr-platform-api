@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity(name = "employees")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -46,8 +46,8 @@ public class Employee {
 
     @Column(nullable = false, unique = true)
     @Pattern(
-            regexp = "^[A-Za-z0-9._%+-]+@deped\\.gov\\.ph$",
-            message = "Email must be a valid deped.gov.ph address"
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "Email must be a valid email address"
     )
     String email;
 

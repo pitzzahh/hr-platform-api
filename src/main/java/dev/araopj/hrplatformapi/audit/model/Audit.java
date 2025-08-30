@@ -11,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 
-@Entity(name = "audits")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

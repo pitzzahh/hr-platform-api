@@ -11,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "salary_data")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

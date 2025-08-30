@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity(name = "salary_grade")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
