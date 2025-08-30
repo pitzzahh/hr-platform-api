@@ -1,22 +1,21 @@
 package dev.araopj.hrplatformapi.user.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Permission {
+public class Permission extends EntityTimestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,22 +1,18 @@
 package dev.araopj.hrplatformapi.audit.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Audit {
+public class Audit extends EntityTimestamp {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     String id;
@@ -44,12 +40,4 @@ public class Audit {
 
     @Column(nullable = false)
     String performedBy;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

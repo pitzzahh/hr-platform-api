@@ -1,20 +1,19 @@
 package dev.araopj.hrplatformapi.user.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Role {
+public class Role extends EntityTimestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,21 +1,20 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity(name = "employment_information_salary_override")
+@EqualsAndHashCode(callSuper = true)
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class EmploymentInformationSalaryOverride {
+public class EmploymentInformationSalaryOverride extends EntityTimestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

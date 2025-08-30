@@ -1,11 +1,9 @@
 package dev.araopj.hrplatformapi.user.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,13 +11,14 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class User {
+public class User extends EntityTimestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
