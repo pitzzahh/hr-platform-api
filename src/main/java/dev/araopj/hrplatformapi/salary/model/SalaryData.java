@@ -3,7 +3,8 @@ package dev.araopj.hrplatformapi.salary.model;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.io.Serializable;
@@ -21,7 +22,8 @@ public class SalaryData extends EntityTimestamp implements Serializable {
     private String id;
 
     @Column(nullable = false)
-    @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
+    @Min(value = 1, message = "Salary step must be at least 1")
+    @Max(value = 8, message = "Salary step must be at most 8")
     private byte step;
 
     @Column(nullable = false)
