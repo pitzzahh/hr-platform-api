@@ -1,10 +1,14 @@
 package dev.araopj.hrplatformapi.audit.model;
 
+
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -12,32 +16,34 @@ import org.hibernate.type.SqlTypes;
 @AllArgsConstructor
 @Builder
 @Data
-public class Audit extends EntityTimestamp {
+public class Audit extends EntityTimestamp implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String id;
+    @Uuid
+    private String id;
 
     @Column(nullable = false)
-    String entityType;
+    private String entityType;
 
     @Column(nullable = false)
-    AuditAction action;
+    @Enumerated(EnumType.STRING)
+    private AuditAction action;
 
     @Column(nullable = false)
-    String entity_id;
+    private String entityId;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    Object oldData;
+    private Object oldData;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    Object newData;
+    private Object newData;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    Object changes;
+    private Object changes;
 
     @Column(nullable = false)
-    String performedBy;
+    private String performedBy;
 }
