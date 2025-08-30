@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -19,7 +20,8 @@ import java.util.Set;
 public class Employee extends EntityTimestamp {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    
+    @GeneratedValue
     String id;
 
     @Column(unique = true, nullable = false)
