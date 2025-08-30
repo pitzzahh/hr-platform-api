@@ -1,12 +1,14 @@
 package dev.araopj.hrplatformapi.employee.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
-import jakarta.persistence.*;
+import dev.araopj.hrplatformapi.utils.Uuid;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -14,10 +16,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-public class EmploymentInformationSalaryOverride extends EntityTimestamp {
+public class EmploymentInformationSalaryOverride extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Column(nullable = false)
@@ -25,12 +27,4 @@ public class EmploymentInformationSalaryOverride extends EntityTimestamp {
 
     @Column(nullable = false)
     LocalDate effectiveDate;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
