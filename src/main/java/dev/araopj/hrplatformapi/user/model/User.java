@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +14,7 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -45,9 +45,9 @@ public class User {
     @Column
     String name;
 
-    @ColumnDefault("DISABLED")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    UserStatus status;
+    UserStatus status = UserStatus.DISABLED;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column

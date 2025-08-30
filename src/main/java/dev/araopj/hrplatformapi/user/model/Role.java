@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
@@ -21,16 +20,14 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     String id;
 
-    @ColumnDefault("EMPLOYEE")
     @Column(nullable = false)
-    UserRole role;
+    UserRole role = UserRole.EMPLOYEE;
 
     @Column(nullable = false, unique = true)
     String description;
 
-    @ColumnDefault("1")
     @Column(nullable = false)
-    byte maxUser; // Number of users that can be assigned to this role
+    byte maxUser = 1; // Number of users that can be assigned to this role
 
     @OneToOne(mappedBy = "role", cascade = CascadeType.ALL)
     User user;
