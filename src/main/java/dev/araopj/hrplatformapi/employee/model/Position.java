@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 public class Position extends EntityTimestamp {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    
+    @GeneratedValue
     String id;
 
     @Column(nullable = false, unique = true)
