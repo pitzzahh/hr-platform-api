@@ -1,13 +1,12 @@
 package dev.araopj.hrplatformapi.salary.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -15,28 +14,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-public class SalaryData extends EntityTimestamp {
+public class SalaryData extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String id;
+    @Uuid
+    private String id;
 
     @Column(nullable = false)
     @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
-    byte step;
+    private byte step;
 
     @Column(nullable = false)
-    Double amount;
+    private Double amount;
 
     @ManyToOne
     @JoinColumn(name = "salary_grade_id", nullable = false)
-    SalaryGrade salaryGrade;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private SalaryGrade salaryGrade;
 }
