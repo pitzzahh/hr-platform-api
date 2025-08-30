@@ -11,7 +11,7 @@ import org.hibernate.type.SqlTypes;
 import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
