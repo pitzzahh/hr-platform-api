@@ -1,13 +1,12 @@
 package dev.araopj.hrplatformapi.employee.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -15,9 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-public class Gsis extends EntityTimestamp {
+public class Gsis extends EntityTimestamp implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Column(nullable = false, name = "business_partner_number", unique = true)
@@ -31,12 +30,4 @@ public class Gsis extends EntityTimestamp {
 
     @OneToOne(mappedBy = "gsis", cascade = CascadeType.ALL)
     Employee employee;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
