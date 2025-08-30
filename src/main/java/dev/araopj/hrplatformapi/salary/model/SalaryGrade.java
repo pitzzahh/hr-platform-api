@@ -1,13 +1,13 @@
 package dev.araopj.hrplatformapi.salary.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,10 +16,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Data
-public class SalaryGrade extends EntityTimestamp {
+public class SalaryGrade extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Column(nullable = false)
@@ -37,12 +37,4 @@ public class SalaryGrade extends EntityTimestamp {
 
     @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<SalaryData> salaryData;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
