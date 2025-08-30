@@ -1,27 +1,25 @@
 package dev.araopj.hrplatformapi.user.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class User extends EntityTimestamp {
+public class User extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Pattern(
@@ -50,7 +48,7 @@ public class User extends EntityTimestamp {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    Object totp_key;
+    String totp_key;
 
     @Column
     boolean registered_two_factor;
@@ -60,12 +58,4 @@ public class User extends EntityTimestamp {
 
     @Column
     boolean archived;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
