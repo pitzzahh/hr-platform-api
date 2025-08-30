@@ -29,7 +29,7 @@ public class UuidGenerator extends SequenceStyleGenerator {
             log.warn("Could not access getId method on owner: {}", e.getMessage());
         }
         log.info("Generating new UUID, as none was assigned");
-        return UUID.randomUUID();
+        return UUID.randomUUID().toString();
     }
 
     @Override
