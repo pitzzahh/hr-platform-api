@@ -1,6 +1,5 @@
 package dev.araopj.hrplatformapi.user.model;
 
-import dev.araopj.hrplatformapi.employee.model.Gsis;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -12,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
+
 import java.time.LocalDateTime;
 
 @Entity
