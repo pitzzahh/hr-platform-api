@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class ApiError {
     private String message;
     @Null
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String details;
+    private List<String> details;
 }
