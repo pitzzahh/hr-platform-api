@@ -1,12 +1,11 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
-import jakarta.persistence.*;
+import dev.araopj.hrplatformapi.utils.Uuid;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -17,8 +16,7 @@ import java.time.LocalDateTime;
 public class Position extends EntityTimestamp {
 
     @Id
-    
-    @GeneratedValue
+    @Uuid
     String id;
 
     @Column(nullable = false, unique = true)
@@ -26,12 +24,4 @@ public class Position extends EntityTimestamp {
 
     @Column(nullable = false, unique = true)
     String description;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
