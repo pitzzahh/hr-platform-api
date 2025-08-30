@@ -1,6 +1,7 @@
 package dev.araopj.hrplatformapi.audit.model;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
@@ -33,16 +34,16 @@ public class Audit extends EntityTimestamp implements Serializable {
     private String entityId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column
-    private Object oldData;
+    @Column(columnDefinition = "json")
+    private JsonNode oldData;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column
-    private Object newData;
+    @Column(columnDefinition = "json")
+    private JsonNode newData;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column
-    private Object changes;
+    @Column(columnDefinition = "json")
+    private JsonNode changes;
 
     @Column(nullable = false)
     private String performedBy;
