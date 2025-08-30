@@ -1,11 +1,11 @@
 package dev.araopj.hrplatformapi.user.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
+
+import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-public class Role extends EntityTimestamp {
+public class Role extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Column(nullable = false)
@@ -30,12 +30,4 @@ public class Role extends EntityTimestamp {
 
     @OneToOne(mappedBy = "role", cascade = CascadeType.ALL)
     User user;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
