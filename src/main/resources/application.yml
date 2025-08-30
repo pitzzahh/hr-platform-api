@@ -3,8 +3,8 @@ spring:
     name: hr-platform-api
     version: 0.0.1-SNAPSHOT
   datasource:
-    url: jdbc:h2:mem:hr-platform-api
-    driver-class-name: org.h2.Driver
+    url: ${DB_URL}
+    driver-class-name: ${DRIVER_CLASS_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   h2:
@@ -14,6 +14,7 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
