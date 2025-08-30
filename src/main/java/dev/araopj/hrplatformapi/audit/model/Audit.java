@@ -1,6 +1,5 @@
 package dev.araopj.hrplatformapi.audit.model;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.Uuid;
