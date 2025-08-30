@@ -7,6 +7,7 @@ import dev.araopj.hrplatformapi.dto.ApiError;
 import dev.araopj.hrplatformapi.dto.ApiResponse;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class AuditController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Audit>> get(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Audit>> get(@PathVariable @NotNull String id) {
         return auditService.findById(id)
                 .map(e -> ResponseEntity.ok(ApiResponse.success(e)))
                 .orElseGet(() -> new ResponseEntity<>(ApiResponse.failure(
@@ -47,7 +48,7 @@ public class AuditController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AuditDto>> update(@PathVariable String id, @RequestBody AuditDto audit) {
+    public ResponseEntity<ApiResponse<AuditDto>> update(@PathVariable @NotNull String id, @RequestBody @Valid AuditDto audit) {
         return auditService.update(id, audit)
                 .map(e -> ResponseEntity.ok(ApiResponse.success(Mapper.toDto(e))))
                 .orElseGet(() -> new ResponseEntity<>(ApiResponse.failure(
@@ -59,7 +60,7 @@ public class AuditController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable @NotNull String id) {
         var isDeleted = auditService.delete(id);
         if (!isDeleted) {
             return new ResponseEntity<>(ApiResponse.failure(
