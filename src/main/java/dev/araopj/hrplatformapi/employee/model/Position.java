@@ -7,13 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
 
+import java.io.Serializable;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Position extends EntityTimestamp {
+public class Position extends EntityTimestamp implements Serializable {
 
     @Id
     @Uuid
