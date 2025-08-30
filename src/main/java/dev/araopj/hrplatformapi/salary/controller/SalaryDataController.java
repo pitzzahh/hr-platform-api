@@ -1,7 +1,7 @@
 package dev.araopj.hrplatformapi.salary.controller;
 
-import dev.araopj.hrplatformapi.dto.ApiError;
-import dev.araopj.hrplatformapi.dto.ApiResponse;
+import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.ApiResponse;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;

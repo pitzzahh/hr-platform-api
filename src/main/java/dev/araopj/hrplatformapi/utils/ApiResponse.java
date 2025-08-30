@@ -1,4 +1,4 @@
-package dev.araopj.hrplatformapi.dto;
+package dev.araopj.hrplatformapi.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

@@ -1,4 +1,4 @@
-package dev.araopj.hrplatformapi.dto;
+package dev.araopj.hrplatformapi.utils;
 
 import lombok.*;
 import org.springframework.data.domain.Page;

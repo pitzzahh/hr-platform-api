@@ -1,7 +1,7 @@
 package dev.araopj.hrplatformapi.exception;
 
-import dev.araopj.hrplatformapi.dto.ApiError;
-import dev.araopj.hrplatformapi.dto.ApiResponse;
+import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
