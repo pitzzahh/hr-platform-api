@@ -1,6 +1,7 @@
 package dev.araopj.hrplatformapi.audit.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,15 +27,14 @@ public class AuditDto {
 
     @Null
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object oldData;
+    private JsonNode oldData;
+
+    @NotNull
+    private JsonNode newData;
 
     @Null
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object newData;
-
-    @Null
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object changes;
+    private JsonNode changes;
 
     @NotBlank
     private String performedBy;
