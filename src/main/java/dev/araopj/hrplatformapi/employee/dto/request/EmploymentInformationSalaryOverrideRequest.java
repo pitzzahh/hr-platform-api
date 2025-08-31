@@ -1,6 +1,7 @@
 package dev.araopj.hrplatformapi.employee.dto.request;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,4 +16,7 @@ public class EmploymentInformationSalaryOverrideRequest {
 
     @NotNull(message = "Effective date cannot be null")
     private LocalDate effectiveDate;
+
+    @NotBlank(message = "Employment Information ID cannot be blank")
+    private String employmentInformationId;
 }
