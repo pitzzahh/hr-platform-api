@@ -5,7 +5,7 @@ import dev.araopj.hrplatformapi.audit.dto.AuditDto;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.ApiError;
-import dev.araopj.hrplatformapi.utils.ApiResponse;
+import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +27,11 @@ public class GlobalExceptionHandler {
     private final ObjectMapper objectMapper;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<StandardApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.warn("Validation error: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.failure(ApiError.builder()
+                .body(StandardApiResponse.failure(ApiError.builder()
                         .message("Validation failed")
                         .details(ex.getBindingResult()
                                 .getFieldErrors()
@@ -42,11 +42,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleConstraintViolations(ConstraintViolationException ex) {
+    public ResponseEntity<StandardApiResponse<Object>> handleConstraintViolations(ConstraintViolationException ex) {
         log.warn("Constraint violation: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.failure(ApiError.builder()
+                .body(StandardApiResponse.failure(ApiError.builder()
                         .message("Constraint validation failed")
                         .details(ex.getConstraintViolations()
                                 .stream()
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+    public ResponseEntity<StandardApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         log.warn("Data integrity violation: {}", ex.getMessage());
         var errorMessage = "Database error: Unable to save data due to constraint violation";
 
@@ -65,25 +65,25 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.failure(ApiError.builder()
+                .body(StandardApiResponse.failure(ApiError.builder()
                         .message(errorMessage)
                         .details(List.of(detailedMessage))
                         .build()));
     }
 
     @ExceptionHandler(SalaryGradeNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
+    public ResponseEntity<StandardApiResponse<Object>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
         log.warn("Salary grade not found: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.failure(ApiError.builder()
+                .body(StandardApiResponse.failure(ApiError.builder()
                         .message("Salary grade not found")
                         .details(List.of(ex.getMessage()))
                         .build()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex) {
+    public ResponseEntity<StandardApiResponse<Object>> handleGenericException(Exception ex) {
         log.error("Error [GENERIC_ERROR]: {}", ex.getMessage(), ex);
         var error = ApiError.builder()
                 .message("An unexpected error occurred")
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
                         .newData(objectMapper.valueToTree(error))
                         .build()
         );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.failure(error));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StandardApiResponse.failure(error));
     }
 
 }
