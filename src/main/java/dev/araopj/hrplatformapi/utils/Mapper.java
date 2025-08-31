@@ -34,4 +34,14 @@ public class Mapper {
                 .build();
     }
 
+    public SalaryData toEntity(SalaryDataResponse salaryDataResponse) {
+        log.debug("Mapping SalaryDataResponse to SalaryData: {}", salaryDataResponse);
+        return SalaryData.builder()
+                .id(salaryDataResponse.id())
+                .step(salaryDataResponse.step())
+                .amount(salaryDataResponse.amount())
+                .salaryGrade(salaryDataResponse.salaryGrade())
+                .build();
+    }
+
 }
