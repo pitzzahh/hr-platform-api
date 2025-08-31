@@ -6,10 +6,12 @@ import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.ApiResponse;
 import dev.araopj.hrplatformapi.utils.Mapper;
+import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,17 @@ public class AuditController {
     private final AuditService auditService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Audit>>> all() {
-        return ResponseEntity.ok(ApiResponse.success(auditService.findAll()));
+    public ResponseEntity<ApiResponse<List<Audit>>> all(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        var auditsPage = auditService.findAll(PageRequest.of(page - 1, size));
+        return ResponseEntity.ok(ApiResponse.success(auditsPage.getContent(), new PaginationMeta(
+                auditsPage.getNumber() + 1,
+                auditsPage.getSize(),
+                auditsPage.getTotalElements(),
+                auditsPage.getTotalPages()
+        )));
     }
 
     @GetMapping("/{id}")
