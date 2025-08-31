@@ -54,7 +54,7 @@ public class SalaryDataService {
         return data;
     }
 
-    public Optional<SalaryData> findById(String id) {
+    public Optional<SalaryDataResponse> findById(String id) {
         var data = salaryDataRepository.findById(id);
         auditService.create(
                 AuditDto.builder()
@@ -69,16 +69,42 @@ public class SalaryDataService {
                         .entityId(data.map(SalaryData::getId).orElse("N/A"))
                         .build()
         );
-        return data;
+        return data.map(Mapper::toDto);
     }
 
-    public Optional<SalaryDataResponse> create(SalaryDataRequest salaryDataRequest) {
+    public Optional<SalaryDataResponse> findByIdAndSalaryGradeId(String id, String salaryGradeId) {
+        var data = salaryDataRepository.findByIdAndSalaryGrade_Id(id, salaryGradeId);
+        auditService.create(
+                AuditDto.builder()
+                        .action(AuditAction.VIEW)
+                        .newData(objectMapper.valueToTree(Map.of(
+                                "timestamp", LocalDateTime.now().toString(),
+                                "entity", "SalaryData",
+                                "found", data.isPresent()
+                        )))
+                        .performedBy("system")
+                        .entityType("SalaryData")
+                        .entityId(data.map(SalaryData::getId).orElse("N/A"))
+                        .build()
+        );
+        if (data.isEmpty()) {
+            log.warn("Salary data with id {} and salary grade id {} not found", id, salaryGradeId);
+            return Optional.empty();
+        }
+        return data.map(Mapper::toDto);
+    }
+
+    public Optional<SalaryDataResponse> create(SalaryDataRequest salaryDataRequest, String salaryGradeId) {
         var salary_grade_id = salaryDataRequest.getSalaryGradeId();
 
         var salaryGradeOpt = salaryGradeRepository.findById(salary_grade_id);
 
         if (salaryGradeOpt.isEmpty()) {
-            throw new SalaryGradeNotFoundException("Salary grade with id %s not found, no salary grade to relate".formatted(salary_grade_id));
+            log.warn("Checking salary grade with path variable salaryGradeId: {}", salaryGradeId);
+            salaryGradeOpt = salaryGradeRepository.findById(salaryGradeId);
+            if (salaryGradeOpt.isEmpty()) {
+                throw new SalaryGradeNotFoundException("Salary grade with id %s not found, no salary grade to relate".formatted(salaryGradeId));
+            }
         }
 
         var data = Mapper.toDto(salaryDataRepository.saveAndFlush(
@@ -100,19 +126,19 @@ public class SalaryDataService {
         return Optional.of(data);
     }
 
-    public Optional<SalaryDataResponse> update(String id, SalaryDataRequest salaryDataRequest) {
-        var data = salaryDataRepository.findById(id);
-        if (data.isEmpty()) {
+    public Optional<SalaryDataResponse> update(String id, String salaryGradeId, SalaryDataRequest salaryDataRequest) {
+        var data = findByIdAndSalaryGradeId(id, salaryGradeId);
+        if (data.isEmpty()) { // No existing data found to update
             log.warn("Salary data with id {} not found", id);
             return Optional.empty();
         }
-        var oldData = Mapper.toDto(data.get());
-        var newData = MergeUtil.merge(data.get(), salaryDataRequest);
-        var changes = DiffUtil.diff(data.get(), salaryDataRequest);
+        var oldData = data.get(); // Keep the old data for auditing
+        var newData = MergeUtil.merge(data.get(), salaryDataRequest); // Merge old data with new request data
+        var changes = DiffUtil.diff(data.get(), salaryDataRequest); // Compute the diff between old and new data
 
         if (changes.isEmpty()) {
-            log.info("No changes detected for salary data with id {}", id);
-            return Optional.of(Mapper.toDto(data.get()));
+            log.info("No changes detected for salary data with id {}", id); // Nothing to update
+            return data;
         }
 
         auditService.create(
@@ -128,11 +154,16 @@ public class SalaryDataService {
         );
 
         var updatedEntity = DiffUtil.applyDiff(data.get(), changes);
-        salaryDataRepository.save(updatedEntity);
-        return Optional.of(Mapper.toDto(updatedEntity));
+        salaryDataRepository.save(Mapper.toEntity(updatedEntity));
+        return Optional.of(updatedEntity);
     }
 
-    public boolean delete(String id) {
+    public boolean delete(String id, String salaryGradeId) {
+        var data = findByIdAndSalaryGradeId(id, salaryGradeId);
+        if (data.isEmpty()) {
+            log.warn("Salary data with id {} and salaryGradeId {} not found", id, salaryGradeId);
+            return false;
+        }
         if (!salaryDataRepository.existsById(id)) {
             log.warn("Salary data with id {} not found for deletion", id);
             return false;
