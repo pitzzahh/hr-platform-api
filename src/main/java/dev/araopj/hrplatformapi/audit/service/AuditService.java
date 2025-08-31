@@ -6,9 +6,10 @@ import dev.araopj.hrplatformapi.audit.repository.AuditRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -17,8 +18,8 @@ import java.util.Optional;
 public class AuditService {
     private final AuditRepository auditRepository;
 
-    public List<Audit> findAll() {
-        return auditRepository.findAll();
+    public Page<Audit> findAll(Pageable pageable) {
+        return auditRepository.findAll(pageable);
     }
 
     public Optional<Audit> findById(@NotNull String id) {
