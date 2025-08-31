@@ -207,7 +207,7 @@ public class EmploymentInformationSalaryOverrideService {
         var optionalEmploymentInformationSalaryOverrideResponse = useEmploymentInformationIdFromPath ?
                 findByIdAndEmploymentInformationId(
                         id,
-                        checkWithEmploymentInformationIdFromPath ?
+                        checkWithEmploymentInformationIdFromPath ? // TODO: FIx this because it's wrong fr
                                 employmentInformationId : employmentInformationSalaryOverrideRequest.getEmploymentInformationId()
                 ) : findById(id);
 
