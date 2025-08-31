@@ -2,15 +2,13 @@ package dev.araopj.hrplatformapi.employee.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.Uuid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity(name = "station_org")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -28,4 +26,7 @@ public class DivisionStationPlaceOfAssignment extends EntityTimestamp implements
 
     @Column
     String shortName;
+
+    @OneToOne(mappedBy = "divisionStationPlaceOfAssignment", cascade = CascadeType.ALL)
+    EmploymentInformation employmentInformation;
 }
