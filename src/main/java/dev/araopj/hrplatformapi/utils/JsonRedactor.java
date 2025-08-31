@@ -10,8 +10,8 @@ import java.util.Set;
 @UtilityClass
 public class JsonRedactor {
 
-    private static final String REDACTED_VALUE = "****";
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final String REDACTED_VALUE = "****";
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Redacts specified fields from the given object and returns a JsonNode.
@@ -20,11 +20,11 @@ public class JsonRedactor {
      * @param fieldsToRedact The set of field names to redact.
      * @return A JsonNode with sensitive fields redacted.
      */
-    public static JsonNode redact(Object data, Set<String> fieldsToRedact) {
+    public JsonNode redact(Object data, Set<String> fieldsToRedact) {
         return redactNode(mapper.valueToTree(data), fieldsToRedact);
     }
 
-    private static JsonNode redactNode(JsonNode node, Set<String> fieldsToRedact) {
+    private JsonNode redactNode(JsonNode node, Set<String> fieldsToRedact) {
         if (node.isObject()) {
             var objectNode = (ObjectNode) node;
             for (var entry : objectNode.properties()) {
