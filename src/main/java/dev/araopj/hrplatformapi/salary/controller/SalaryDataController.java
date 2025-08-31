@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/salary-grades/{salaryGradeId}/data")
 public class SalaryDataController {
-    
+
     private final SalaryDataService salaryDataService;
 
     @GetMapping
