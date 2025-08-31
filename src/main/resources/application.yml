@@ -20,6 +20,7 @@ spring:
       hibernate:
         format_sql: true
         default_schema: public
+    open-in-view: false
 logging:
   level:
     dev.araopj.hrplatformapi: debug
@@ -29,3 +30,13 @@ scalar:
   url: ${SERVER_URL}/v3/api-docs
   enabled: true
   path: /docs
+
+springdoc:
+  swagger-ui:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
