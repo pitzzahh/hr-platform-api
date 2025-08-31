@@ -15,6 +15,7 @@ import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,8 +33,11 @@ public class SalaryDataService {
     private final AuditService auditService;
     private final ObjectMapper objectMapper;
 
-    public List<SalaryData> findAll() {
-        var data = salaryDataRepository.findAll();
+    public List<SalaryData> findAll(String salaryGradeId, Limit limit) {
+        var data = salaryDataRepository.findBySalaryGrade_Id(
+                salaryGradeId,
+                limit
+        );
         auditService.create(
                 AuditDto.builder()
                         .action(AuditAction.VIEW)
