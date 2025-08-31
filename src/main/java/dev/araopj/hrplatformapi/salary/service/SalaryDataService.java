@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public class SalaryDataService {
                 AuditDto.builder()
                         .action(AuditAction.VIEW)
                         .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", LocalDateTime.now().toString(),
+                                "timestamp", Instant.now().toString(),
                                 "entity", "SalaryData",
                                 "count", data.size()
                         )))
@@ -60,7 +60,7 @@ public class SalaryDataService {
                 AuditDto.builder()
                         .action(AuditAction.VIEW)
                         .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", LocalDateTime.now().toString(),
+                                "timestamp", Instant.now().toString(),
                                 "entity", "SalaryData",
                                 "found", data.isPresent()
                         )))
@@ -78,7 +78,7 @@ public class SalaryDataService {
                 AuditDto.builder()
                         .action(AuditAction.VIEW)
                         .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", LocalDateTime.now().toString(),
+                                "timestamp", Instant.now().toString(),
                                 "entity", "SalaryData",
                                 "found", data.isPresent()
                         )))
@@ -173,7 +173,7 @@ public class SalaryDataService {
                 AuditDto.builder()
                         .action(AuditAction.DELETE)
                         .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", LocalDateTime.now().toString(),
+                                "timestamp", Instant.now().toString(),
                                 "entity", "SalaryData",
                                 "deletedId", id
                         )))
