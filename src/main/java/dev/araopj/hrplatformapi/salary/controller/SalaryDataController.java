@@ -1,11 +1,11 @@
 package dev.araopj.hrplatformapi.salary.controller;
 
-import dev.araopj.hrplatformapi.utils.ApiError;
-import dev.araopj.hrplatformapi.utils.ApiResponse;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
+import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +19,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("/salary-data")
+@RequestMapping("api/v1/salary-grades/{salaryGradeId}/data")
 public class SalaryDataController {
+    
     private final SalaryDataService salaryDataService;
 
-
     @GetMapping
-    public ResponseEntity<ApiResponse<List<SalaryData>>> all() {
+    public ResponseEntity<ApiResponse<List<SalaryData>>> all(@PathVariable @NotNull String salaryGradeId) {
         return ResponseEntity.ok(ApiResponse.success(salaryDataService.findAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<SalaryData>> get(@PathVariable @NotNull String id) {
+    public ResponseEntity<ApiResponse<SalaryData>> get(@PathVariable @NotNull String salaryGradeId, @PathVariable @NotNull String id) {
         return salaryDataService.findById(id)
                 .map(ApiResponse::success)
                 .map(ResponseEntity::ok)
@@ -43,21 +43,21 @@ public class SalaryDataController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<SalaryDataResponse>> create(@RequestBody @Valid SalaryData salaryData) {
+    public ResponseEntity<ApiResponse<SalaryDataResponse>> create(@RequestBody @Valid SalaryDataRequest salaryData, @PathVariable @NotNull String salaryGradeId) {
         log.debug("Request to create salaryData: {}", salaryData);
         return salaryDataService.create(salaryData)
                 .map(ApiResponse::success)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> new ResponseEntity<>(ApiResponse.failure(
                                 ApiError.builder()
-                                        .message("SalaryData with id [%s] already exists".formatted(salaryData.getId()))
+                                        .message("SalaryData with step [%s] and amount [%s] already exists".formatted(salaryData.getStep(), salaryData.getAmount()))
                                         .build()
                         ), HttpStatus.CONFLICT)
                 );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<SalaryDataResponse>> update(@PathVariable @NotNull String id, @RequestBody @Valid SalaryDataRequest salaryDataRequest) {
+    public ResponseEntity<ApiResponse<SalaryDataResponse>> update(@PathVariable @NotNull String salaryGradeId, @PathVariable @NotNull String id, @RequestBody @Valid SalaryDataRequest salaryDataRequest) {
         log.debug("Request to update salaryData with id {}: {}", id, salaryDataRequest);
         return salaryDataService.update(id, salaryDataRequest)
                 .map(ApiResponse::success)
@@ -71,7 +71,7 @@ public class SalaryDataController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable @NotNull String id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable @NotNull String salaryGradeId, @PathVariable @NotNull String id) {
         log.debug("Request to delete salaryData with id {}", id);
         var isDeleted = salaryDataService.delete(id);
         if (!isDeleted) {
