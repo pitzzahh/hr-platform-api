@@ -40,9 +40,9 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     @Column
     String remarks;
 
-    @ManyToOne
-    @JoinColumn(name = "employment_information_salary_override_id")
-    EmploymentInformationSalaryOverride salaryOverride;
+    @OneToOne
+    @JoinColumn(name = "employment_information_salary_override_id", nullable = false, unique = true)
+    EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
     @Column(nullable = false)
     @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
@@ -52,11 +52,11 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     @Size(min = 1, max = 8, message = "Anticipated step must be between 1 and 8")
     byte anticipatedStep;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "position_id")
+    @OneToOne
+    @JoinColumn(name = "position_id", nullable = false, unique = true)
     Position position;
 
-    @ManyToOne
-    @JoinColumn(name = "station_org_id")
+    @OneToOne
+    @JoinColumn(name = "division_station_place_of_assignment_id", nullable = false, unique = true)
     DivisionStationPlaceOfAssignment divisionStationPlaceOfAssignment;
 }
