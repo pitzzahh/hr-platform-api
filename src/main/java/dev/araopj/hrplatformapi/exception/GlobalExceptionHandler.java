@@ -1,10 +1,16 @@
 package dev.araopj.hrplatformapi.exception;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.araopj.hrplatformapi.audit.dto.AuditDto;
+import dev.araopj.hrplatformapi.audit.model.AuditAction;
+import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,7 +20,11 @@ import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final AuditService auditService;
+    private final ObjectMapper objectMapper;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -60,4 +70,35 @@ public class GlobalExceptionHandler {
                         .details(List.of(detailedMessage))
                         .build()));
     }
+
+    @ExceptionHandler(SalaryGradeNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
+        log.warn("Salary grade not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.failure(ApiError.builder()
+                        .message("Salary grade not found")
+                        .details(List.of(ex.getMessage()))
+                        .build()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex) {
+        log.error("Error [GENERIC_ERROR]: {}", ex.getMessage(), ex);
+        var error = ApiError.builder()
+                .message("An unexpected error occurred")
+                .details(List.of(ex.getMessage()))
+                .build();
+        auditService.create(
+                AuditDto.builder()
+                        .entityType("[GENERIC_ERROR]")
+                        .entityId(ex.getMessage())
+                        .action(AuditAction.VIEW)
+                        .performedBy("system")
+                        .newData(objectMapper.valueToTree(error))
+                        .build()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.failure(error));
+    }
+
 }
