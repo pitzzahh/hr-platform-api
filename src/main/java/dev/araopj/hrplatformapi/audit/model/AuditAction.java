@@ -11,7 +11,8 @@ public enum AuditAction implements EnumUtil.HasCode {
     CREATE("C", "Create operation"),
     UPDATE("U", "Update operation"),
     DELETE("D", "Delete operation"),
-    VIEW("V", "View operation");
+    VIEW("V", "View operation"),
+    ERROR("E", "Error operation");
 
     private final String code;
     private final String description;
