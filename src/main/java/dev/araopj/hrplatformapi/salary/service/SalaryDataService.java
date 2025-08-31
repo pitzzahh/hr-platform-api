@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.audit.dto.AuditDto;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.audit.service.AuditService;
+import dev.araopj.hrplatformapi.exception.SalaryGradeNotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
+import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
@@ -25,6 +27,7 @@ import java.util.Optional;
 @Slf4j
 public class SalaryDataService {
 
+    private final SalaryGradeRepository salaryGradeRepository;
     private final SalaryDataRepository salaryDataRepository;
     private final AuditService auditService;
     private final ObjectMapper objectMapper;
@@ -65,12 +68,22 @@ public class SalaryDataService {
         return data;
     }
 
-    public Optional<SalaryDataResponse> create(SalaryData salaryData) {
-        if (salaryData.getId() != null && salaryDataRepository.existsById(salaryData.getId())) {
-            log.warn("Salary data with id {} already exists", salaryData.getId());
-            return Optional.empty();
+    public Optional<SalaryDataResponse> create(SalaryDataRequest salaryDataRequest) {
+        var salary_grade_id = salaryDataRequest.getSalaryGradeId();
+
+        var salaryGradeOpt = salaryGradeRepository.findById(salary_grade_id);
+
+        if (salaryGradeOpt.isEmpty()) {
+            throw new SalaryGradeNotFoundException("Salary grade with id %s not found, no salary grade to relate".formatted(salary_grade_id));
         }
-        var data = Mapper.toDto(salaryDataRepository.saveAndFlush(salaryData));
+
+        var data = Mapper.toDto(salaryDataRepository.saveAndFlush(
+                SalaryData.builder()
+                        .step(salaryDataRequest.getStep())
+                        .amount(salaryDataRequest.getAmount())
+                        .salaryGrade(salaryGradeOpt.get())
+                        .build()
+        ));
         auditService.create(
                 AuditDto.builder()
                         .action(AuditAction.CREATE)
