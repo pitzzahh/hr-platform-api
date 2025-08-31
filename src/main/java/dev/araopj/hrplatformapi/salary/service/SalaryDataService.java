@@ -97,12 +97,12 @@ public class SalaryDataService {
     public Optional<SalaryDataResponse> create(SalaryDataRequest salaryDataRequest, String salaryGradeId) {
         var salary_grade_id = salaryDataRequest.getSalaryGradeId();
 
-        var salaryGradeOpt = salaryGradeRepository.findById(salary_grade_id);
+        var optionalSalaryGrade = salaryGradeRepository.findById(salary_grade_id);
 
-        if (salaryGradeOpt.isEmpty()) {
+        if (optionalSalaryGrade.isEmpty()) {
             log.warn("Checking salary grade with path variable salaryGradeId: {}", salaryGradeId);
-            salaryGradeOpt = salaryGradeRepository.findById(salaryGradeId);
-            if (salaryGradeOpt.isEmpty()) {
+            optionalSalaryGrade = salaryGradeRepository.findById(salaryGradeId);
+            if (optionalSalaryGrade.isEmpty()) {
                 throw new SalaryGradeNotFoundException("Salary grade with id %s not found, no salary grade to relate".formatted(salaryGradeId));
             }
         }
@@ -111,7 +111,7 @@ public class SalaryDataService {
                 SalaryData.builder()
                         .step(salaryDataRequest.getStep())
                         .amount(salaryDataRequest.getAmount())
-                        .salaryGrade(salaryGradeOpt.get())
+                        .salaryGrade(optionalSalaryGrade.get())
                         .build()
         ));
         auditService.create(
@@ -126,18 +126,52 @@ public class SalaryDataService {
         return Optional.of(data);
     }
 
-    public Optional<SalaryDataResponse> update(String id, String salaryGradeId, SalaryDataRequest salaryDataRequest) {
-        var data = findByIdAndSalaryGradeId(id, salaryGradeId);
-        if (data.isEmpty()) { // No existing data found to update
-            log.warn("Salary data with id {} not found", id);
+    public Optional<SalaryDataResponse> update(
+            String id,
+            String salaryGradeId,
+            SalaryDataRequest salaryDataRequest,
+            boolean checkWithSalaryGradeIdFromRequest,
+            boolean checkWithEmploymentInformationIdFromPath
+    ) {
+        // Validate salaryGradeId from request if check is enabled
+        if (checkWithSalaryGradeIdFromRequest && salaryDataRequest.getSalaryGradeId() == null) {
+            log.warn("SalaryGradeId in request is required when checkWithSalaryGradeIdFromRequest is true");
             return Optional.empty();
         }
+
+        // Validate salaryGradeId match if both checks are enabled
+        if (checkWithSalaryGradeIdFromRequest && checkWithEmploymentInformationIdFromPath) {
+            if (!salaryDataRequest.getSalaryGradeId().equals(salaryGradeId)) {
+                log.warn("SalaryGradeId in request [{}] does not match provided salaryGradeId [{}]",
+                        salaryDataRequest.getSalaryGradeId(), salaryGradeId);
+                return Optional.empty();
+            }
+        }
+
+        // Determine effective salaryGradeId for lookup
+        String effectiveSalaryGradeId = checkWithEmploymentInformationIdFromPath ? salaryGradeId :
+                (checkWithSalaryGradeIdFromRequest ? salaryDataRequest.getSalaryGradeId() : null);
+
+        // Perform lookup based on checks
+        Optional<SalaryDataResponse> data;
+        if (effectiveSalaryGradeId != null) {
+            data = findByIdAndSalaryGradeId(id, effectiveSalaryGradeId);
+        } else {
+            data = findById(id);
+        }
+
+        if (data.isEmpty()) {
+            log.warn("Salary data with id {} not found{}", id,
+                    effectiveSalaryGradeId != null ? " for salaryGradeId " + effectiveSalaryGradeId : "");
+            return Optional.empty();
+        }
+
         var oldData = data.get(); // Keep the old data for auditing
         var newData = MergeUtil.merge(data.get(), salaryDataRequest); // Merge old data with new request data
         var changes = DiffUtil.diff(data.get(), salaryDataRequest); // Compute the diff between old and new data
 
         if (changes.isEmpty()) {
-            log.info("No changes detected for salary data with id {}", id); // Nothing to update
+            log.info("No changes detected for salary data with id {}", id);
             return data;
         }
 
