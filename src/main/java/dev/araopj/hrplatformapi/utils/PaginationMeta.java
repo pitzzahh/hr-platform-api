@@ -1,13 +1,13 @@
 package dev.araopj.hrplatformapi.utils;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.domain.Page;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
+@AllArgsConstructor
 public class PaginationMeta {
     private int page;
     private int size;
