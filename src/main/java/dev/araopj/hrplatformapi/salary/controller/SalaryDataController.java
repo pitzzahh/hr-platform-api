@@ -169,18 +169,20 @@ public class SalaryDataController {
             @PathVariable @NotNull String id,
             @RequestBody @Valid SalaryDataRequest salaryDataRequest,
             @RequestParam(defaultValue = "false") boolean usePathSalaryGradeId
-
     ) {
-        log.debug("Request to update salaryData with id {}: {}", id, salaryDataRequest);
-        return salaryDataService.update(id, usePathSalaryGradeId ? salaryGradeId : salaryDataRequest.getSalaryGradeId(), salaryDataRequest)
+        log.info("Request to update salary data with id {}: {}", id, salaryGradeId);
+        var effectiveSalaryGradeId = usePathSalaryGradeId ? salaryGradeId : salaryDataRequest.getSalaryGradeId();
+        return salaryDataService.update(id, effectiveSalaryGradeId, salaryDataRequest,
+                        !usePathSalaryGradeId && salaryDataRequest.getSalaryGradeId() != null, usePathSalaryGradeId)
                 .map(StandardApiResponse::success)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> new ResponseEntity<>(StandardApiResponse.failure(
-                                ApiError.builder()
-                                        .message("SalaryData with id [%s] not found".formatted(id))
-                                        .build()
-                        ), HttpStatus.NOT_FOUND)
-                );
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(StandardApiResponse.failure(
+                        ApiError.builder()
+                                .message(effectiveSalaryGradeId != null
+                                        ? "SalaryData with id [%s] not found in SalaryGrade with id [%s]".formatted(id, effectiveSalaryGradeId)
+                                        : "SalaryData with id [%s] not found".formatted(id))
+                                .build()
+                )));
     }
 
     @DeleteMapping("/{id}")
