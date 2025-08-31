@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Limit;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,11 @@ public class SalaryDataController {
     private final SalaryDataService salaryDataService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<SalaryData>>> all(@PathVariable @NotNull String salaryGradeId) {
-        return ResponseEntity.ok(ApiResponse.success(salaryDataService.findAll()));
+    public ResponseEntity<ApiResponse<List<SalaryData>>> all(@PathVariable @NotNull String salaryGradeId, @RequestParam(defaultValue = "10") @Valid int limit) {
+        return ResponseEntity.ok(ApiResponse.success(salaryDataService.findAll(
+                salaryGradeId,
+                Limit.of(limit)
+        )));
     }
 
     @GetMapping("/{id}")
