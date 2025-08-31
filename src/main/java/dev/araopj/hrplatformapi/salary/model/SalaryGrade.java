@@ -21,22 +21,22 @@ public class SalaryGrade extends EntityTimestamp implements Serializable {
 
     @Id
     @Uuid
-    String id;
+    private String id;
 
     @Column(nullable = false)
-    String legalBasis;
+    private String legalBasis;
 
     @Column
-    byte tranche;
+    private byte tranche;
 
-    @Column
-    LocalDate effectiveDate;
+    @Column(nullable = false)
+    private LocalDate effectiveDate;
 
     @Column(nullable = false)
     @Min(value = 1, message = "Salary grade must be at least 1")
     @Max(value = 33, message = "Salary grade must be at most 33")
-    byte salaryGrade;
+    private byte salaryGrade;
 
     @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Set<SalaryData> salaryData;
+    private Set<SalaryData> salaryData;
 }
