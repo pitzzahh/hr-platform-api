@@ -2,9 +2,7 @@ package dev.araopj.hrplatformapi.employee.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.Uuid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -27,4 +25,7 @@ public class EmploymentInformationSalaryOverride extends EntityTimestamp impleme
 
     @Column(nullable = false)
     private LocalDate effectiveDate;
+
+    @OneToOne(mappedBy = "employmentInformationSalaryOverride", cascade = CascadeType.ALL)
+    EmploymentInformation employmentInformation;
 }
