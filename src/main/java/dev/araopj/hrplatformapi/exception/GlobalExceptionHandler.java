@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice
@@ -31,14 +32,23 @@ public class GlobalExceptionHandler {
         log.warn("Validation error: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
-                .body(StandardApiResponse.failure(ApiError.builder()
-                        .message("Validation failed")
-                        .details(ex.getBindingResult()
-                                .getFieldErrors()
-                                .stream()
-                                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                                .toList())
-                        .build()));
+                .body(StandardApiResponse.failure(
+                        createAuditRecord(
+                                auditService,
+                                ex,
+                                objectMapper,
+                                "Validation failed",
+                                Optional.of(ApiError.builder()
+                                        .message("Validation failed")
+                                        .details(ex.getBindingResult()
+                                                .getFieldErrors()
+                                                .stream()
+                                                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                                                .toList())
+                                        .build()
+                                )
+                        )
+                ));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -46,29 +56,40 @@ public class GlobalExceptionHandler {
         log.warn("Constraint violation: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
-                .body(StandardApiResponse.failure(ApiError.builder()
-                        .message("Constraint validation failed")
-                        .details(ex.getConstraintViolations()
-                                .stream()
-                                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                                .toList())
-                        .build()));
+                .body(StandardApiResponse.failure(
+                        createAuditRecord(
+                                auditService,
+                                ex,
+                                objectMapper,
+                                "Constraint validation failed",
+                                Optional.of(ApiError.builder()
+                                        .message("Constraint validation failed")
+                                        .details(ex.getConstraintViolations()
+                                                .stream()
+                                                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                                                .toList())
+                                        .build())
+                        )
+                ));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<StandardApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         log.warn("Data integrity violation: {}", ex.getMessage());
         var errorMessage = "Database error: Unable to save data due to constraint violation";
-
         // Optionally extract more details from the root cause (e.g., PSQLException)
         var detailedMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
-
         return ResponseEntity
                 .badRequest()
-                .body(StandardApiResponse.failure(ApiError.builder()
-                        .message(errorMessage)
-                        .details(List.of(detailedMessage))
-                        .build()));
+                .body(StandardApiResponse.failure(
+                                createAuditRecord(
+                                        auditService,
+                                        ex,
+                                        objectMapper,
+                                        errorMessage + " - " + detailedMessage,
+                                        Optional.empty())
+                        )
+                );
     }
 
     @ExceptionHandler(SalaryGradeNotFoundException.class)
@@ -76,10 +97,15 @@ public class GlobalExceptionHandler {
         log.warn("Salary grade not found: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(StandardApiResponse.failure(ApiError.builder()
-                        .message("Salary grade not found")
-                        .details(List.of(ex.getMessage()))
-                        .build()));
+                .body(StandardApiResponse.failure(
+                                createAuditRecord(
+                                        auditService,
+                                        ex,
+                                        objectMapper,
+                                        "Salary grade not found",
+                                        Optional.empty())
+                        )
+                );
     }
 
     @ExceptionHandler(EmploymentInformationNotFoundException.class)
@@ -87,29 +113,72 @@ public class GlobalExceptionHandler {
         log.warn("Employment information not found: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(StandardApiResponse.failure(ApiError.builder()
-                        .message("Employment information not found")
-                        .details(List.of(ex.getMessage()))
-                        .build()));
+                .body(StandardApiResponse.failure(
+                                createAuditRecord(
+                                        auditService,
+                                        ex,
+                                        objectMapper,
+                                        "Employment information not found",
+                                        Optional.empty())
+                        )
+                );
+    }
+
+    @ExceptionHandler(GsisNotFoundException.class)
+    public ResponseEntity<StandardApiResponse<Object>> handleGsisNotFound(GsisNotFoundException ex) {
+        log.warn("GSIS record not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(StandardApiResponse.failure(
+                                createAuditRecord(
+                                        auditService,
+                                        ex,
+                                        objectMapper,
+                                        "GSIS record not found",
+                                        Optional.empty())
+                        )
+                );
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardApiResponse<Object>> handleGenericException(Exception ex) {
         log.error("Error [GENERIC_ERROR]: {}", ex.getMessage(), ex);
-        var error = ApiError.builder()
-                .message("An unexpected error occurred")
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(StandardApiResponse.failure(
+                                createAuditRecord(
+                                        auditService,
+                                        ex,
+                                        objectMapper,
+                                        "An unexpected error occurred",
+                                        Optional.empty())
+                        )
+                );
+    }
+
+    /**
+     * Helper method to create an audit record for exceptions.
+     *
+     * @param auditService the audit service to use
+     * @param ex           the exception that occurred
+     * @param objectMapper the object mapper for JSON conversion
+     * @param message      the error message
+     * @return the created ApiError
+     */
+    private static ApiError createAuditRecord(AuditService auditService, Exception ex, ObjectMapper objectMapper, String message, Optional<ApiError> existingError) {
+        var error = existingError.orElse(ApiError.builder()
+                .message(message)
                 .details(List.of(ex.getMessage()))
-                .build();
+                .build());
         auditService.create(
                 AuditDto.builder()
-                        .entityType("[GENERIC_ERROR]")
-                        .entityId(ex.getMessage())
-                        .action(AuditAction.VIEW)
+                        .entityType(ex.getClass().getTypeName())
+                        .entityId(ex.getClass().getPackageName())
+                        .action(AuditAction.ERROR)
                         .performedBy("system")
                         .newData(objectMapper.valueToTree(error))
                         .build()
         );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StandardApiResponse.failure(error));
+        return error;
     }
-
 }
