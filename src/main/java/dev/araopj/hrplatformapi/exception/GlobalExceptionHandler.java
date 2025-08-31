@@ -82,6 +82,17 @@ public class GlobalExceptionHandler {
                         .build()));
     }
 
+    @ExceptionHandler(EmploymentInformationNotFoundException.class)
+    public ResponseEntity<StandardApiResponse<Object>> handleEmploymentInformationNotFound(EmploymentInformationNotFoundException ex) {
+        log.warn("Employment information not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(StandardApiResponse.failure(ApiError.builder()
+                        .message("Employment information not found")
+                        .details(List.of(ex.getMessage()))
+                        .build()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardApiResponse<Object>> handleGenericException(Exception ex) {
         log.error("Error [GENERIC_ERROR]: {}", ex.getMessage(), ex);
