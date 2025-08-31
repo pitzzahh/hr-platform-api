@@ -16,7 +16,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 @ToString
-public class ApiResponse<T> {
+public class StandardApiResponse<T> {
 
     private Instant timestamp = Instant.now();
 
@@ -30,29 +30,29 @@ public class ApiResponse<T> {
     private PaginationMeta pagination;
 
     /**
-     * Static factory method to create a successful ApiResponse with data.
+     * Static factory method to create a successful StandardApiResponse with data.
      *
      * @param data the data to include in the response
      * @param <T>  the type of the data
-     * @return a successful ApiResponse containing the data
+     * @return a successful StandardApiResponse containing the data
      */
-    public static <T> ApiResponse<T> success(T data) {
-        return ApiResponse.<T>builder()
+    public static <T> StandardApiResponse<T> success(T data) {
+        return StandardApiResponse.<T>builder()
                 .timestamp(Instant.now())
                 .data(data)
                 .build();
     }
 
     /**
-     * Static factory method to create a successful ApiResponse with data and pagination metadata.
+     * Static factory method to create a successful StandardApiResponse with data and pagination metadata.
      *
      * @param data       the data to include in the response
      * @param pagination the pagination metadata
      * @param <T>        the type of the data
-     * @return a successful ApiResponse containing the data and pagination info
+     * @return a successful StandardApiResponse containing the data and pagination info
      */
-    public static <T> ApiResponse<T> success(T data, PaginationMeta pagination) {
-        return ApiResponse.<T>builder()
+    public static <T> StandardApiResponse<T> success(T data, PaginationMeta pagination) {
+        return StandardApiResponse.<T>builder()
                 .timestamp(Instant.now())
                 .data(data)
                 .pagination(pagination)
@@ -60,14 +60,14 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Static factory method to create a failure ApiResponse with an error.
+     * Static factory method to create a failure StandardApiResponse with an error.
      *
      * @param error the error details
      * @param <T>   the type of the data
-     * @return a failure ApiResponse containing the error
+     * @return a failure StandardApiResponse containing the error
      */
-    public static <T> ApiResponse<T> failure(ApiError error) {
-        return ApiResponse.<T>builder()
+    public static <T> StandardApiResponse<T> failure(ApiError error) {
+        return StandardApiResponse.<T>builder()
                 .timestamp(Instant.now())
                 .error(error)
                 .build();
