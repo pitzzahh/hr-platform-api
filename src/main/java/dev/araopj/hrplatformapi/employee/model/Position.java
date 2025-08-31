@@ -2,9 +2,7 @@ package dev.araopj.hrplatformapi.employee.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.Uuid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -26,4 +24,7 @@ public class Position extends EntityTimestamp implements Serializable {
 
     @Column(nullable = false, unique = true)
     String description;
+
+    @OneToOne(mappedBy = "position", cascade = CascadeType.ALL)
+    EmploymentInformation employmentInformation;
 }
