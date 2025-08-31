@@ -23,3 +23,9 @@ spring:
 logging:
   level:
     dev.araopj.hrplatformapi: debug
+
+scalar:
+  theme: elysiajs
+  url: ${SERVER_URL}/v3/api-docs
+  enabled: true
+  path: /docs
