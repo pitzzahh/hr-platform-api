@@ -15,7 +15,7 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ---
 
-## ����️ Project Structure
+## 📁 Project Structure
 
 ```
 ~/hrplatformapi
