@@ -7,7 +7,9 @@ import dev.araopj.hrplatformapi.audit.service.AuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,6 +48,25 @@ public class AuditUtil {
         changes.ifPresent(c -> builder.changes(objectMapper.valueToTree(c)));
 
         auditService.create(builder.build());
+    }
+
+    /**
+     * Logs a simple audit event for viewing an entity.
+     *
+     * @param id         The identifier of the viewed entity.
+     * @param entityName The name of the entity being viewed.
+     */
+    public void audit(String id, String entityName) {
+        audit(
+                AuditAction.VIEW,
+                "[]",
+                Optional.empty(),
+                Map.of("timestamp", Instant.now().toString(),
+                        "entity", entityName,
+                        "request_id", id),
+                Optional.empty(),
+                entityName
+        );
     }
 
     /**
