@@ -1,4 +1,4 @@
-# 🚀 HR Platform API
+# HR Platform API
 
 A **SpringBoot RESTful API** for managing HR data such as employees, salaries, audits, and user roles/permissions.
 Designed with clean architecture, modular packages, and standardized API responses for smooth integration.
@@ -15,40 +15,40 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ---
 
-## 🗂️ Project Structure
+## ����️ Project Structure
 
 ```
-src/main/java/dev/araopj/hrplatformapi
-├── audit/             # Audit logging
-│   ├── controller     # REST controllers
-│   ├── dto            # Request/response DTOs
-│   ├── model          # JPA entities
-│   ├── repository     # Data access layer
-│   └── service        # Business logic
+~/hrplatformapi
+├── audit/             
+│   ├── controller     
+│   ├── dto           
+│   ├── model          
+│   ├── repository    
+│   └── service
 │
-├── employee/          # Employee domain
-│   ├── controller     # REST controllers
-│   ├── dto            # Request/response DTOs
-│   ├── model          # JPA entities
-│   ├── repository     # Data access layer
-│   └── service        # Business logic
+├── employee/
+│   ├── controller     
+│   ├── dto           
+│   ├── model          
+│   ├── repository    
+│   └── service
 │
-├── salary/            # Salary domain
-│   ├── controller     # REST controllers
-│   ├── dto            # Request/response DTOs
-│   ├── model          # JPA entities
-│   ├── repository     # Data access layer
-│   └── service        # Business logic
+├── salary/           
+│   ├── controller     
+│   ├── dto           
+│   ├── model          
+│   ├── repository    
+│   └── service
 │
-├── user/              # User, role, and permissions
-│   ├── controller     # REST controllers
-│   ├── dto            # Request/response DTOs
-│   ├── model          # JPA entities
-│   ├── repository     # Data access layer
-│   └── service        # Business logic
+├── user/             
+│   ├── controller     
+│   ├── dto           
+│   ├── model          
+│   ├── repository    
+│   └── service
 │
-├── utils/             # Common utilities (mapping, responses, etc.)
-└── exception/         # Global exception handling
+├── utils/            
+└── exception/         
 ```
 
 ---
@@ -82,13 +82,28 @@ src/main/resources/application.yml
 
 | Resource     | Endpoint                                     | Methods                | Description                              |
 |--------------|----------------------------------------------|------------------------|------------------------------------------|
-| Employee     | `/api/employees`                             | GET, POST, PUT, DELETE | Manage employees (CRUD, info, positions) |
+| Employee     | `/api/v1/employees`                          | GET, POST, PUT, DELETE | Manage employees (CRUD, info, positions) |
 | Salary Grade | `/api/v1/salary-grades`                      | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)   |
 | Salary Data  | `/api/v1/salary-grades/{salaryGradeId}/data` | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)  |
 | Audit        | `/api/v1/audit`                              | GET                    | View audit logs                          |
 | User         | `/api/v1/users`                              | GET, POST, PUT, DELETE | Manage users, roles, and permissions     |
+| Roles        | `/api/v1/roles`                              | POST                   | User login and token generation          |
+| Permission   | `/api/v1/permissions`                        | POST                   | Manage user permissions                  |
+ | 
 
 👉 Check the controller classes for full request/response examples.
+
+---
+
+## 📖 API Documentation
+
+Interactive API documentation is available at:
+
+```
+/docs
+```
+
+After starting the application, visit this endpoint in your browser to explore and test all available endpoints using Scalar.
 
 ---
 
