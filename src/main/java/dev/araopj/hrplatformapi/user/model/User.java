@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Data
-public class User extends EntityTimestamp implements Serializable {
+public class User extends EntityTimestamp implements Serializable { // TODO: implement UserDetails interface for Spring Security
 
     @Id
     @Uuid
