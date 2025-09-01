@@ -2,9 +2,9 @@ package dev.araopj.hrplatformapi.salary.controller;
 
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.FetchType;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,7 +51,7 @@ public class SalaryDataController {
                     )
             }
     )
-    public ResponseEntity<StandardApiResponse<List<SalaryData>>> all(@PathVariable @NotNull String salaryGradeId, @RequestParam(defaultValue = "10") @Valid int limit) {
+    public ResponseEntity<StandardApiResponse<List<SalaryDataResponse>>> all(@PathVariable @NotNull String salaryGradeId, @RequestParam(defaultValue = "10") @Valid int limit) {
         return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.findAll(
                 salaryGradeId,
                 Limit.of(limit)
@@ -143,7 +143,11 @@ public class SalaryDataController {
 
     @PutMapping("/{id}")
     @Operation(
-            description = "Update an existing salary data entry by its ID.",
+            description = """
+                    Update an existing salary data entry by its ID for a specific salary grade.
+                    Allows optional fetching strategies and the choice to use the parent salary grade ID from the path variable
+                    or from the request body.
+                    """,
             summary = "Update salary data",
             responses = {
                     @ApiResponse(
@@ -156,7 +160,7 @@ public class SalaryDataController {
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "Salary data not found"
+                            description = "Salary data to update not found"
                     ),
                     @ApiResponse(
                             responseCode = "500",
@@ -168,21 +172,22 @@ public class SalaryDataController {
             @PathVariable @NotNull String salaryGradeId,
             @PathVariable @NotNull String id,
             @RequestBody @Valid SalaryDataRequest salaryDataRequest,
-            @RequestParam(defaultValue = "false") boolean usePathSalaryGradeId
+            @RequestParam(defaultValue = "BY_PATH_VARIABLE") FetchType fetchType,
+            @RequestParam(defaultValue = "false") boolean useParentIdFromPathVariable
     ) {
         log.info("Request to update salary data with id {}: {}", id, salaryGradeId);
-        var effectiveSalaryGradeId = usePathSalaryGradeId ? salaryGradeId : salaryDataRequest.getSalaryGradeId();
-        return salaryDataService.update(id, effectiveSalaryGradeId, salaryDataRequest,
-                        !usePathSalaryGradeId && salaryDataRequest.getSalaryGradeId() != null, usePathSalaryGradeId)
-                .map(StandardApiResponse::success)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(StandardApiResponse.failure(
-                        ApiError.builder()
-                                .message(effectiveSalaryGradeId != null
-                                        ? "SalaryData with id [%s] not found in SalaryGrade with id [%s]".formatted(id, effectiveSalaryGradeId)
-                                        : "SalaryData with id [%s] not found".formatted(id))
-                                .build()
-                )));
+        return ResponseEntity
+                .ok(StandardApiResponse
+                        .success(salaryDataService.update(
+                                        id,
+                                        salaryGradeId,
+                                        salaryDataRequest,
+                                        fetchType,
+                                        useParentIdFromPathVariable
+                                )
+                        )
+                );
+
     }
 
     @DeleteMapping("/{id}")
