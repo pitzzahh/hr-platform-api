@@ -41,7 +41,9 @@ public class NotFoundException extends RuntimeException {
         AUDIT("AUDIT", "Audit"),
         USER("USER", "User"),
         SALARY_DATA("SALARY_DATA", "Salary Data"),
-        SALARY_GRADE("SALARY_GRADE", "Salary Grade");
+        SALARY_GRADE("SALARY_GRADE", "Salary Grade"),
+        IDENTIFIER_TYPE("IDENTIFIER_TYPE", "Identifier Type"),
+        IDENTIFIER("IDENTIFIER", "Identifier");
 
         private final String code;
         private final String description;

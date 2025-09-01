@@ -1,5 +1,6 @@
-package dev.araopj.hrplatformapi.utils;
+package dev.araopj.hrplatformapi.utils.annotations;
 
+import dev.araopj.hrplatformapi.utils.UuidGenerator;
 import org.hibernate.annotations.IdGeneratorType;
 
 import java.lang.annotation.Retention;
