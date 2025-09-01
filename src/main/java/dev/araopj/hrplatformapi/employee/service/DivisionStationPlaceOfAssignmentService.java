@@ -7,7 +7,10 @@ import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssi
 import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.repository.DivisionStationPlaceOfAssignmentRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.CommonValidation;
+import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.enums.FetchType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -205,6 +208,7 @@ public class DivisionStationPlaceOfAssignmentService {
             case BY_PATH_VARIABLE -> findById(id);
             case WITH_PARENT_PATH_VARIABLE ->
                     findByIdAndEmploymentInformationId(id, useParentIdFromPathVariable ? employmentInformationId : divisionStationPlaceOfAssignmentRequest.employmentInformationId());
+            default -> Optional.<DivisionStationPlaceOfAssignmentResponse>empty();
         };
 
         if (divisionPlaceOfAssignmentResponse.isEmpty()) {

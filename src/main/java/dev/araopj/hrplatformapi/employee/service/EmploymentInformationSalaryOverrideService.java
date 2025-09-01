@@ -196,6 +196,7 @@ public class EmploymentInformationSalaryOverrideService {
             case BY_PATH_VARIABLE -> findById(id);
             case WITH_PARENT_PATH_VARIABLE ->
                     findByIdAndEmploymentInformationId(id, useParentIdFromPathVariable ? employmentInformationId : employmentInformationSalaryOverrideRequest.employmentInformationId());
+            default -> Optional.<EmploymentInformationSalaryOverrideResponse>empty();
         };
 
         if (employmentInformationSalaryOverrideResponse.isEmpty()) {
