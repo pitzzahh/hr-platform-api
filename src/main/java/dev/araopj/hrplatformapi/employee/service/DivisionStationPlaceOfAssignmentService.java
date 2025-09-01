@@ -7,9 +7,7 @@ import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssi
 import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.repository.DivisionStationPlaceOfAssignmentRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.CommonValidation;
-import dev.araopj.hrplatformapi.utils.FetchType;
+import dev.araopj.hrplatformapi.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -185,14 +183,14 @@ public class DivisionStationPlaceOfAssignmentService {
     }
 
     /**
-     * Update an existing DivisionStationPlaceOfAssignment record identified by its ID, with optional employment information ID verification, and log the action in the audit service.
+     * Update an existing {@link DivisionStationPlaceOfAssignment} record identified by its ID, with optional employment information ID verification, and log the action in the audit utility.
      *
-     * @param id                                      The ID of the DivisionStationPlaceOfAssignment record to update.
+     * @param id                                      The ID of the {@link DivisionStationPlaceOfAssignment} record to update.
      * @param employmentInformationId                 The ID of the associated employment information (used if {@code useParentIdFromPathVariable} is true).
      * @param divisionStationPlaceOfAssignmentRequest The request object containing updated DivisionStationPlaceOfAssignment details.
-     * @param fetchType                               The method to fetch the existing DivisionStationPlaceOfAssignment record (by path variable or with parent path variable).
+     * @param fetchType                               The method to fetch the existing {@link DivisionStationPlaceOfAssignment} record (by path variable or with parent path variable).
      * @param useParentIdFromPathVariable             Flag indicating whether to use the employment information ID from the path variable or from the request.
-     * @return DivisionStationPlaceOfAssignmentResponse containing the updated DivisionStationPlaceOfAssignment record.
+     * @return {@link DivisionStationPlaceOfAssignmentResponse} containing the updated DivisionStationPlaceOfAssignment record.
      * @throws NotFoundException if no DivisionStationPlaceOfAssignment record is found with the given criteria.
      */
     public DivisionStationPlaceOfAssignmentResponse update(
@@ -218,14 +216,24 @@ public class DivisionStationPlaceOfAssignmentService {
             );
         }
 
+        var oldData = divisionPlaceOfAssignmentResponse.get(); // Keep the old data for auditing
+        var newData = MergeUtil.merge(divisionPlaceOfAssignmentResponse.get(), divisionStationPlaceOfAssignmentRequest); // Merge old divisionPlaceOfAssignmentResponse with new request divisionPlaceOfAssignmentResponse
+        var changes = DiffUtil.diff(divisionPlaceOfAssignmentResponse.get(), divisionStationPlaceOfAssignmentRequest); // Compute the diff between old and new data
+
+        if (changes.isEmpty()) {
+            log.info("No changes detected for DivisionStationPlaceOfAssignment with id {}", id);
+            return oldData;
+        }
+
         auditUtil.audit(
                 UPDATE,
                 id,
-                Optional.of(redact(divisionPlaceOfAssignmentResponse, REDACTED)),
-                redact(merge(divisionPlaceOfAssignmentResponse, divisionStationPlaceOfAssignmentRequest), REDACTED),
-                Optional.of(redact(diff(divisionPlaceOfAssignmentResponse, divisionStationPlaceOfAssignmentRequest), REDACTED)),
+                Optional.of(redact(oldData, REDACTED)),
+                redact(merge(newData, divisionStationPlaceOfAssignmentRequest), REDACTED),
+                Optional.of(redact(diff(oldData, divisionStationPlaceOfAssignmentRequest), REDACTED)),
                 ENTITY_NAME
         );
+
         return objectMapper.convertValue(
                 divisionStationPlaceOfAssignmentRepository.saveAndFlush(
                         objectMapper.convertValue(divisionPlaceOfAssignmentResponse, DivisionStationPlaceOfAssignment.class)
