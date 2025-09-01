@@ -1,4 +1,4 @@
-package dev.araopj.hrplatformapi.utils;
+package dev.araopj.hrplatformapi.utils.enums;
 
 public enum FetchType {
     BY_PATH_VARIABLE,
