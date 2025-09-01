@@ -28,12 +28,12 @@ public class GlobalExceptionHandler {
     private final ObjectMapper objectMapper;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.warn("Validation error: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        createAuditRecord(
+                        audit(
                                 auditService,
                                 ex,
                                 objectMapper,
@@ -52,12 +52,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleConstraintViolations(ConstraintViolationException ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleConstraintViolations(ConstraintViolationException ex) {
         log.warn("Constraint violation: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        createAuditRecord(
+                        audit(
                                 auditService,
                                 ex,
                                 objectMapper,
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         log.warn("Data integrity violation: {}", ex.getMessage());
         var errorMessage = "Database error: Unable to save data due to constraint violation";
         // Optionally extract more details from the root cause (e.g., PSQLException)
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                                createAuditRecord(
+                                audit(
                                         auditService,
                                         ex,
                                         objectMapper,
@@ -93,12 +93,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SalaryGradeNotFoundException.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
         log.warn("Salary grade not found: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                createAuditRecord(
+                                audit(
                                         auditService,
                                         ex,
                                         objectMapper,
@@ -109,12 +109,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmploymentInformationNotFoundException.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleEmploymentInformationNotFound(EmploymentInformationNotFoundException ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleEmploymentInformationNotFound(EmploymentInformationNotFoundException ex) {
         log.warn("Employment information not found: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                createAuditRecord(
+                                audit(
                                         auditService,
                                         ex,
                                         objectMapper,
@@ -125,12 +125,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(GsisNotFoundException.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleGsisNotFound(GsisNotFoundException ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleGsisNotFound(GsisNotFoundException ex) {
         log.warn("GSIS record not found: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                createAuditRecord(
+                                audit(
                                         auditService,
                                         ex,
                                         objectMapper,
@@ -141,12 +141,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<StandardApiResponse<Object>> handleGenericException(Exception ex) {
+    public ResponseEntity<StandardApiResponse<ApiError>> handleGenericException(Exception ex) {
         log.error("Error [GENERIC_ERROR]: {}", ex.getMessage(), ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(StandardApiResponse.failure(
-                                createAuditRecord(
+                                audit(
                                         auditService,
                                         ex,
                                         objectMapper,
@@ -165,7 +165,7 @@ public class GlobalExceptionHandler {
      * @param message      the error message
      * @return the created ApiError
      */
-    private static ApiError createAuditRecord(AuditService auditService, Exception ex, ObjectMapper objectMapper, String message, Optional<ApiError> existingError) {
+    private static ApiError audit(AuditService auditService, Exception ex, ObjectMapper objectMapper, String message, Optional<ApiError> existingError) {
         var error = existingError.orElse(ApiError.builder()
                 .message(message)
                 .details(List.of(ex.getMessage()))
