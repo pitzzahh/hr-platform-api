@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.audit.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
-import dev.araopj.hrplatformapi.utils.Uuid;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

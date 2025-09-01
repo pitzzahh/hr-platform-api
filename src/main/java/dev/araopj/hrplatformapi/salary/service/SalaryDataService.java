@@ -8,8 +8,10 @@ import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.enums.CreateType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,7 @@ public class SalaryDataService {
     private final Set<String> REDACTED = Set.of("id", "salaryGrade");
     private final String ENTITY_NAME = "SalaryDataResponse";
 
+    // TODO: must be able to use findAll and findBySalaryGrade_Id
     public List<SalaryDataResponse> findAll(String salaryGradeId, Limit limit) {
         var data = salaryDataRepository.findBySalaryGrade_Id(
                         salaryGradeId,
@@ -93,16 +96,27 @@ public class SalaryDataService {
                 .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId")));
     }
 
-    public Optional<SalaryDataResponse> create(SalaryDataRequest salaryDataRequest, String salaryGradeId) {
-        var salary_grade_id = salaryDataRequest.getSalaryGradeId();
+    public Optional<SalaryDataResponse> create(
+            SalaryDataRequest salaryDataRequest,
+            String salaryGradeId,
+            CreateType createType
+    ) throws BadRequestException {
+        var optionalSalaryGrade = switch (createType) {
+            case FROM_REQUEST_PARAM -> salaryGradeRepository.findById(salaryGradeId);
+            case FROM_REQUEST_BODY -> salaryGradeRepository.findById(salaryDataRequest.getSalaryGradeId());
+        };
 
-        var optionalSalaryGrade = salaryGradeRepository.findById(salary_grade_id);
-
-        if (optionalSalaryGrade.isEmpty()) {
-            log.warn("Checking salary grade with path variable salaryGradeId: {}", salaryGradeId);
-            optionalSalaryGrade = salaryGradeRepository.findById(salaryGradeId);
-            if (optionalSalaryGrade.isEmpty()) {
-                throw new NotFoundException(salaryGradeId, SALARY_DATA);
+        if (optionalSalaryGrade.isPresent()) {
+            var sg = optionalSalaryGrade.get();
+            var existing_salary_data = salaryDataRepository.findByStepAndAmountAndSalaryGrade_Id(
+                    salaryDataRequest.getStep(),
+                    salaryDataRequest.getAmount(),
+                    sg.getId()
+            );
+            if (existing_salary_data.isPresent()) {
+                log.warn("SalaryData with step {} and amount {} already exists in SalaryGrade with id {}",
+                        salaryDataRequest.getStep(), salaryDataRequest.getAmount(), sg.getId());
+                throw new BadRequestException("SalaryData with the same step and amount already exists in the specified SalaryGrade.");
             }
         }
 
@@ -110,7 +124,7 @@ public class SalaryDataService {
                 SalaryData.builder()
                         .step(salaryDataRequest.getStep())
                         .amount(salaryDataRequest.getAmount())
-                        .salaryGrade(optionalSalaryGrade.get())
+                        .salaryGrade(optionalSalaryGrade.orElse(null))
                         .build()
         ));
         auditUtil.audit(
@@ -128,14 +142,15 @@ public class SalaryDataService {
             String id,
             String salaryGradeId,
             SalaryDataRequest salaryDataRequest,
-            FetchType fetchType,
-            boolean useParentIdFromPathVariable
+            CreateType createType,
+            boolean useWithParentId
     ) {
 
-        var salaryDataResponse = switch (fetchType) {
-            case BY_PATH_VARIABLE -> findById(id);
-            case WITH_PARENT_PATH_VARIABLE ->
-                    findByIdAndSalaryGradeId(id, useParentIdFromPathVariable ? salaryGradeId : salaryDataRequest.getSalaryGradeId());
+        var salaryDataResponse = switch (createType) {
+            case FROM_PATH_VARIABLE -> findById(id);
+            case FROM_REQUEST_BODY ->
+                    findByIdAndSalaryGradeId(id, useWithParentId ? salaryGradeId : salaryDataRequest.getSalaryGradeId());
+            default -> Optional.empty();
         };
 
         if (salaryDataResponse.isEmpty()) {

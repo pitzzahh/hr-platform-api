@@ -1,6 +1,6 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-import dev.araopj.hrplatformapi.utils.Uuid;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

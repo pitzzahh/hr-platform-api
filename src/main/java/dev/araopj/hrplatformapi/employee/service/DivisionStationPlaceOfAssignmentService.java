@@ -8,6 +8,7 @@ import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.repository.DivisionStationPlaceOfAssignmentRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.enums.FetchType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

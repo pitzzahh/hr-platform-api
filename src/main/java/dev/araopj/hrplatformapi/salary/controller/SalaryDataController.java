@@ -4,7 +4,7 @@ import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
-import dev.araopj.hrplatformapi.utils.FetchType;
+import dev.araopj.hrplatformapi.utils.enums.CreateType;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Limit;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("api/v1/salary-grades/{salaryGradeId}/data")
+@RequestMapping("api/v1/salary-data")
 @Tag(
         name = "Salary Data",
         description = "Endpoints for managing salary data associated with specific salary grades."
@@ -126,11 +127,11 @@ public class SalaryDataController {
     )
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
             @RequestBody @Valid SalaryDataRequest salaryDataRequest,
-            @PathVariable @NotNull String salaryGradeId,
-            @RequestParam(defaultValue = "false") boolean usePathSalaryGradeId
-    ) {
+            @RequestParam String salaryGradeId,
+            @RequestParam(defaultValue = "FROM_REQUEST_PARAM") @NotNull CreateType createType
+    ) throws BadRequestException {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
-        return salaryDataService.create(salaryDataRequest, usePathSalaryGradeId ? salaryGradeId : salaryDataRequest.getSalaryGradeId())
+        return salaryDataService.create(salaryDataRequest, salaryGradeId, createType)
                 .map(StandardApiResponse::success)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> new ResponseEntity<>(StandardApiResponse.failure(
@@ -141,7 +142,6 @@ public class SalaryDataController {
                 );
     }
 
-    @PutMapping("/{id}")
     @Operation(
             description = """
                     Update an existing salary data entry by its ID for a specific salary grade.
@@ -168,11 +168,12 @@ public class SalaryDataController {
                     )
             }
     )
+    @PutMapping("/{id}")
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> update(
-            @PathVariable @NotNull String salaryGradeId,
             @PathVariable @NotNull String id,
+            @RequestParam @NotNull String salaryGradeId,
             @RequestBody @Valid SalaryDataRequest salaryDataRequest,
-            @RequestParam(defaultValue = "BY_PATH_VARIABLE") FetchType fetchType,
+            @RequestParam(defaultValue = "BY_PATH_VARIABLE") CreateType createType,
             @RequestParam(defaultValue = "false") boolean useParentIdFromPathVariable
     ) {
         log.info("Request to update salary data with id {}: {}", id, salaryGradeId);
@@ -182,7 +183,7 @@ public class SalaryDataController {
                                         id,
                                         salaryGradeId,
                                         salaryDataRequest,
-                                        fetchType,
+                                        createType,
                                         useParentIdFromPathVariable
                                 )
                         )

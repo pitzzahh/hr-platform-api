@@ -9,6 +9,7 @@ import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverri
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.enums.FetchType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
