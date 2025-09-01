@@ -3,9 +3,7 @@ package dev.araopj.hrplatformapi.utils;
 import dev.araopj.hrplatformapi.audit.dto.AuditDto;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
-import dev.araopj.hrplatformapi.employee.dto.response.GsisResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
-import dev.araopj.hrplatformapi.employee.model.Gsis;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import lombok.experimental.UtilityClass;
@@ -49,19 +47,6 @@ public class Mapper {
                 .build();
     }
 
-    public GsisResponse toDto(Gsis gsis) {
-        log.info("Mapping Gsis to GsisResponse: {}", gsis);
-        return GsisResponse.builder()
-                .id(gsis.getId())
-                .businessPartnerNumber(gsis.getBusinessPartnerNumber())
-                .issuedDate(gsis.getIssuedDate())
-                .issuedPlace(gsis.getIssuedPlace())
-                .createdAt(gsis.getCreatedAt())
-                .updatedAt(gsis.getUpdatedAt())
-                .employee(gsis.getEmployee())
-                .build();
-    }
-
     public SalaryData toEntity(SalaryDataResponse salaryDataResponse) {
         log.info("Mapping SalaryDataResponse to SalaryData: {}", salaryDataResponse);
         return SalaryData.builder()
@@ -78,17 +63,6 @@ public class Mapper {
                 .id(employmentInformationSalaryOverrideResponse.id())
                 .salary(employmentInformationSalaryOverrideResponse.salary())
                 .effectiveDate(employmentInformationSalaryOverrideResponse.effectiveDate())
-                .build();
-    }
-
-    public Gsis toEntity(GsisResponse gsisResponse) {
-        log.info("Mapping GsisResponse to Gsis: {}", gsisResponse);
-        return Gsis.builder()
-                .id(gsisResponse.id())
-                .businessPartnerNumber(gsisResponse.businessPartnerNumber())
-                .issuedDate(gsisResponse.issuedDate())
-                .issuedPlace(gsisResponse.issuedPlace())
-                .employee(gsisResponse.employee())
                 .build();
     }
 
