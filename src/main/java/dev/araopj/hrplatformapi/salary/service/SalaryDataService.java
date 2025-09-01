@@ -7,7 +7,11 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
-import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.Mapper;
+import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import dev.araopj.hrplatformapi.utils.enums.CreateType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,14 +43,23 @@ public class SalaryDataService {
     private final Set<String> REDACTED = Set.of("id", "salaryGrade");
     private final String ENTITY_NAME = "SalaryDataResponse";
 
-    // TODO: must be able to use findAll and findBySalaryGrade_Id
     public List<SalaryDataResponse> findAll(String salaryGradeId, Limit limit) {
-        var data = salaryDataRepository.findBySalaryGrade_Id(
-                        salaryGradeId,
-                        limit
-                ).stream()
+        var data = salaryDataRepository.findAll().stream()
                 .map(entity -> objectMapper.convertValue(entity, SalaryDataResponse.class))
                 .toList();
+        if (salaryGradeId != null) {
+            if (!salaryGradeRepository.existsById(salaryGradeId)) {
+                log.warn("SalaryGrade with id {} not found", salaryGradeId);
+                throw new NotFoundException(salaryGradeId, NotFoundException.EntityType.SALARY_GRADE);
+            }
+            data = salaryDataRepository.findBySalaryGrade_Id(
+                            salaryGradeId,
+                            limit
+                    ).stream()
+                    .map(entity -> objectMapper.convertValue(entity, SalaryDataResponse.class))
+                    .toList();
+        }
+
         auditUtil.audit(
                 VIEW,
                 "[]",
@@ -99,11 +112,11 @@ public class SalaryDataService {
     public Optional<SalaryDataResponse> create(
             SalaryDataRequest salaryDataRequest,
             String salaryGradeId,
-            CreateType createType
+            CheckType checkType
     ) throws BadRequestException {
-        var optionalSalaryGrade = switch (createType) {
-            case FROM_REQUEST_PARAM -> salaryGradeRepository.findById(salaryGradeId);
-            case FROM_REQUEST_BODY -> salaryGradeRepository.findById(salaryDataRequest.getSalaryGradeId());
+        var optionalSalaryGrade = switch (checkType) {
+            case CHECK_PARENT_FROM_REQUEST_PARAM -> salaryGradeRepository.findById(salaryGradeId);
+            case CHECK_PARENT_FROM_REQUEST_BODY -> salaryGradeRepository.findById(salaryDataRequest.getSalaryGradeId());
         };
 
         if (optionalSalaryGrade.isPresent()) {
@@ -150,7 +163,7 @@ public class SalaryDataService {
             case FROM_PATH_VARIABLE -> findById(id);
             case FROM_REQUEST_BODY ->
                     findByIdAndSalaryGradeId(id, useWithParentId ? salaryGradeId : salaryDataRequest.getSalaryGradeId());
-            default -> Optional.empty();
+            default -> Optional.<SalaryDataResponse>empty();
         };
 
         if (salaryDataResponse.isEmpty()) {
