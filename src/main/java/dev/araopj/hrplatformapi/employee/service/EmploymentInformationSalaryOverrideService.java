@@ -1,8 +1,6 @@
 package dev.araopj.hrplatformapi.employee.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.araopj.hrplatformapi.audit.dto.AuditDto;
-import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
@@ -10,10 +8,8 @@ import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
-import dev.araopj.hrplatformapi.exception.EmploymentInformationNotFoundException;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
-import dev.araopj.hrplatformapi.utils.Mapper;
-import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.exception.NotFoundException;
+import dev.araopj.hrplatformapi.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,17 +18,23 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
+import static dev.araopj.hrplatformapi.utils.DiffUtil.applyDiff;
+import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
+import static dev.araopj.hrplatformapi.utils.Mapper.toDto;
 
 /**
  * Service class for managing EmploymentInformationSalaryOverride entities.
  * <p>
  * This service provides methods to create, read, update, and delete EmploymentInformationSalaryOverride records.
- * It also integrates with the AuditService to log actions performed on these records.
+ * It also integrates with the AuditUtil to log actions performed on these records.
  *
  * @see EmploymentInformationSalaryOverride
  * @see EmploymentInformationSalaryOverrideRepository
  * @see EmploymentInformationRepository
- * @see AuditService
+ * @see AuditUtil
  */
 @Slf4j
 @Service
@@ -41,8 +43,10 @@ public class EmploymentInformationSalaryOverrideService {
 
     private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
     private final EmploymentInformationRepository employmentInformationRepository;
-    private final AuditService auditService;
+    private final AuditUtil auditUtil;
     private final ObjectMapper objectMapper;
+    private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformation");
+    private final String ENTITY_NAME = "EmploymentInformationSalaryOverride";
 
     /**
      * Find all EmploymentInformationSalaryOverride records
@@ -52,21 +56,21 @@ public class EmploymentInformationSalaryOverrideService {
     public List<EmploymentInformationSalaryOverrideResponse> findAll() {
         var data = employmentInformationSalaryOverrideRepository.findAll()
                 .stream()
-                .map(Mapper::toDto)
+                .map(entity -> objectMapper.convertValue(entity, EmploymentInformationSalaryOverrideResponse.class))
                 .toList();
-        auditService.create(
-                AuditDto.builder()
-                        .action(AuditAction.VIEW)
-                        .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", Instant.now().toString(),
-                                "entity", "EmploymentInformationSalaryOverride",
-                                "count", data.size()
-                        )))
-                        .performedBy("system")
-                        .entityType("EmploymentInformationSalaryOverride")
-                        .entityId("N/A")
-                        .build()
+        auditUtil.audit(
+                VIEW,
+                "[]",
+                Optional.empty(),
+                Map.of(
+                        "timestamp", Instant.now().toString(),
+                        "entity", ENTITY_NAME,
+                        "count", data.size()
+                ),
+                Optional.empty(),
+                ENTITY_NAME
         );
+
         return data;
     }
 
@@ -77,22 +81,19 @@ public class EmploymentInformationSalaryOverrideService {
      * @return Optional of EmploymentInformationSalaryOverrideResponse
      */
     public Optional<EmploymentInformationSalaryOverrideResponse> findById(String id) {
-        var data = employmentInformationSalaryOverrideRepository.findById(id);
-        auditService.create(
-                AuditDto.builder()
-                        .action(AuditAction.VIEW)
-                        .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", Instant.now().toString(),
-                                "entity", "EmploymentInformationSalaryOverride",
-                                "id", id,
-                                "found", data.isPresent()
-                        )))
-                        .performedBy("system")
-                        .entityType("EmploymentInformationSalaryOverride")
-                        .entityId(id)
-                        .build()
+        auditUtil.audit(
+                VIEW,
+                "[]",
+                Optional.of(Map.of("timestamp", Instant.now().toString(),
+                        "entity", ENTITY_NAME,
+                        "request_id", id)),
+                Optional.empty(),
+                Optional.empty(),
+                ENTITY_NAME
         );
-        return data.map(Mapper::toDto);
+        return Optional.ofNullable(employmentInformationSalaryOverrideRepository.findById(id)
+                .map(e -> objectMapper.convertValue(e, EmploymentInformationSalaryOverrideResponse.class))
+                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE)));
     }
 
     /**
@@ -104,20 +105,19 @@ public class EmploymentInformationSalaryOverrideService {
      */
     public Optional<EmploymentInformationSalaryOverrideResponse> findByIdAndEmploymentInformationId(String id, String employmentInformationId) {
         var data = employmentInformationSalaryOverrideRepository.findByIdAndEmploymentInformation_Id(id, employmentInformationId);
-        auditService.create(
-                AuditDto.builder()
-                        .action(AuditAction.VIEW)
-                        .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", Instant.now().toString(),
-                                "entity", "EmploymentInformationSalaryOverride",
-                                "id", id,
-                                "employmentInformationId", employmentInformationId,
-                                "found", data.isPresent()
-                        )))
-                        .performedBy("system")
-                        .entityType("EmploymentInformationSalaryOverride")
-                        .entityId(id)
-                        .build()
+
+        if (data.isEmpty()) {
+            log.warn("{} not found with id {} and employmentInformationId {}", ENTITY_NAME, id, employmentInformationId);
+            throw new NotFoundException(id, employmentInformationId, NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE, "employmentInformationId");
+        }
+
+        auditUtil.audit(
+                VIEW,
+                id,
+                Optional.empty(),
+                redact(data.get(), REDACTED),
+                Optional.empty(),
+                ENTITY_NAME
         );
         return data.map(Mapper::toDto);
     }
@@ -127,7 +127,7 @@ public class EmploymentInformationSalaryOverrideService {
      * <p>
      * This method validates the **employmentInformationId** from the request body or path variable, ensuring it exists
      * in the {@link EmploymentInformationRepository}. If the ID from the request body is invalid or not found, it falls
-     * back to the path variable's ID. If neither ID is valid, an {@link EmploymentInformationNotFoundException} is thrown.
+     * back to the path variable's ID. If neither ID is valid, an {@link NotFoundException()} is thrown.
      * Upon successful validation, the salary override is saved, and an audit record is created via {@link AuditService}.
      *
      * @param employmentInformationSalaryOverrideRequest The request object containing the salary override details, such as
@@ -139,8 +139,8 @@ public class EmploymentInformationSalaryOverrideService {
      *                                                   Must not be null.
      * @return An {@link Optional} containing the created {@link EmploymentInformationSalaryOverrideResponse}, or empty if
      * creation fails (though typically, an exception is thrown for invalid cases).
-     * @throws EmploymentInformationNotFoundException If neither the **employmentInformationId** from the request nor the
-     *                                                path variable corresponds to a valid {@link EmploymentInformation}.
+     * @throws NotFoundException() If neither the **employmentInformationId** from the request nor the
+     *                             path variable corresponds to a valid {@link EmploymentInformation}.
      * @see EmploymentInformationSalaryOverride
      * @see EmploymentInformationRepository
      * @see AuditService
@@ -149,7 +149,7 @@ public class EmploymentInformationSalaryOverrideService {
             EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest,
             String employmentInformationId
     ) {
-        var employment_information_id_from_request = employmentInformationSalaryOverrideRequest.getEmploymentInformationId();
+        var employment_information_id_from_request = employmentInformationSalaryOverrideRequest.employmentInformationId();
         var optionalEmploymentInformation = employmentInformationRepository.findById(employment_information_id_from_request);
 
         if (optionalEmploymentInformation.isEmpty()) {
@@ -159,28 +159,28 @@ public class EmploymentInformationSalaryOverrideService {
             );
             optionalEmploymentInformation = employmentInformationRepository.findById(employmentInformationId);
             if (optionalEmploymentInformation.isEmpty()) {
-                throw new EmploymentInformationNotFoundException(
-                        "Employment information id from request: %s and path variable: %s not found".formatted(employment_information_id_from_request, employmentInformationId)
+                throw new NotFoundException(
+                        employment_information_id_from_request,
+                        NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE
                 );
             }
         }
 
-        var data = Mapper.toDto(employmentInformationSalaryOverrideRepository.saveAndFlush(
+        var data = toDto(employmentInformationSalaryOverrideRepository.saveAndFlush(
                 EmploymentInformationSalaryOverride.builder()
-                        .salary(employmentInformationSalaryOverrideRequest.getSalary())
-                        .effectiveDate(employmentInformationSalaryOverrideRequest.getEffectiveDate())
+                        .salary(employmentInformationSalaryOverrideRequest.salary())
+                        .effectiveDate(employmentInformationSalaryOverrideRequest.effectiveDate())
                         .employmentInformation(optionalEmploymentInformation.get())
                         .build()
         ));
 
-        auditService.create(
-                AuditDto.builder()
-                        .action(AuditAction.CREATE)
-                        .newData(objectMapper.valueToTree(data))
-                        .performedBy("system")
-                        .entityType("EmploymentInformationSalaryOverride")
-                        .entityId(data.id())
-                        .build()
+        auditUtil.audit(
+                CREATE,
+                data.id(),
+                Optional.empty(),
+                redact(data, REDACTED),
+                Optional.empty(),
+                ENTITY_NAME
         );
 
         return Optional.of(data);
@@ -195,52 +195,53 @@ public class EmploymentInformationSalaryOverrideService {
      * @param useEmploymentInformationIdFromPath         Indicates whether to use the employmentInformationId from the path variable or the request body.
      * @param checkWithEmploymentInformationIdFromPath   When true and useEmploymentInformationIdFromPath is true, validates the employmentInformationId from the path variable.
      * @return An {@link EmploymentInformationSalaryOverrideResponse}.
-     * @throws EmploymentInformationNotFoundException if no EmploymentInformationSalaryOverride is found with the provided id and employmentInformationId.
+     * @throws NotFoundException() if no EmploymentInformationSalaryOverride is found with the provided id and employmentInformationId.
      */
     public EmploymentInformationSalaryOverrideResponse update(
             String id,
             String employmentInformationId,
             EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest,
-            boolean useEmploymentInformationIdFromPath,
-            boolean checkWithEmploymentInformationIdFromPath
+            FetchType fetchType,
+            boolean useParentIdFromPathVariable
     ) {
-        var optionalEmploymentInformationSalaryOverrideResponse = useEmploymentInformationIdFromPath ?
-                findByIdAndEmploymentInformationId(
-                        id,
-                        checkWithEmploymentInformationIdFromPath ? // TODO: FIx this because it's wrong fr
-                                employmentInformationId : employmentInformationSalaryOverrideRequest.getEmploymentInformationId()
-                ) : findById(id);
+        var employmentInformationSalaryOverrideResponse = switch (fetchType) {
+            case BY_PATH_VARIABLE -> findById(id);
+            case WITH_PARENT_PATH_VARIABLE ->
+                    findByIdAndEmploymentInformationId(id, useParentIdFromPathVariable ? employmentInformationId : employmentInformationSalaryOverrideRequest.employmentInformationId());
+        };
 
-        if (optionalEmploymentInformationSalaryOverrideResponse.isEmpty()) {
+        if (employmentInformationSalaryOverrideResponse.isEmpty()) {
             log.warn("Employment information salary override with id {} and employment information id {} not found", id, employmentInformationId);
-            throw new EmploymentInformationNotFoundException("Employment information salary override with id %s and employment information id %s not found".formatted(id, employmentInformationId));
+            throw new NotFoundException(
+                    id,
+                    employmentInformationId,
+                    NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE,
+                    "employmentInformationId"
+            );
         }
 
-        var oldData = optionalEmploymentInformationSalaryOverrideResponse.get(); // Keep the old data for auditing
-        var newData = MergeUtil.merge(optionalEmploymentInformationSalaryOverrideResponse.get(), employmentInformationSalaryOverrideRequest); // Merge old data with new request data
-        var changes = DiffUtil.diff(optionalEmploymentInformationSalaryOverrideResponse.get(), employmentInformationSalaryOverrideRequest); // Compute the diff between old and new data
+        var oldData = employmentInformationSalaryOverrideResponse.get(); // Keep the old data for auditing
+        var newData = MergeUtil.merge(employmentInformationSalaryOverrideResponse.get(), employmentInformationSalaryOverrideRequest); // Merge old data with new request data
+        var changes = DiffUtil.diff(employmentInformationSalaryOverrideResponse.get(), employmentInformationSalaryOverrideRequest); // Compute the diff between old and new data
 
-        auditService.create(
-                AuditDto.builder()
-                        .action(AuditAction.UPDATE)
-                        .oldData(objectMapper.valueToTree(oldData))
-                        .newData(objectMapper.valueToTree(newData))
-                        .changes(objectMapper.valueToTree(changes))
-                        .performedBy("system")
-                        .entityType("EmploymentInformationSalaryOverride")
-                        .entityId(id)
-                        .build()
+        auditUtil.audit(
+                UPDATE,
+                id,
+                Optional.of(redact(oldData, REDACTED)),
+                redact(newData, REDACTED),
+                Optional.of(redact(changes, REDACTED)),
+                ENTITY_NAME
         );
 
-        return Mapper.toDto(
+        return objectMapper.convertValue(
                 employmentInformationSalaryOverrideRepository.save(
-                        Mapper.toEntity(
-                                DiffUtil.applyDiff(
-                                        optionalEmploymentInformationSalaryOverrideResponse.get(),
+                        objectMapper.convertValue(applyDiff(
+                                        oldData,
                                         changes
-                                )
+                                ), EmploymentInformationSalaryOverride.class
                         )
-                )
+                ),
+                EmploymentInformationSalaryOverrideResponse.class
         );
     }
 
@@ -254,33 +255,20 @@ public class EmploymentInformationSalaryOverrideService {
      * @param id                      the ID of the {@link dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride} to delete
      * @param employmentInformationId the ID of the associated {@link dev.araopj.hrplatformapi.employee.model.EmploymentInformation}
      * @return true if the deletion was successful
-     * @throws EmploymentInformationNotFoundException if the salary override with the specified IDs does not exist
+     * @throws NotFoundException() if the salary override with the specified IDs does not exist
      * @see EmploymentInformationSalaryOverrideRepository
      * @see dev.araopj.hrplatformapi.audit.service.AuditService
      */
     public boolean delete(String id, String employmentInformationId) {
         var data = findByIdAndEmploymentInformationId(id, employmentInformationId);
-        if (data.isEmpty()) {
-            log.warn("EmploymentInformationSalaryOverride with id {} and employmentInformationId {} not found", id, employmentInformationId);
-            throw new EmploymentInformationNotFoundException("EmploymentInformationSalaryOverride with id %s and employmentInformationId %s not found".formatted(id, employmentInformationId));
-        }
-        if (!employmentInformationSalaryOverrideRepository.existsById(id)) {
-            log.warn("EmploymentInformationSalaryOverride with id {} not found for deletion", id);
-            throw new EmploymentInformationNotFoundException("EmploymentInformationSalaryOverride with id %s not found for deletion".formatted(id));
-        }
         employmentInformationSalaryOverrideRepository.deleteById(id);
-        auditService.create(
-                AuditDto.builder()
-                        .action(AuditAction.DELETE)
-                        .newData(objectMapper.valueToTree(Map.of(
-                                "timestamp", Instant.now().toString(),
-                                "entity", "EmploymentInformationSalaryOverride",
-                                "deletedId", id
-                        )))
-                        .performedBy("system")
-                        .entityType("EmploymentInformationSalaryOverride")
-                        .entityId(id)
-                        .build()
+        auditUtil.audit(
+                DELETE,
+                id,
+                Optional.of(redact(data, REDACTED)),
+                Optional.empty(),
+                Optional.empty(),
+                ENTITY_NAME
         );
         return true;
     }
