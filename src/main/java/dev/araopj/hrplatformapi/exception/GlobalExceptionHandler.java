@@ -1,10 +1,7 @@
 package dev.araopj.hrplatformapi.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.araopj.hrplatformapi.audit.dto.AuditDto;
-import dev.araopj.hrplatformapi.audit.model.AuditAction;
-import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -24,8 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    private final AuditService auditService;
-    private final ObjectMapper objectMapper;
+    private final AuditUtil auditUtil;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -33,10 +28,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        audit(
-                                auditService,
+                        auditUtil.audit(
                                 ex,
-                                objectMapper,
                                 "Validation failed",
                                 Optional.of(ApiError.builder()
                                         .message("Validation failed")
@@ -57,10 +50,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        audit(
-                                auditService,
+                        auditUtil.audit(
                                 ex,
-                                objectMapper,
                                 "Constraint validation failed",
                                 Optional.of(ApiError.builder()
                                         .message("Constraint validation failed")
@@ -82,10 +73,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                                audit(
-                                        auditService,
+                                auditUtil.audit(
                                         ex,
-                                        objectMapper,
                                         errorMessage + " - " + detailedMessage,
                                         Optional.empty())
                         )
@@ -98,10 +87,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                audit(
-                                        auditService,
+                                auditUtil.audit(
                                         ex,
-                                        objectMapper,
                                         "Salary grade not found",
                                         Optional.empty())
                         )
@@ -114,27 +101,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                audit(
-                                        auditService,
+                                auditUtil.audit(
                                         ex,
-                                        objectMapper,
                                         "Employment information not found",
                                         Optional.empty())
                         )
                 );
     }
 
-    @ExceptionHandler(GsisNotFoundException.class)
-    public ResponseEntity<StandardApiResponse<ApiError>> handleGsisNotFound(GsisNotFoundException ex) {
-        log.warn("GSIS record not found: {}", ex.getMessage());
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleNotFound(NotFoundException ex) {
+        log.warn("{} not found: {}", ex.getClass().getSimpleName(), ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                audit(
-                                        auditService,
+                                auditUtil.audit(
                                         ex,
-                                        objectMapper,
-                                        "GSIS record not found",
+                                        ex.getMessage(),
                                         Optional.empty())
                         )
                 );
@@ -146,39 +129,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(StandardApiResponse.failure(
-                                audit(
-                                        auditService,
-                                        ex,
-                                        objectMapper,
-                                        "An unexpected error occurred",
-                                        Optional.empty())
+                        auditUtil.audit(
+                                ex,
+                                ex.getMessage(),
+                                Optional.empty()
                         )
-                );
-    }
+                ));
 
-    /**
-     * Helper method to create an audit record for exceptions.
-     *
-     * @param auditService the audit service to use
-     * @param ex           the exception that occurred
-     * @param objectMapper the object mapper for JSON conversion
-     * @param message      the error message
-     * @return the created ApiError
-     */
-    private static ApiError audit(AuditService auditService, Exception ex, ObjectMapper objectMapper, String message, Optional<ApiError> existingError) {
-        var error = existingError.orElse(ApiError.builder()
-                .message(message)
-                .details(List.of(ex.getMessage()))
-                .build());
-        auditService.create(
-                AuditDto.builder()
-                        .entityType(ex.getClass().getTypeName())
-                        .entityId(ex.getClass().getPackageName())
-                        .action(AuditAction.ERROR)
-                        .performedBy("system")
-                        .newData(objectMapper.valueToTree(error))
-                        .build()
-        );
-        return error;
     }
 }
+
