@@ -110,24 +110,6 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(EmploymentInformationNotFoundException.class)
-    public ResponseEntity<StandardApiResponse<ApiError>> handleEmploymentInformationNotFound(EmploymentInformationNotFoundException ex) {
-        log.warn("""
-                \nERROR: Resource Not Found
-                  TYPE: EmploymentInformationNotFoundException
-                  MESSAGE: {}
-                  DETAILS: Employment information not found in the system""", ex.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(StandardApiResponse.failure(
-                                auditUtil.audit(
-                                        ex,
-                                        "Employment information not found",
-                                        Optional.empty())
-                        )
-                );
-    }
-
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleNotFound(NotFoundException ex) {
         log.warn("""
@@ -149,7 +131,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleGenericException(Exception ex) {
         log.error("""
-                E\nRROR: Unexpected Server Error
+                \nERROR: Unexpected Server Error
                   TYPE: {}
                   MESSAGE: {}
                   DETAILS: An unexpected error occurred on the server""", ex.getClass().getSimpleName(), ex.getMessage(), ex);
