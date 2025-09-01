@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.audit.dto.AuditDto;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.audit.service.AuditService;
-import dev.araopj.hrplatformapi.exception.SalaryGradeNotFoundException;
+import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
@@ -103,7 +103,7 @@ public class SalaryDataService {
             log.warn("Checking salary grade with path variable salaryGradeId: {}", salaryGradeId);
             optionalSalaryGrade = salaryGradeRepository.findById(salaryGradeId);
             if (optionalSalaryGrade.isEmpty()) {
-                throw new SalaryGradeNotFoundException("Salary grade with id %s not found, no salary grade to relate".formatted(salaryGradeId));
+                throw new NotFoundException(salaryGradeId, NotFoundException.EntityType.SALARY_DATA);
             }
         }
 

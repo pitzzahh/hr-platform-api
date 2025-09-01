@@ -92,24 +92,6 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(SalaryGradeNotFoundException.class)
-    public ResponseEntity<StandardApiResponse<ApiError>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
-        log.warn("""
-                \nERROR: Resource Not Found
-                  TYPE: SalaryGradeNotFoundException
-                  MESSAGE: {}
-                  DETAILS: Salary grade not found in the system""", ex.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(StandardApiResponse.failure(
-                                auditUtil.audit(
-                                        ex,
-                                        "Salary grade not found",
-                                        Optional.empty())
-                        )
-                );
-    }
-
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleNotFound(NotFoundException ex) {
         log.warn("""
