@@ -6,6 +6,7 @@ import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,6 +102,24 @@ public class GlobalExceptionHandler {
                   DETAILS: Requested resource not found in the system""", ex.getClass().getSimpleName(), ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(StandardApiResponse.failure(
+                                auditUtil.audit(
+                                        ex,
+                                        ex.getMessage(),
+                                        Optional.empty())
+                        )
+                );
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleBadRequest(BadRequestException ex) {
+        log.warn("""
+                \nERROR: Bad Request
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: Malformed request or invalid parameters""", ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity
+                .badRequest()
                 .body(StandardApiResponse.failure(
                                 auditUtil.audit(
                                         ex,
