@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.CREATE;
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.UPDATE;
+import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 import static dev.araopj.hrplatformapi.utils.MergeUtil.merge;
@@ -240,6 +239,30 @@ public class DivisionStationPlaceOfAssignmentService {
                 ),
                 DivisionStationPlaceOfAssignmentResponse.class
         );
+    }
+
+    /**
+     * Delete a DivisionStationPlaceOfAssignment record by its ID and associated employment information ID, logging the action in the audit service.
+     *
+     * @param id                      The ID of the DivisionStationPlaceOfAssignment record to delete.
+     * @param employmentInformationId The ID of the associated employment information.
+     * @return true if the deletion was successful.
+     * @throws NotFoundException if no DivisionStationPlaceOfAssignment record is found with the given ID and employment information ID.
+     */
+    public boolean delete(String id, String employmentInformationId) {
+        var data = findByIdAndEmploymentInformationId(id, employmentInformationId);
+
+        divisionStationPlaceOfAssignmentRepository.deleteById(id);
+
+        auditUtil.audit(
+                DELETE,
+                id,
+                Optional.of(redact(data, REDACTED)),
+                Optional.empty(),
+                Optional.empty(),
+                ENTITY_NAME
+        );
+        return true;
     }
 
 
