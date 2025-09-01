@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
-public abstract class EntityTimestamp {
+public abstract class EntityTimestamp { // TODO: Tell spring to make this work
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
