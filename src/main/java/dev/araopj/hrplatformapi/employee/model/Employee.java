@@ -2,13 +2,14 @@ package dev.araopj.hrplatformapi.employee.model;
 
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.Uuid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -17,11 +18,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Data
-public class Employee extends EntityTimestamp {
+public class Employee extends EntityTimestamp implements Serializable {
 
     @Id
-    
-    @GeneratedValue
+    @Uuid
     String id;
 
     @Column(unique = true, nullable = false)
@@ -77,18 +77,9 @@ public class Employee extends EntityTimestamp {
     @Column
     String userId;
 
-    @OneToOne
-    @JoinColumn(name = "gsis_id", nullable = false, unique = true)
-    Gsis gsis;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Identifier> identifiers = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     Set<EmploymentInformation> employmentInformation;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }
