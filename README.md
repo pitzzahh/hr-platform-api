@@ -80,16 +80,16 @@ src/main/resources/application.yml
 
 ## 🔗 API Endpoints
 
-| Resource     | Endpoint                                     | Methods                | Description                              |
-|--------------|----------------------------------------------|------------------------|------------------------------------------|
-| Employee     | `/api/v1/employees`                          | GET, POST, PUT, DELETE | Manage employees (CRUD, info, positions) |
-| Salary Grade | `/api/v1/salary-grades`                      | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)   |
-| Salary Data  | `/api/v1/salary-grades/{salaryGradeId}/data` | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)  |
-| Audit        | `/api/v1/audit`                              | GET                    | View audit logs                          |
-| User         | `/api/v1/users`                              | GET, POST, PUT, DELETE | Manage users, roles, and permissions     |
-| Roles        | `/api/v1/roles`                              | POST                   | User login and token generation          |
-| Permission   | `/api/v1/permissions`                        | POST                   | Manage user permissions                  |
- | 
+| Resource     | Endpoint                | Methods                | Description                              |
+|--------------|-------------------------|------------------------|------------------------------------------|
+| Employee     | `/api/v1/employees`     | GET, POST, PUT, DELETE | Manage employees (CRUD, info, positions) |
+| Salary Grade | `/api/v1/salary-grades` | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)   |
+| Salary Data  | `/api/v1/salary-data`   | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)  |
+| Audit        | `/api/v1/audit`         | GET                    | View audit logs                          |
+| User         | `/api/v1/users`         | GET, POST, PUT, DELETE | Manage users, roles, and permissions     |
+| Roles        | `/api/v1/roles`         | POST                   | User login and token generation          |
+| Permission   | `/api/v1/permissions`   | POST                   | Manage user permissions                  |
+|
 
 👉 Check the controller classes for full request/response examples.
 
@@ -103,7 +103,8 @@ Interactive API documentation is available at:
 /docs
 ```
 
-After starting the application, visit this endpoint in your browser to explore and test all available endpoints using Scalar.
+After starting the application, visit this endpoint in your browser to explore and test all available endpoints using
+Scalar.
 
 ---
 
@@ -126,4 +127,4 @@ For major changes, please open an issue first to discuss your ideas.
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE).
