@@ -1,7 +1,10 @@
 package dev.araopj.hrplatformapi.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
@@ -10,12 +13,10 @@ import java.time.Instant;
  *
  * @param <T> the type of the data included in the response
  */
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString
 public class StandardApiResponse<T> {
 
     private Instant timestamp = Instant.now();
