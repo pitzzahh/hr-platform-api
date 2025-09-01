@@ -16,17 +16,17 @@ import java.io.Serializable;
 public class DivisionStationPlaceOfAssignment extends EntityTimestamp implements Serializable {
     @Id
     @Uuid
-    String id;
+    private String id;
 
     @Column(nullable = false)
-    String code;
+    private String code;
 
     @Column(nullable = false, unique = true)
-    String name;
+    private String name;
 
     @Column
-    String shortName;
+    private String shortName;
 
     @OneToOne(mappedBy = "divisionStationPlaceOfAssignment", cascade = CascadeType.ALL)
-    EmploymentInformation employmentInformation;
+    private EmploymentInformation employmentInformation;
 }
