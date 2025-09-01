@@ -6,7 +6,6 @@ import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalary
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
-import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
@@ -34,7 +33,7 @@ import static dev.araopj.hrplatformapi.utils.Mapper.toDto;
  *
  * @see EmploymentInformationSalaryOverride
  * @see EmploymentInformationSalaryOverrideRepository
- * @see EmploymentInformationRepository
+ * @see CommonValidation
  * @see AuditUtil
  */
 @Slf4j
@@ -43,8 +42,8 @@ import static dev.araopj.hrplatformapi.utils.Mapper.toDto;
 public class EmploymentInformationSalaryOverrideService {
 
     private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
-    private final EmploymentInformationRepository employmentInformationRepository;
     private final AuditUtil auditUtil;
+    private final CommonValidation commonValidation;
     private final ObjectMapper objectMapper;
     private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformation");
     private final String ENTITY_NAME = "EmploymentInformationSalaryOverride";
@@ -127,7 +126,6 @@ public class EmploymentInformationSalaryOverrideService {
      * Creates a new {@link EmploymentInformationSalaryOverride} entity for the specified employment information.
      * <p>
      * This method validates the **employmentInformationId** from the request body or path variable, ensuring it exists
-     * in the {@link EmploymentInformationRepository}. If the ID from the request body is invalid or not found, it falls
      * back to the path variable's ID. If neither ID is valid, an {@link NotFoundException()} is thrown.
      * Upon successful validation, the salary override is saved, and an audit record is created via {@link AuditService}.
      *
@@ -143,35 +141,23 @@ public class EmploymentInformationSalaryOverrideService {
      * @throws NotFoundException() If neither the **employmentInformationId** from the request nor the
      *                             path variable corresponds to a valid {@link EmploymentInformation}.
      * @see EmploymentInformationSalaryOverride
-     * @see EmploymentInformationRepository
      * @see AuditService
      */
     public Optional<EmploymentInformationSalaryOverrideResponse> create(
             EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest,
             String employmentInformationId
     ) {
-        var employment_information_id_from_request = employmentInformationSalaryOverrideRequest.employmentInformationId();
-        var optionalEmploymentInformation = employmentInformationRepository.findById(employment_information_id_from_request);
-
-        if (optionalEmploymentInformation.isEmpty()) {
-            log.warn("Checking employment information id from request [{}] not found, falling back to path variable [{}]",
-                    employment_information_id_from_request,
-                    employmentInformationId
-            );
-            optionalEmploymentInformation = employmentInformationRepository.findById(employmentInformationId);
-            if (optionalEmploymentInformation.isEmpty()) {
-                throw new NotFoundException(
-                        employment_information_id_from_request,
-                        EMPLOYMENT_INFORMATION_SALARY_OVERRIDE
-                );
-            }
-        }
+        var optionalEmploymentInformation = commonValidation.validateEmploymentInformationExists(
+                employmentInformationSalaryOverrideRequest.employmentInformationId(),
+                employmentInformationId,
+                EMPLOYMENT_INFORMATION_SALARY_OVERRIDE
+        );
 
         var data = toDto(employmentInformationSalaryOverrideRepository.saveAndFlush(
                 EmploymentInformationSalaryOverride.builder()
                         .salary(employmentInformationSalaryOverrideRequest.salary())
                         .effectiveDate(employmentInformationSalaryOverrideRequest.effectiveDate())
-                        .employmentInformation(optionalEmploymentInformation.get())
+                        .employmentInformation(optionalEmploymentInformation)
                         .build()
         ));
 

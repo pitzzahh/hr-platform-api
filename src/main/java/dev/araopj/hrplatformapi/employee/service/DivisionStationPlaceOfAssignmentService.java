@@ -6,12 +6,10 @@ import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssig
 import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
 import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.repository.DivisionStationPlaceOfAssignmentRepository;
-import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.CommonValidation;
 import dev.araopj.hrplatformapi.utils.FetchType;
-import dev.araopj.hrplatformapi.utils.MergeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,18 +43,10 @@ import static dev.araopj.hrplatformapi.utils.MergeUtil.merge;
  * </pre>
  *
  * @author Peter John Arao
- * @see DivisionStationPlaceOfAssignment
- * @see DivisionStationPlaceOfAssignmentRequest
- * @see DivisionStationPlaceOfAssignmentResponse
  * @see DivisionStationPlaceOfAssignmentRepository
- * @see EmploymentInformationRepository
+ * @see CommonValidation
  * @see AuditUtil
- * @see NotFoundException
  * @see ObjectMapper
- * @see FetchType
- * @see DiffUtil
- * @see MergeUtil
- * @see dev.araopj.hrplatformapi.utils.JsonRedactor
  * @since 0.0.1
  */
 @Slf4j
@@ -65,7 +55,7 @@ import static dev.araopj.hrplatformapi.utils.MergeUtil.merge;
 public class DivisionStationPlaceOfAssignmentService {
 
     private final DivisionStationPlaceOfAssignmentRepository divisionStationPlaceOfAssignmentRepository;
-    private final EmploymentInformationRepository employmentInformationRepository;
+    private final CommonValidation commonValidation;
     private final ObjectMapper objectMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "employmentInformation");
@@ -166,26 +156,18 @@ public class DivisionStationPlaceOfAssignmentService {
             DivisionStationPlaceOfAssignmentRequest divisionStationPlaceOfAssignmentRequest,
             String employmentInformationId
     ) {
-        var employment_information_id_from_request = divisionStationPlaceOfAssignmentRequest.employmentInformationId();
-        var optionalEmploymentInformation = employmentInformationRepository.findById(employment_information_id_from_request);
-
-        if (optionalEmploymentInformation.isEmpty()) {
-            log.warn("Checking employment information id from request [{}] not found, falling back to path variable [{}]",
-                    employment_information_id_from_request,
-                    employmentInformationId
-            );
-            optionalEmploymentInformation = employmentInformationRepository.findById(employmentInformationId);
-            if (optionalEmploymentInformation.isEmpty()) {
-                throw new NotFoundException(employment_information_id_from_request, DIVISION_STATION_PLACE_OF_ASSIGNMENT);
-            }
-        }
+        var optionalEmploymentInformation = commonValidation.validateEmploymentInformationExists(
+                divisionStationPlaceOfAssignmentRequest.employmentInformationId(),
+                employmentInformationId,
+                DIVISION_STATION_PLACE_OF_ASSIGNMENT
+        );
         var data = objectMapper.convertValue(
                 divisionStationPlaceOfAssignmentRepository.saveAndFlush(
                         DivisionStationPlaceOfAssignment.builder()
                                 .code(divisionStationPlaceOfAssignmentRequest.code())
                                 .name(divisionStationPlaceOfAssignmentRequest.name())
                                 .shortName(divisionStationPlaceOfAssignmentRequest.shortName())
-                                .employmentInformation(optionalEmploymentInformation.get())
+                                .employmentInformation(optionalEmploymentInformation)
                                 .build()
                 ),
                 DivisionStationPlaceOfAssignmentResponse.class
