@@ -11,7 +11,7 @@ import java.util.Set;
 public class JsonRedactor {
 
     private final String REDACTED_VALUE = "****";
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Redacts specified fields from the given object and returns a JsonNode.
@@ -21,7 +21,7 @@ public class JsonRedactor {
      * @return A JsonNode with sensitive fields redacted.
      */
     public JsonNode redact(Object data, Set<String> fieldsToRedact) {
-        return redactNode(mapper.valueToTree(data), fieldsToRedact);
+        return redactNode(MAPPER.valueToTree(data), fieldsToRedact);
     }
 
     private JsonNode redactNode(JsonNode node, Set<String> fieldsToRedact) {
