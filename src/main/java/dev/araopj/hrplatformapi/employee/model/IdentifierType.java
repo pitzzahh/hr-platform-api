@@ -26,8 +26,5 @@ public class IdentifierType {
     private String name; // e.g., "Government Service Insurance System", "Social Security System"
 
     @Column
-    private String country; // optional if you want to scope it by country
-
-    @Column
     private String description;
 }
