@@ -21,4 +21,8 @@ public interface SalaryDataRepository extends JpaRepository<SalaryData, String> 
 
     @Query("SELECT sd FROM SalaryData sd JOIN FETCH sd.salaryGrade WHERE sd.id = :id")
     Optional<SalaryData> findByIdWithSalaryGrade(@Param("id") String id);
+
+    Optional<SalaryData> findByStepAndAmountAndSalaryGrade_Id(int step, double amount, String id);
+
+    Optional<SalaryData> findByStep(int step);
 }
