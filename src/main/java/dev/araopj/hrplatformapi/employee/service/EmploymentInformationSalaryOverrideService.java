@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE;
 import static dev.araopj.hrplatformapi.utils.DiffUtil.applyDiff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 import static dev.araopj.hrplatformapi.utils.Mapper.toDto;
@@ -93,7 +94,7 @@ public class EmploymentInformationSalaryOverrideService {
         );
         return Optional.ofNullable(employmentInformationSalaryOverrideRepository.findById(id)
                 .map(e -> objectMapper.convertValue(e, EmploymentInformationSalaryOverrideResponse.class))
-                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE)));
+                .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE)));
     }
 
     /**
@@ -108,7 +109,7 @@ public class EmploymentInformationSalaryOverrideService {
 
         if (data.isEmpty()) {
             log.warn("{} not found with id {} and employmentInformationId {}", ENTITY_NAME, id, employmentInformationId);
-            throw new NotFoundException(id, employmentInformationId, NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE, "employmentInformationId");
+            throw new NotFoundException(id, employmentInformationId, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE, "employmentInformationId");
         }
 
         auditUtil.audit(
@@ -161,7 +162,7 @@ public class EmploymentInformationSalaryOverrideService {
             if (optionalEmploymentInformation.isEmpty()) {
                 throw new NotFoundException(
                         employment_information_id_from_request,
-                        NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE
+                        EMPLOYMENT_INFORMATION_SALARY_OVERRIDE
                 );
             }
         }
@@ -192,8 +193,8 @@ public class EmploymentInformationSalaryOverrideService {
      * @param id                                         The unique identifier of the EmploymentInformationSalaryOverride from the path variable.
      * @param employmentInformationId                    The unique identifier of the EmploymentInformation from the path variable.
      * @param employmentInformationSalaryOverrideRequest The request object containing updated data for the EmploymentInformationSalaryOverride. See {@link EmploymentInformationSalaryOverrideRequest}.
-     * @param useEmploymentInformationIdFromPath         Indicates whether to use the employmentInformationId from the path variable or the request body.
-     * @param checkWithEmploymentInformationIdFromPath   When true and useEmploymentInformationIdFromPath is true, validates the employmentInformationId from the path variable.
+     * @param fetchType                                  The strategy to use for fetching the existing record. See {@link FetchType}.
+     * @param useParentIdFromPathVariable                If true, uses the employmentInformationId from the path variable for validation; otherwise, uses the ID from the request body.
      * @return An {@link EmploymentInformationSalaryOverrideResponse}.
      * @throws NotFoundException() if no EmploymentInformationSalaryOverride is found with the provided id and employmentInformationId.
      */
@@ -211,11 +212,11 @@ public class EmploymentInformationSalaryOverrideService {
         };
 
         if (employmentInformationSalaryOverrideResponse.isEmpty()) {
-            log.warn("Employment information salary override with id {} and employment information id {} not found", id, employmentInformationId);
+            log.warn("EmploymentInformationSalaryOverride with id {} and employment information id {} not found", id, employmentInformationId);
             throw new NotFoundException(
                     id,
                     employmentInformationId,
-                    NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE,
+                    EMPLOYMENT_INFORMATION_SALARY_OVERRIDE,
                     "employmentInformationId"
             );
         }

@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.DIVISION_STATION_PLACE_OF_ASSIGNMENT;
 import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 import static dev.araopj.hrplatformapi.utils.MergeUtil.merge;
@@ -116,7 +117,7 @@ public class DivisionStationPlaceOfAssignmentService {
         );
         return Optional.ofNullable(divisionStationPlaceOfAssignmentRepository.findById(id)
                 .map(e -> objectMapper.convertValue(e, DivisionStationPlaceOfAssignmentResponse.class))
-                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.DIVISION_STATION_PLACE_OF_ASSIGNMENT)));
+                .orElseThrow(() -> new NotFoundException(id, DIVISION_STATION_PLACE_OF_ASSIGNMENT)));
 
     }
 
@@ -128,12 +129,12 @@ public class DivisionStationPlaceOfAssignmentService {
      * @return DivisionStationPlaceOfAssignmentResponse containing the DivisionStationPlaceOfAssignment record.
      * @throws NotFoundException() if no DivisionStationPlaceOfAssignment record is found with the given ID and employee ID.
      */
-    public DivisionStationPlaceOfAssignmentResponse findByIdAndEmploymentInformationId(String id, String employmentInformationId) {
+    public Optional<DivisionStationPlaceOfAssignmentResponse> findByIdAndEmploymentInformationId(String id, String employmentInformationId) {
         var data = divisionStationPlaceOfAssignmentRepository.findByIdAndEmploymentInformation_Id(id, employmentInformationId);
 
         if (data.isEmpty()) {
             log.warn("{} not found with id {} and employmentInformationId {}", ENTITY_NAME, id, employmentInformationId);
-            throw new NotFoundException(id, employmentInformationId, NotFoundException.EntityType.DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId");
+            throw new NotFoundException(id, employmentInformationId, DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId");
         }
 
         auditUtil.audit(
@@ -148,9 +149,9 @@ public class DivisionStationPlaceOfAssignmentService {
                 ENTITY_NAME
         );
 
-        return data
+        return Optional.of(data
                 .map(e -> objectMapper.convertValue(e, DivisionStationPlaceOfAssignmentResponse.class))
-                .orElseThrow(() -> new NotFoundException(id, employmentInformationId, NotFoundException.EntityType.DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId"));
+                .orElseThrow(() -> new NotFoundException(id, employmentInformationId, DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId")));
     }
 
     /**
@@ -175,7 +176,7 @@ public class DivisionStationPlaceOfAssignmentService {
             );
             optionalEmploymentInformation = employmentInformationRepository.findById(employmentInformationId);
             if (optionalEmploymentInformation.isEmpty()) {
-                throw new NotFoundException(employment_information_id_from_request, NotFoundException.EntityType.DIVISION_STATION_PLACE_OF_ASSIGNMENT);
+                throw new NotFoundException(employment_information_id_from_request, DIVISION_STATION_PLACE_OF_ASSIGNMENT);
             }
         }
         var data = objectMapper.convertValue(
@@ -224,6 +225,16 @@ public class DivisionStationPlaceOfAssignmentService {
             case WITH_PARENT_PATH_VARIABLE ->
                     findByIdAndEmploymentInformationId(id, useParentIdFromPathVariable ? employmentInformationId : divisionStationPlaceOfAssignmentRequest.employmentInformationId());
         };
+
+        if (divisionPlaceOfAssignmentResponse.isEmpty()) {
+            log.warn("DivisionStationPlaceOfAssignment with id {} and employment information id {} not found", id, employmentInformationId);
+            throw new NotFoundException(
+                    id,
+                    employmentInformationId,
+                    DIVISION_STATION_PLACE_OF_ASSIGNMENT,
+                    "employmentInformationId"
+            );
+        }
 
         auditUtil.audit(
                 UPDATE,
