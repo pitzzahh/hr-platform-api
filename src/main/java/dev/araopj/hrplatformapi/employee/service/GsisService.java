@@ -58,7 +58,13 @@ public class GsisService {
         return data;
     }
 
-
+    /**
+     * Retrieve a GSIS record by its ID and log the action in the audit service.
+     *
+     * @param id The ID of the GSIS record.
+     * @return GsisResponse containing the GSIS record.
+     * @throws GsisNotFoundException if no GSIS record is found with the given ID.
+     */
     public GsisResponse findById(String id) {
         audit(
                 AuditAction.VIEW,
@@ -108,7 +114,14 @@ public class GsisService {
         return data.map(Mapper::toDto).orElseThrow(() -> new GsisNotFoundException(id, employeeId));
     }
 
-
+    /**
+     * Create a new GSIS record associated with an employee, logging the action in the audit service.
+     *
+     * @param gsisRequest The request object containing GSIS details.
+     * @param employeeId  The ID of the associated employee (used as a fallback if not found in the request).
+     * @return GsisResponse containing the created GSIS record.
+     * @throws GsisNotFoundException if no employee is found with the given ID from the request or path variable.
+     */
     public GsisResponse create(
             GsisRequest gsisRequest,
             String employeeId
@@ -145,6 +158,17 @@ public class GsisService {
         return data;
     }
 
+    /**
+     * Update an existing GSIS record identified by its ID, with optional employee ID verification, and log the action in the audit service.
+     *
+     * @param id                            The ID of the GSIS record to update.
+     * @param employeeId                    The ID of the associated employee (used if {@code useParentIdFromPathVariable} is true).
+     * @param gsisRequest                   The request object containing updated GSIS details.
+     * @param fetchType                     The method to fetch the existing GSIS record (by path variable or with parent path variable).
+     * @param useParentIdFromPathVariable   Flag indicating whether to use the employee ID from the path variable or from the request.
+     * @return GsisResponse containing the updated GSIS record.
+     * @throws GsisNotFoundException if no GSIS record is found with the given criteria.
+     */
     public GsisResponse update(
             String id,
             String employeeId,
@@ -172,7 +196,18 @@ public class GsisService {
         );
     }
 
-
+    /**
+     * Logs an audit event with the provided details.
+     *
+     * @param action   The audit action performed (e.g., {@link dev.araopj.hrplatformapi.audit.model.AuditAction#CREATE}, {@link dev.araopj.hrplatformapi.audit.model.AuditAction#UPDATE}, {@link dev.araopj.hrplatformapi.audit.model.AuditAction#VIEW}).
+     * @param entityId The identifier of the entity being audited.
+     * @param oldData  Optional previous state of the entity (before the action), see {@link java.util.Optional}.
+     * @param newData  The new state of the entity (after the action).
+     * @param changes  Optional object representing the changes between old and new data, see {@link java.util.Optional}.
+     * @see dev.araopj.hrplatformapi.audit.model.AuditAction
+     * @see dev.araopj.hrplatformapi.audit.dto.AuditDto
+     * @see dev.araopj.hrplatformapi.audit.service.AuditService
+     */
     private void audit(AuditAction action, String entityId, Optional<Object> oldData, Object newData, Optional<Object> changes) {
         var builder = AuditDto.builder()
                 .action(action)
