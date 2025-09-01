@@ -24,7 +24,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        log.warn("Validation error: {}", ex.getMessage());
+        log.warn("""
+                \nERROR: Validation Failure
+                  TYPE: MethodArgumentNotValidException
+                  MESSAGE: {}
+                  DETAILS: Validation errors occurred in request""", ex.getMessage());
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
@@ -46,7 +50,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleConstraintViolations(ConstraintViolationException ex) {
-        log.warn("Constraint violation: {}", ex.getMessage());
+        log.warn("""
+                \nERROR: Constraint Violation
+                  TYPE: ConstraintViolationException
+                  MESSAGE: {}
+                  DETAILS: Constraint validation errors occurred""", ex.getMessage());
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
@@ -66,10 +74,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        log.warn("Data integrity violation: {}", ex.getMessage());
         var errorMessage = "Database error: Unable to save data due to constraint violation";
-        // Optionally extract more details from the root cause (e.g., PSQLException)
         var detailedMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+        log.warn("""
+                \nERROR: Data Integrity Violation
+                  TYPE: DataIntegrityViolationException
+                  MESSAGE: {}
+                  DETAILS: {}""", ex.getMessage(), detailedMessage);
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
@@ -83,7 +94,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SalaryGradeNotFoundException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleSalaryGradeNotFound(SalaryGradeNotFoundException ex) {
-        log.warn("Salary grade not found: {}", ex.getMessage());
+        log.warn("""
+                \nERROR: Resource Not Found
+                  TYPE: SalaryGradeNotFoundException
+                  MESSAGE: {}
+                  DETAILS: Salary grade not found in the system""", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
@@ -97,7 +112,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmploymentInformationNotFoundException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleEmploymentInformationNotFound(EmploymentInformationNotFoundException ex) {
-        log.warn("Employment information not found: {}", ex.getMessage());
+        log.warn("""
+                \nERROR: Resource Not Found
+                  TYPE: EmploymentInformationNotFoundException
+                  MESSAGE: {}
+                  DETAILS: Employment information not found in the system""", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
@@ -111,7 +130,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleNotFound(NotFoundException ex) {
-        log.warn("{} not found: {}", ex.getClass().getSimpleName(), ex.getMessage());
+        log.warn("""
+                \nERROR: Resource Not Found
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: Requested resource not found in the system""", ex.getClass().getSimpleName(), ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
@@ -125,7 +148,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleGenericException(Exception ex) {
-        log.error("Error [GENERIC_ERROR]: {}", ex.getMessage(), ex);
+        log.error("""
+                E\nRROR: Unexpected Server Error
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: An unexpected error occurred on the server""", ex.getClass().getSimpleName(), ex.getMessage(), ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(StandardApiResponse.failure(
@@ -135,7 +162,5 @@ public class GlobalExceptionHandler {
                                 Optional.empty()
                         )
                 ));
-
     }
 }
-
