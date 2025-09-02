@@ -24,12 +24,12 @@ import java.util.List;
 
 /**
  * REST controller for managing salary grades.
- * Provides endpoints for retrieving and creating salary grade entries.
+ * Provides endpoints for retrieving, creating, updating, and deleting salary grade entries.
  */
 @Tag(
         name = "Salary Grade",
         description = """
-                Endpoints for managing salary grades, including operations to retrieve and create salary grade entries.
+                Endpoints for managing salary grades, including operations to retrieve, create, update, and delete salary grade entries.
                 """
 )
 @Slf4j
@@ -49,9 +49,9 @@ public class SalaryGradeController {
     @Operation(
             summary = "Get all salary grades",
             description = """
-                    Retrieve a list of all salary grade entries. 
-                    Optionally include associated salary data using the 'includeSalaryData' parameter.
-                    """,
+                     Retrieve a list of all salary grade entries.\s
+                     Optionally include associated salary data using the 'includeSalaryData' parameter.
+                    \s""",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -86,14 +86,15 @@ public class SalaryGradeController {
      * @param id                The ID of the salary grade to retrieve.
      * @param includeSalaryData If true, includes associated salary data in the response.
      * @return A ResponseEntity containing a StandardApiResponse with the SalaryGradeResponse.
-     * @throws NotFoundException If the salary grade is not found.
+     * @throws NotFoundException   If the salary grade is not found.
+     * @throws BadRequestException If the provided ID is invalid.
      */
     @Operation(
             summary = "Get salary grade by ID",
             description = """
-                    Retrieve a specific salary grade entry by its ID. 
-                    Optionally include associated salary data using the 'includeSalaryData' parameter.
-                    """,
+                     Retrieve a specific salary grade entry by its ID.\s
+                     Optionally include associated salary data using the 'includeSalaryData' parameter.
+                    \s""",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -135,13 +136,13 @@ public class SalaryGradeController {
             @PathVariable @NotBlank String id,
             @Parameter(description = "Include associated salary data in the response", example = "false")
             @RequestParam(defaultValue = "false", required = false) @Valid boolean includeSalaryData
-    ) {
+    ) throws BadRequestException {
         log.debug("Fetching salary grade with id: {}, includeSalaryData: {}", id, includeSalaryData);
         var response = salaryGradeService.findById(id, includeSalaryData);
         return response
                 .map(StandardApiResponse::success)
                 .map(ResponseEntity::ok)
-                .orElseThrow(); // Exception handled globally
+                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.SALARY_GRADE));
     }
 
     /**
@@ -150,14 +151,14 @@ public class SalaryGradeController {
      * @param salaryGradeRequest The salary grade details to create.
      * @param includeSalaryData  If true, includes associated salary data in the creation process.
      * @return A ResponseEntity containing a StandardApiResponse with the created SalaryGradeResponse.
-     * @throws BadRequestException If the salary grade already exists with the same salary grade and effective date.
+     * @throws BadRequestException If the salary grade already exists with the same salary grade and effective date or if invalid data is provided.
      */
     @Operation(
             summary = "Create salary grade",
             description = """
-                    Create a new salary grade entry. 
-                    Optionally include associated salary data using the 'includeSalaryData' parameter.
-                    """,
+                     Create a new salary grade entry.\s
+                     Optionally include associated salary data using the 'includeSalaryData' parameter.
+                    \s""",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -204,6 +205,124 @@ public class SalaryGradeController {
         return salaryGradeService.create(salaryGradeRequest, includeSalaryData)
                 .map(StandardApiResponse::success)
                 .map(ResponseEntity::ok)
-                .orElseThrow(); // Exception handled globally
+                .orElseThrow(() -> new BadRequestException("Failed to create salary grade"));
+    }
+
+    /**
+     * Updates an existing salary grade entry by its ID.
+     *
+     * @param id                 The ID of the salary grade to update.
+     * @param salaryGradeRequest The updated salary grade details.
+     * @return A ResponseEntity containing a StandardApiResponse with the updated SalaryGradeResponse.
+     * @throws BadRequestException If the provided ID is invalid.
+     * @throws NotFoundException   If the salary grade is not found.
+     */
+    @Operation(
+            summary = "Update salary grade by ID",
+            description = """
+                    Update an existing salary grade entry by its ID with the provided details.
+                    Note that this endpoint does not update associated salary data.
+                    """,
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully updated the salary grade",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = StandardApiResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid ID or salary grade data provided",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiError.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Salary grade not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiError.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiError.class)
+                            )
+                    )
+            }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<StandardApiResponse<SalaryGradeResponse>> update(
+            @Parameter(description = "ID of the salary grade to update", required = true)
+            @PathVariable @NotBlank String id,
+            @Parameter(description = "Updated salary grade details", required = true)
+            @RequestBody @Valid SalaryGradeRequest salaryGradeRequest
+    ) throws BadRequestException {
+        log.debug("Request to update salary grade with id: {}, salaryGradeRequest: {}", id, salaryGradeRequest);
+        SalaryGradeResponse updatedSalaryGrade = salaryGradeService.update(id, salaryGradeRequest);
+        return ResponseEntity.ok(StandardApiResponse.success(updatedSalaryGrade));
+    }
+
+    /**
+     * Deletes a salary grade entry by its ID.
+     *
+     * @param id The ID of the salary grade to delete.
+     * @return A ResponseEntity containing a StandardApiResponse with a boolean indicating deletion success.
+     * @throws NotFoundException   If the salary grade is not found.
+     * @throws BadRequestException If the provided ID is invalid.
+     */
+    @Operation(
+            summary = "Delete salary grade by ID",
+            description = "Delete a salary grade entry by its ID.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully deleted the salary grade",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = StandardApiResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid ID provided",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiError.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Salary grade not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiError.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiError.class)
+                            )
+                    )
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StandardApiResponse<Boolean>> delete(
+            @Parameter(description = "ID of the salary grade to delete", required = true)
+            @PathVariable @NotBlank String id
+    ) throws BadRequestException {
+        log.debug("Request to delete salary grade with id: {}", id);
+        boolean deleted = salaryGradeService.delete(id);
+        return ResponseEntity.ok(StandardApiResponse.success(deleted));
     }
 }
