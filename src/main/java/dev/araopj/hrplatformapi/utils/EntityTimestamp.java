@@ -10,7 +10,7 @@ import java.time.Instant;
 
 @Getter
 @MappedSuperclass
-public abstract class EntityTimestamp { // TODO: Tell spring to make this work
+public abstract class EntityTimestamp {
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
