@@ -12,8 +12,6 @@ public record SalaryDataRequest(
         byte step,
         @NotNull(message = "Amount cannot be null")
         Double amount,
-        @NotNull(message = "Salary grade ID cannot be null")
         String salaryGradeId
 ) {
-
 }
