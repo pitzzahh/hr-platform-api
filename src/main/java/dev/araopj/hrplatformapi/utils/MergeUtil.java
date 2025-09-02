@@ -1,12 +1,9 @@
 package dev.araopj.hrplatformapi.utils;
 
-import lombok.experimental.UtilityClass;
-
 /**
  * Utility class for merging non-null fields from one object into another.
  * This class uses reflection to inspect and copy fields.
  */
-@UtilityClass
 public class MergeUtil {
     /**
      * Merges non-null fields from newObj into oldObj.

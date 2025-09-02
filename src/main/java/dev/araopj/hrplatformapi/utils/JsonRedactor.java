@@ -3,15 +3,13 @@ package dev.araopj.hrplatformapi.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.experimental.UtilityClass;
 
 import java.util.Set;
 
-@UtilityClass
 public class JsonRedactor {
 
-    private final String REDACTED_VALUE = "****";
-    private final ObjectMapper MAPPER = new ObjectMapper();
+    private static final String REDACTED_VALUE = "****";
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Redacts specified fields from the given object and returns a JsonNode.
@@ -20,11 +18,11 @@ public class JsonRedactor {
      * @param fieldsToRedact The set of field names to redact.
      * @return A JsonNode with sensitive fields redacted.
      */
-    public JsonNode redact(Object data, Set<String> fieldsToRedact) {
+    public static JsonNode redact(Object data, Set<String> fieldsToRedact) {
         return redactNode(MAPPER.valueToTree(data), fieldsToRedact);
     }
 
-    private JsonNode redactNode(JsonNode node, Set<String> fieldsToRedact) {
+    private static JsonNode redactNode(JsonNode node, Set<String> fieldsToRedact) {
         if (node.isObject()) {
             var objectNode = (ObjectNode) node;
             for (var entry : objectNode.properties()) {

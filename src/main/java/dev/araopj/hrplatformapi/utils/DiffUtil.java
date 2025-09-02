@@ -1,7 +1,5 @@
 package dev.araopj.hrplatformapi.utils;
 
-import lombok.experimental.UtilityClass;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,7 +7,6 @@ import java.util.Objects;
 /**
  * Utility class for computing differences between two objects and applying those differences.
  */
-@UtilityClass
 public class DiffUtil {
 
     /**
@@ -60,7 +57,7 @@ public class DiffUtil {
      * @return The modified target object.
      * @throws IllegalArgumentException if the target is null.
      */
-    public <T> T applyDiff(T target, Map<String, Object> diff) {
+    public static <T> T applyDiff(T target, Map<String, Object> diff) {
         Class<?> clazz = target.getClass();
 
         diff.forEach((fieldName, value) -> {

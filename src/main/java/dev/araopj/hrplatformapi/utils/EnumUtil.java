@@ -4,10 +4,9 @@ import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.employee.model.CivilStatus;
 import dev.araopj.hrplatformapi.employee.model.EmploymentStatus;
 import dev.araopj.hrplatformapi.employee.model.Gender;
-import lombok.experimental.UtilityClass;
+
 import java.util.Arrays;
 
-@UtilityClass
 public class EnumUtil {
 
     @SuppressWarnings("unchecked")
@@ -21,6 +20,7 @@ public class EnumUtil {
 
     /**
      * Interface to be implemented by enums that have a code.
+     *
      * @implNote This interface is used to enforce the presence of the getCode method in enums.
      */
     public interface HasCode {
