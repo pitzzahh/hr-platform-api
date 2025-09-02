@@ -53,33 +53,23 @@ public class SalaryGradeService {
      * @return list of SalaryGradeResponse objects
      */
     public List<SalaryGradeResponse> findAll(boolean includeSalaryData) {
-        List<SalaryGrade> entities;
-        if (includeSalaryData) {
-            entities = salaryGradeRepository.findAllWithSalaryData();
-            log.debug("Fetched {} SalaryGrade records with salary data", entities.size());
-        } else {
-            entities = salaryGradeRepository.findAll();
-            log.debug("Fetched {} SalaryGrade records without salary data", entities.size());
-        }
-
-        List<SalaryGradeResponse> data = entities.stream()
-                .map(entity -> Mapper.toDto(entity, includeSalaryData))
-                .collect(Collectors.toList());
-
+        final var SALARY_GRADES = includeSalaryData ?
+                salaryGradeRepository.findAllWithSalaryData() : salaryGradeRepository.findAll();
         auditUtil.audit(
                 VIEW,
                 "[]",
-                Optional.empty(),
-                Map.of(
+                Optional.of(Map.of(
                         "timestamp", Instant.now().toString(),
                         "entity", ENTITY_NAME,
-                        "count", data.size()
-                ),
+                        "count", SALARY_GRADES.size()
+                )),
                 Optional.empty(),
-                ENTITY_NAME
+                Optional.empty(),
+                "List<%s>".formatted(ENTITY_NAME)
         );
-
-        return data;
+        return SALARY_GRADES.stream()
+                .map(entity -> Mapper.toDto(entity, includeSalaryData))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -89,7 +79,11 @@ public class SalaryGradeService {
      * @param includeSalaryData whether to include salary data in the response
      * @return Optional containing SalaryGradeResponse if found
      */
-    public Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) {
+    public Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) throws BadRequestException {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("SalaryGrade ID must be provided as path");
+        }
+
         auditUtil.audit(
                 id,
                 ENTITY_NAME
@@ -113,7 +107,7 @@ public class SalaryGradeService {
             SalaryGradeRequest salaryGradeRequest,
             boolean includeSalaryData
     ) throws BadRequestException {
-        var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
+        final var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
                 salaryGradeRequest.salaryGrade(),
                 salaryGradeRequest.effectiveDate()
         );
