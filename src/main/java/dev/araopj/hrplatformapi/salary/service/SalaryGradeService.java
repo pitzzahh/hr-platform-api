@@ -100,9 +100,8 @@ public class SalaryGradeService {
                 ENTITY_NAME
         );
 
-        return Optional.ofNullable(Optional.of(salaryGradeRepository.findById(id))
-                .map(e -> objectMapper.convertValue(e, SalaryGradeResponse.class))
-                .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE)));
+        return salaryGradeRepository.findById(id)
+                .map(e -> objectMapper.convertValue(e, SalaryGradeResponse.class));
 
 //        return Optional.ofNullable(Optional.ofNullable(
 //                        includeSalaryData ?
