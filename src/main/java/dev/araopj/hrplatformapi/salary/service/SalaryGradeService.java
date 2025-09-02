@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
+import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -26,8 +28,12 @@ import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SALARY_GRADE;
 import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
-import static dev.araopj.hrplatformapi.utils.MergeUtil.merge;
 
+/**
+ * Service class for managing SalaryGrade entities.
+ * Provides methods for retrieving, creating, updating, and deleting salary grades,
+ * with optional inclusion of associated salary data.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,43 +46,25 @@ public class SalaryGradeService {
     private final Set<String> REDACTED = Set.of("id", "salaryData");
     private final String ENTITY_NAME = "SalaryGradeResponse";
 
+    /**
+     * Retrieves all salary grades, optionally including associated salary data.
+     *
+     * @param includeSalaryData whether to include salary data in the response
+     * @return list of SalaryGradeResponse objects
+     */
     public List<SalaryGradeResponse> findAll(boolean includeSalaryData) {
-        var data = salaryGradeRepository.findAll().stream()
-                .map(entity -> SalaryGradeResponse.builder()
-                        .id(entity.getId())
-                        .legalBasis(entity.getLegalBasis())
-                        .tranche(entity.getTranche())
-                        .effectiveDate(entity.getEffectiveDate())
-                        .salaryGrade(entity.getSalaryGrade())
-                        .createdAt(entity.getCreatedAt())
-                        .updatedAt(entity.getUpdatedAt())
-                        .build())
-                .collect(Collectors.toList());
+        List<SalaryGrade> entities;
+        if (includeSalaryData) {
+            entities = salaryGradeRepository.findAllWithSalaryData();
+            log.debug("Fetched {} SalaryGrade records with salary data", entities.size());
+        } else {
+            entities = salaryGradeRepository.findAll();
+            log.debug("Fetched {} SalaryGrade records without salary data", entities.size());
+        }
 
-        log.debug("Fetched {} SalaryGrade records without salary data", data);
-//        if (includeSalaryData) {
-//            data = salaryGradeRepository.findAllWithSalaryData().stream()
-//                    .map(entity -> SalaryGradeResponse.builder()
-//                            .id(entity.getId())
-//                            .legalBasis(entity.getLegalBasis())
-//                            .tranche(entity.getTranche())
-//                            .effectiveDate(entity.getEffectiveDate())
-//                            .salaryGrade(entity.getSalaryGrade())
-//                            .salaryData(
-//                                    entity.getSalaryData()
-//                                            .stream()
-//                                            .map(e -> SalaryDataResponse
-//                                                    .builder()
-//                                                    .step(e.getStep())
-//                                                    .amount(e.getAmount())
-//                                                    .createdAt(e.getCreatedAt())
-//                                                    .updatedAt(e.getUpdatedAt())
-//                                                    .build())
-//                                            .collect(Collectors.toSet())
-//                            )
-//                            .build())
-//                    .collect(Collectors.toList());
-//        }
+        List<SalaryGradeResponse> data = entities.stream()
+                .map(entity -> Mapper.toDto(entity, includeSalaryData))
+                .collect(Collectors.toList());
 
         auditUtil.audit(
                 VIEW,
@@ -94,170 +82,141 @@ public class SalaryGradeService {
         return data;
     }
 
+    /**
+     * Retrieves a salary grade by ID, optionally including associated salary data.
+     *
+     * @param id                the ID of the salary grade
+     * @param includeSalaryData whether to include salary data in the response
+     * @return Optional containing SalaryGradeResponse if found
+     */
     public Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) {
         auditUtil.audit(
                 id,
                 ENTITY_NAME
         );
 
-        return Optional.ofNullable(Optional.of(salaryGradeRepository.findById(id))
-                .map(e -> objectMapper.convertValue(e, SalaryGradeResponse.class))
-                .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE)));
+        final var OPTIONAL_SALARY_GRADE = includeSalaryData ?
+                salaryGradeRepository.findSalaryGradeWithSalaryDataById(id) : salaryGradeRepository.findById(id);
 
-//        return Optional.ofNullable(Optional.ofNullable(
-//                        includeSalaryData ?
-//                                salaryGradeRepository.findSalaryGradeWithSalaryDataById(id) :
-//                                salaryGradeRepository.findById(id)
-//                ).map(e -> objectMapper.convertValue(e, SalaryGradeResponse.class))
-//                .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE)));
-
+        return OPTIONAL_SALARY_GRADE.map(entity -> Mapper.toDto(entity, includeSalaryData));
     }
 
+    /**
+     * Creates a new salary grade, optionally with associated salary data.
+     *
+     * @param salaryGradeRequest the request containing salary grade details
+     * @param includeSalaryData  whether to include salary data in creation
+     * @return Optional containing the created SalaryGradeResponse
+     * @throws BadRequestException if duplicate exists or invalid data
+     */
     public Optional<SalaryGradeResponse> create(
             SalaryGradeRequest salaryGradeRequest,
             boolean includeSalaryData
     ) throws BadRequestException {
-        var optionalSalaryGrade = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
+        var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
                 salaryGradeRequest.salaryGrade(),
                 salaryGradeRequest.effectiveDate()
         );
 
-        if (optionalSalaryGrade.isPresent()) {
+        if (OPTIONAL_SALARY_GRADE.isPresent()) {
             log.warn("salaryGrade {} and effectiveDate {} already exists in SalaryGrade with id {}",
-                    salaryGradeRequest.salaryGrade(), salaryGradeRequest.effectiveDate(), optionalSalaryGrade.get().getId());
-            throw new BadRequestException("SalaryGrade with the same salaryGrade and effectiveDate already exists in the specified SalaryGrade.");
+                    salaryGradeRequest.salaryGrade(), salaryGradeRequest.effectiveDate(), OPTIONAL_SALARY_GRADE.get().getId());
+            throw new BadRequestException("SalaryGrade with the same salaryGrade and effectiveDate already exists.");
         }
 
-        var savedSalaryGrade = salaryGradeRepository.save(SalaryGrade.builder()
-                        .legalBasis(salaryGradeRequest.legalBasis())
-                        .tranche(salaryGradeRequest.tranche())
-                        .effectiveDate(salaryGradeRequest.effectiveDate())
-                        .salaryGrade(salaryGradeRequest.salaryGrade())
-//                .salaryData(includeSalaryData ? salaryGradeRequest.salaryData()
-//                        .stream()
-//                        .map(e -> SalaryData.builder()
-//                                .step(e.step())
-//                                .amount(e.amount())
-//                                .build())
-//                        .collect(Collectors.toSet()) : Set.of())
-                        .build()
-        );
-
-        log.debug("Saved salary grade: {}", savedSalaryGrade);
-
-        var salaryGradeResponse = SalaryGradeResponse.builder()
-                .id(savedSalaryGrade.getId())
-                .legalBasis(savedSalaryGrade.getLegalBasis())
-                .tranche(savedSalaryGrade.getTranche())
-                .effectiveDate(savedSalaryGrade.getEffectiveDate())
-                .salaryGrade(savedSalaryGrade.getSalaryGrade())
-                .createdAt(savedSalaryGrade.getCreatedAt())
-//                .salaryData(
-//                        includeSalaryData ?
-//                                savedSalaryGrade.getSalaryData()
-//                                        .stream()
-//                                        .map(e -> SalaryDataResponse.builder()
-//                                                .id(e.getId())
-//                                                .step(e.getStep())
-//                                                .amount(e.getAmount())
-//                                                .createdAt(e.getCreatedAt())
-//                                                .updatedAt(e.getUpdatedAt())
-//                                                .build())
-//                                        .collect(Collectors.toSet()) : Set.of()
-//                )
-                .updatedAt(savedSalaryGrade.getUpdatedAt())
+        var salaryGradeToSave = SalaryGrade.builder()
+                .legalBasis(salaryGradeRequest.legalBasis())
+                .tranche(salaryGradeRequest.tranche())
+                .effectiveDate(salaryGradeRequest.effectiveDate())
+                .salaryGrade(salaryGradeRequest.salaryGrade())
                 .build();
 
-//        if (includeSalaryData) {
-//            var salaryDataToSave = salaryGradeRequest.salaryData()
-//                    .stream()
-//                    .map(e -> SalaryData.builder()
-//                            .step(e.step())
-//                            .amount(e.amount())
-//                            .salaryGrade(savedSalaryGrade)
-//                            .build())
-//                    .collect(Collectors.toSet());
-//            log.debug("Saving salary data: {}", salaryDataToSave);
-//
-//            var salaryData = salaryDataRepository.saveAll(salaryDataToSave)
-//                    .stream()
-//                    .map(e -> SalaryDataResponse.builder()
-//                            .id(e.getId())
-//                            .step(e.getStep())
-//                            .amount(e.getAmount())
-//                            .createdAt(e.getCreatedAt())
-//                            .updatedAt(e.getUpdatedAt())
-//                            .build())
-//                    .collect(Collectors.toSet());
-//
-//            salaryGradeResponse.salaryData(salaryData);
-//        }
+        if (includeSalaryData) {
+            if (salaryGradeRequest.salaryData() == null || salaryGradeRequest.salaryData().isEmpty()) {
+                throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
+            }
+            salaryGradeToSave.setSalaryData(
+                    salaryGradeRequest.salaryData().stream()
+                            .map(sd -> SalaryData.builder()
+                                    .step(sd.step())
+                                    .amount(sd.amount())
+                                    .salaryGrade(salaryGradeToSave)
+                                    .build())
+                            .collect(Collectors.toList())
+            );
+        }
 
-        log.debug("Salary grade response: {}", salaryGradeResponse);
+        var savedSalaryGrade = salaryGradeRepository.save(salaryGradeToSave);
+        log.debug("Saved salary grade: {}", savedSalaryGrade);
 
         auditUtil.audit(
                 CREATE,
-                salaryGradeResponse.id(),
+                savedSalaryGrade.getId(),
                 Optional.empty(),
                 redact(savedSalaryGrade, REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return Optional.of(salaryGradeResponse);
+
+        return Optional.of(Mapper.toDto(savedSalaryGrade, includeSalaryData));
     }
 
+    /**
+     * Updates an existing salary grade.
+     *
+     * @param id                 the ID of the salary grade to update
+     * @param salaryGradeRequest the updated details
+     * @return the updated SalaryGradeResponse
+     */
     public SalaryGradeResponse update(
-            String id,
+            @Nullable String id,
             SalaryGradeRequest salaryGradeRequest
-    ) {
-        var optionalSalaryGrade = findById(id, false);
+    ) throws BadRequestException {
 
-        if (optionalSalaryGrade.isEmpty()) {
-            log.warn("SalaryGrade with id {} not found", id);
-            throw new NotFoundException(
-                    id,
-                    SALARY_GRADE
-            );
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("SalaryGrade ID must be provided as path");
         }
 
-        var oldData = optionalSalaryGrade.get();
-        var newData = MergeUtil.merge(optionalSalaryGrade.get(), salaryGradeRequest);
-        var changes = DiffUtil.diff(optionalSalaryGrade.get(), salaryGradeRequest);
+        final var SALARY_GRADE = MergeUtil.merge(salaryGradeRepository.findById(id)
+                        .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.SALARY_GRADE)),
+                Mapper.toEntity(salaryGradeRequest)
+        );
 
-        if (changes.isEmpty()) {
-            log.info("No changes detected for SalaryGrade with id {}", id);
-            return oldData;
-        }
+        final var OLD_REDACTED = redact(SALARY_GRADE, REDACTED);
+
+        final var SAVED_SALARY_GRADE = salaryGradeRepository.saveAndFlush(SALARY_GRADE);
 
         auditUtil.audit(
                 UPDATE,
                 id,
-                Optional.of(redact(oldData, REDACTED)),
-                redact(merge(newData, salaryGradeRequest), REDACTED),
-                Optional.of(redact(diff(oldData, salaryGradeRequest), REDACTED)),
+                Optional.of(OLD_REDACTED),
+                redact(SAVED_SALARY_GRADE, REDACTED),
+                Optional.of(redact(diff(Mapper.toDto(SALARY_GRADE, false), salaryGradeRequest), REDACTED)), // Adjust diff if needed
                 ENTITY_NAME
         );
 
-        return objectMapper.convertValue(
-                salaryGradeRepository.saveAndFlush(
-                        objectMapper.convertValue(changes, SalaryGrade.class)
-                ),
-                SalaryGradeResponse.class
-        );
+        return Mapper.toDto(SAVED_SALARY_GRADE, false); // false as update doesn't include data yet
     }
 
+    /**
+     * Deletes a salary grade by ID.
+     *
+     * @param id the ID to delete
+     * @return true if deleted
+     */
     public boolean delete(String id) {
-        findById(id, false)
+        SalaryGrade entity = salaryGradeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE));
         salaryGradeRepository.deleteById(id);
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(id),
+                Optional.of(redact(entity, REDACTED)),
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
         return true;
     }
+
 }
