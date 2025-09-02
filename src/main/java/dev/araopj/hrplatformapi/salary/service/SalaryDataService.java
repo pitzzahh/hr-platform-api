@@ -7,6 +7,7 @@ import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
@@ -168,9 +169,9 @@ public class SalaryDataService {
         }
 
         final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
-
-        var SALARY_DATA = MergeUtil.merge(salaryDataRepository
-                        .findById(id).orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.SALARY_DATA)),
+        final var ORIGINAL_SALARY_DATA = salaryDataRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, SALARY_DATA));
+        var SALARY_DATA = MergeUtil.merge(ORIGINAL_SALARY_DATA,
                 Mapper.toEntity(salaryDataRequest)
         );
 
@@ -203,9 +204,9 @@ public class SalaryDataService {
         auditUtil.audit(
                 UPDATE,
                 id,
-                Optional.of(redact(SALARY_DATA, REDACTED)),
-                redact(MergeUtil.merge(SALARY_DATA, SALARY_DATA), REDACTED),
-                Optional.of(redact(SALARY_DATA, REDACTED)),
+                Optional.of(redact(ORIGINAL_SALARY_DATA, REDACTED)),
+                redact(SALARY_DATA, REDACTED),
+                Optional.of(redact(DiffUtil.diff(ORIGINAL_SALARY_DATA, SALARY_DATA), REDACTED)),
                 ENTITY_NAME
         );
 
