@@ -5,7 +5,7 @@ import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Set;
 
 @Builder
 public record SalaryGradeResponse(
@@ -15,6 +15,6 @@ public record SalaryGradeResponse(
         LocalDate effectiveDate,
         byte salaryGrade,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        ArrayList<SalaryData> salaryData
+        Set<SalaryData> salaryData
 ) {
 }
