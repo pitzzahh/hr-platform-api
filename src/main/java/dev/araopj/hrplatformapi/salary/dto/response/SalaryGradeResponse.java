@@ -5,7 +5,7 @@ import lombok.Builder;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Builder
 public record SalaryGradeResponse(
@@ -17,6 +17,6 @@ public record SalaryGradeResponse(
         Instant createdAt,
         Instant updatedAt,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        Set<SalaryDataResponse> salaryData
+        List<SalaryDataResponse> salaryData
 ) {
 }
