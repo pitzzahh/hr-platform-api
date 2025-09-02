@@ -10,6 +10,7 @@ import dev.araopj.hrplatformapi.utils.enums.FetchType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -140,9 +141,9 @@ public class SalaryDataController {
     )
     @PostMapping
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
-            @RequestBody @Valid SalaryDataRequest salaryDataRequest,
-            @RequestParam(required = false) String salaryGradeId,
-            @RequestParam(defaultValue = "CHECK_PARENT_FROM_REQUEST_BODY") @Valid CheckType checkType
+            @RequestBody @NotNull SalaryDataRequest salaryDataRequest,
+            @RequestParam(required = false) @Nullable String salaryGradeId,
+            @RequestParam(defaultValue = "CHECK_PARENT_FROM_REQUEST_BODY") @NotNull CheckType checkType
     ) throws BadRequestException {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
         return salaryDataService.create(salaryDataRequest, salaryGradeId, checkType)
