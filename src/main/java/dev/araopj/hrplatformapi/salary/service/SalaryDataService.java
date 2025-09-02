@@ -116,33 +116,33 @@ public class SalaryDataService {
     ) throws BadRequestException {
         var optionalSalaryGrade = switch (checkType) {
             case CHECK_PARENT_FROM_REQUEST_PARAM -> salaryGradeRepository.findById(salaryGradeId);
-            case CHECK_PARENT_FROM_REQUEST_BODY -> salaryGradeRepository.findById(salaryDataRequest.getSalaryGradeId());
+            case CHECK_PARENT_FROM_REQUEST_BODY -> salaryGradeRepository.findById(salaryDataRequest.salaryGradeId());
         };
 
         if (optionalSalaryGrade.isPresent()) {
             var sg = optionalSalaryGrade.get();
             var existing_salary_data = salaryDataRepository.findByStepAndAmountAndSalaryGrade_Id(
-                    salaryDataRequest.getStep(),
-                    salaryDataRequest.getAmount(),
+                    salaryDataRequest.step(),
+                    salaryDataRequest.amount(),
                     sg.getId()
             );
             if (existing_salary_data.isPresent()) {
                 log.warn("SalaryData with step {} and amount {} already exists in SalaryGrade with id {}",
-                        salaryDataRequest.getStep(), salaryDataRequest.getAmount(), sg.getId());
+                        salaryDataRequest.step(), salaryDataRequest.amount(), sg.getId());
                 throw new BadRequestException("SalaryData with the same step and amount already exists in the specified SalaryGrade.");
             }
         }
 
         var data = Mapper.toDto(salaryDataRepository.saveAndFlush(
                 SalaryData.builder()
-                        .step(salaryDataRequest.getStep())
-                        .amount(salaryDataRequest.getAmount())
+                        .step(salaryDataRequest.step())
+                        .amount(salaryDataRequest.amount())
                         .salaryGrade(optionalSalaryGrade.orElse(null))
                         .build()
         ));
         auditUtil.audit(
                 CREATE,
-                String.valueOf(salaryDataRequest.getStep()),
+                String.valueOf(salaryDataRequest.step()),
                 Optional.empty(),
                 redact(data, REDACTED),
                 Optional.empty(),
@@ -162,7 +162,7 @@ public class SalaryDataService {
         var salaryDataResponse = switch (createType) {
             case FROM_PATH_VARIABLE -> findById(id);
             case FROM_REQUEST_BODY ->
-                    findByIdAndSalaryGradeId(id, useWithParentId ? salaryGradeId : salaryDataRequest.getSalaryGradeId());
+                    findByIdAndSalaryGradeId(id, useWithParentId ? salaryGradeId : salaryDataRequest.salaryGradeId());
             default -> Optional.<SalaryDataResponse>empty();
         };
 
