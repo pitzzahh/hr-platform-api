@@ -240,12 +240,12 @@ public class SalaryDataService {
             case CHECK_PARENT_FROM_REQUEST_PARAM -> {
                 if (salaryGradeId == null || salaryGradeId.isEmpty())
                     throw new BadRequestException("Salary grade ID must be provided as query parameter when using CHECK_PARENT_FROM_REQUEST_PARAM.");
-                return request.salaryGradeId();
+                return salaryGradeId;
             }
             case CHECK_PARENT_FROM_REQUEST_BODY -> {
                 if (request.salaryGradeId() == null || request.salaryGradeId().isEmpty())
                     throw new BadRequestException("Salary grade ID must be provided in request body when using CHECK_PARENT_FROM_REQUEST_BODY.");
-                return salaryGradeId;
+                return request.salaryGradeId();
             }
             default -> throw new BadRequestException("Invalid CheckType provided.");
         }
