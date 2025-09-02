@@ -1,28 +1,32 @@
 package dev.araopj.hrplatformapi.salary.repository;
 
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
-import org.springframework.data.domain.Limit;
+import io.micrometer.common.lang.NonNullApi;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@NonNullApi
 @Repository
 public interface SalaryDataRepository extends JpaRepository<SalaryData, String> {
-    List<SalaryData> findBySalaryGrade_Id(String salaryGradeId, Limit limit);
-
-    Optional<SalaryData> findByIdAndSalaryGrade_Id(String id, String salaryGradeId);
-
-    @Query("SELECT sd FROM SalaryData sd JOIN FETCH sd.salaryGrade")
-    List<SalaryData> findAllWithParent();
-
-    @Query("SELECT sd FROM SalaryData sd JOIN FETCH sd.salaryGrade WHERE sd.id = :id")
-    Optional<SalaryData> findByIdWithSalaryGrade(@Param("id") String id);
 
     Optional<SalaryData> findByStepAndAmountAndSalaryGrade_Id(int step, double amount, String id);
 
-    Optional<SalaryData> findByStep(int step);
+    @EntityGraph(attributePaths = "salaryGrade")
+    List<SalaryData> findBySalaryGradeId(String salaryGradeId, Pageable pageable);
+
+    @EntityGraph(attributePaths = "salaryGrade")
+    @Override
+    Page<SalaryData> findAll(Pageable pageable);
+
+    Optional<SalaryData> findByIdAndSalaryGradeId(String id, String salaryGradeId);
+
+    @Query("SELECT sd FROM SalaryData sd JOIN FETCH sd.salaryGrade")
+    List<SalaryData> findAllWithParent(Pageable pageable);
 }
