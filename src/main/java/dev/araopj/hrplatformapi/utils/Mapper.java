@@ -5,6 +5,7 @@ import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
+import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
@@ -55,6 +56,17 @@ public class Mapper {
                 .build();
     }
 
+    public static SalaryGrade toEntity(SalaryGradeRequest salaryGradeRequest) {
+        if (salaryGradeRequest == null) return null;
+
+        return SalaryGrade.builder()
+                .legalBasis(salaryGradeRequest.legalBasis())
+                .effectiveDate(salaryGradeRequest.effectiveDate())
+                .tranche(salaryGradeRequest.tranche())
+                .salaryGrade(salaryGradeRequest.salaryGrade())
+                .build();
+    }
+
     public static SalaryGradeResponse toDto(SalaryGrade grade) {
         if (grade == null) return null;
 
@@ -78,6 +90,29 @@ public class Mapper {
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
+    }
+
+    public static SalaryGradeResponse toDto(SalaryGrade salaryGrade, boolean includeSalaryData) {
+        if (salaryGrade == null) return null;
+
+        var builder = SalaryGradeResponse.builder()
+                .id(salaryGrade.getId())
+                .legalBasis(salaryGrade.getLegalBasis())
+                .effectiveDate(salaryGrade.getEffectiveDate())
+                .tranche(salaryGrade.getTranche())
+                .salaryGrade(salaryGrade.getSalaryGrade())
+                .createdAt(salaryGrade.getCreatedAt())
+                .updatedAt(salaryGrade.getUpdatedAt());
+
+        if (includeSalaryData && salaryGrade.getSalaryData() != null) {
+            builder.salaryData(
+                    salaryGrade.getSalaryData().stream()
+                            .map(sd -> toDto(sd, false)) // Avoid circular reference
+                            .toList()
+            );
+        }
+
+        return builder.build();
     }
 
     // fallback for existing usages (defaults with parent)
