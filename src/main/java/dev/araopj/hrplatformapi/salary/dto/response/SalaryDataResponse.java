@@ -9,7 +9,7 @@ import java.time.Instant;
 public record SalaryDataResponse(
         String id,
         byte step,
-        Double amount,
+        double amount,
         SalaryGrade salaryGrade,
         Instant createdAt,
         Instant updatedAt
