@@ -6,7 +6,13 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record SalaryDataResponse(String id, byte step, Double amount, SalaryGrade salaryGrade, LocalDateTime createdAt,
-                                 LocalDateTime updatedAt) {
+public record SalaryDataResponse(
+        String id,
+        byte step,
+        Double amount,
+        SalaryGrade salaryGrade,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {
 }
 
