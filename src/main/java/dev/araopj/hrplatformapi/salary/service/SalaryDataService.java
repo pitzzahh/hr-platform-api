@@ -75,7 +75,7 @@ public class SalaryDataService {
                 id,
                 ENTITY_NAME
         );
-        return Optional.ofNullable(salaryDataRepository.findById(id)
+        return Optional.of(salaryDataRepository.findById(id)
                 .map(Mapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_DATA)));
 
