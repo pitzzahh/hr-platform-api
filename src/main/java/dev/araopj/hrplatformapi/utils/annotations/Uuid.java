@@ -17,4 +17,5 @@ import static java.lang.annotation.ElementType.FIELD;
 @Target({FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Uuid {
+    String getterMethod() default "getId";
 }
