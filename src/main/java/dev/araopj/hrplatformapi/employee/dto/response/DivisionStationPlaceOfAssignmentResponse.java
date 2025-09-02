@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.araopj.hrplatformapi.employee.model.Employee;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Builder
 public record DivisionStationPlaceOfAssignmentResponse(
@@ -12,8 +12,8 @@ public record DivisionStationPlaceOfAssignmentResponse(
         String code,
         String name,
         String shortName,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
+        Instant createdAt,
+        Instant updatedAt,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         Employee employee
 ) {

@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.salary.dto.response;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Builder
 public record SalaryDataResponse(
@@ -11,8 +11,8 @@ public record SalaryDataResponse(
         byte step,
         Double amount,
         SalaryGrade salaryGrade,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Instant createdAt,
+        Instant updatedAt
 ) {
 }
 
