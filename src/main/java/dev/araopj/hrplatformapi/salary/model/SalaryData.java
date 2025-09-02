@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.salary.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
@@ -34,5 +35,6 @@ public class SalaryData extends EntityTimestamp implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "salary_grade_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     private SalaryGrade salaryGrade;
 }
