@@ -4,6 +4,7 @@ import dev.araopj.hrplatformapi.audit.dto.AuditDto;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
+import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
@@ -42,6 +43,15 @@ public class Mapper {
                 .id(dto.id())
                 .salary(dto.salary())
                 .effectiveDate(dto.effectiveDate())
+                .build();
+    }
+
+    public static SalaryData toEntity(SalaryDataRequest salaryDataRequest) {
+        if (salaryDataRequest == null) return null;
+
+        return SalaryData.builder()
+                .step(salaryDataRequest.step())
+                .amount(salaryDataRequest.amount())
                 .build();
     }
 
