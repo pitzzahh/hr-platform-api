@@ -1,9 +1,9 @@
 package dev.araopj.hrplatformapi.salary.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import lombok.Builder;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -14,7 +14,9 @@ public record SalaryGradeResponse(
         byte tranche,
         LocalDate effectiveDate,
         byte salaryGrade,
+        Instant createdAt,
+        Instant updatedAt,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        Set<SalaryData> salaryData
+        Set<SalaryDataResponse> salaryData
 ) {
 }
