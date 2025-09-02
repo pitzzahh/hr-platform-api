@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 
@@ -27,9 +29,10 @@ public class SalaryData extends EntityTimestamp implements Serializable {
     private byte step;
 
     @Column(nullable = false)
-    private Double amount;
+    private double amount;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "salary_grade_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private SalaryGrade salaryGrade;
 }
