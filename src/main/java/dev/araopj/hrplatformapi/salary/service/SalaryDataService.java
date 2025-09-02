@@ -10,6 +10,7 @@ import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -104,18 +105,18 @@ public class SalaryDataService {
 
     public Optional<SalaryDataResponse> create(
             SalaryDataRequest salaryDataRequest,
-            String salaryGradeId, // salary grade id from request param
+            @Nullable String salaryGradeId, // salary grade id from request param
             CheckType checkType
     ) throws BadRequestException {
         final var OPTIONAL_SALARY_GRADE_CHECK = switch (checkType) {
             case CHECK_PARENT_FROM_REQUEST_PARAM -> {
-                if (salaryGradeId.isEmpty()) {
+                if (salaryGradeId == null || salaryGradeId.isEmpty()) {
                     throw new BadRequestException("Salary grade ID must be provided as query parameter when using CHECK_PARENT_FROM_REQUEST_PARAM.");
                 }
                 yield salaryGradeRepository.findById(salaryGradeId);
             }
             case CHECK_PARENT_FROM_REQUEST_BODY -> {
-                if (salaryDataRequest.salaryGradeId().isEmpty()) {
+                if (salaryDataRequest.salaryGradeId() == null || salaryDataRequest.salaryGradeId().isEmpty()) {
                     throw new BadRequestException("Salary grade ID must be provided in request body when using CHECK_PARENT_FROM_REQUEST_BODY.");
                 }
                 yield salaryGradeRepository.findById(salaryDataRequest.salaryGradeId());
@@ -236,12 +237,12 @@ public class SalaryDataService {
     private static String getId(SalaryDataRequest request, String salaryGradeId, CheckType checkType) throws
             BadRequestException {
         switch (checkType) {
-            case CHECK_PARENT_FROM_REQUEST_BODY -> {
+            case CHECK_PARENT_FROM_REQUEST_PARAM -> {
                 if (salaryGradeId == null || salaryGradeId.isEmpty())
                     throw new BadRequestException("Salary grade ID must be provided in request body when using CHECK_PARENT_FROM_REQUEST_BODY.");
                 return request.salaryGradeId();
             }
-            case CHECK_PARENT_FROM_REQUEST_PARAM -> {
+            case CHECK_PARENT_FROM_REQUEST_BODY -> {
                 if (salaryGradeId == null || salaryGradeId.isEmpty())
                     throw new BadRequestException("Salary grade ID must be provided as query parameter when using CHECK_PARENT_FROM_REQUEST_PARAM.");
                 return salaryGradeId;
