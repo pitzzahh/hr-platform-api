@@ -3,6 +3,7 @@ package dev.araopj.hrplatformapi.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.util.Set;
 
@@ -10,6 +11,10 @@ public class JsonRedactor {
 
     private static final String REDACTED_VALUE = "****";
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    static {
+        MAPPER.registerModule(new JavaTimeModule());
+    }
 
     /**
      * Redacts specified fields from the given object and returns a JsonNode.
