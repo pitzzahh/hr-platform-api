@@ -6,7 +6,6 @@ import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
-import dev.araopj.hrplatformapi.utils.enums.CreateType;
 import dev.araopj.hrplatformapi.utils.enums.FetchType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,14 +15,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
-import org.springframework.data.domain.Limit;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static dev.araopj.hrplatformapi.utils.enums.FetchType.WITH_PARENT_REQUEST_PARAM;
+import static dev.araopj.hrplatformapi.utils.enums.FetchType.BY_PATH_VARIABLE;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -62,11 +60,13 @@ public class SalaryDataController {
     @GetMapping
     public ResponseEntity<StandardApiResponse<List<SalaryDataResponse>>> all(
             @RequestParam(required = false) String salaryGradeId,
+            @RequestParam(required = false) boolean withSalaryGrade,
             @RequestParam(defaultValue = "10", required = false) @Valid int limit
-    ) {
+    ) throws BadRequestException {
         return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.findAll(
                 salaryGradeId,
-                Limit.of(limit)
+                withSalaryGrade,
+                limit
         )));
     }
 
@@ -100,11 +100,11 @@ public class SalaryDataController {
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> get(
             @PathVariable String id,
             @RequestParam(required = false) String salaryGradeId,
-            @RequestParam(defaultValue = "WITH_PARENT_REQUEST_PARAM", required = false) @Valid FetchType fetchType
+            @RequestParam(defaultValue = "BY_PATH_VARIABLE", required = false) @Valid FetchType fetchType
     ) {
-        var response = fetchType == WITH_PARENT_REQUEST_PARAM
-                ? salaryDataService.findByIdAndSalaryGradeId(id, salaryGradeId)
-                : salaryDataService.findById(id);
+        var response = fetchType == BY_PATH_VARIABLE
+                ? salaryDataService.findById(id)
+                : salaryDataService.findByIdAndSalaryGradeId(id, salaryGradeId);
 
         return response
                 .map(StandardApiResponse::success)
@@ -142,7 +142,7 @@ public class SalaryDataController {
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
             @RequestBody @Valid SalaryDataRequest salaryDataRequest,
             @RequestParam(required = false) String salaryGradeId,
-            @RequestParam(defaultValue = "CHECK_PARENT_FROM_REQUEST_BODY", required = false) @Valid CheckType checkType
+            @RequestParam(defaultValue = "CHECK_PARENT_FROM_REQUEST_BODY") @Valid CheckType checkType
     ) throws BadRequestException {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
         return salaryDataService.create(salaryDataRequest, salaryGradeId, checkType)
@@ -154,8 +154,7 @@ public class SalaryDataController {
     @Operation(
             description = """
                     Update an existing salary data entry by its ID for a specific salary grade.
-                    Allows optional fetching strategies and the choice to use the parent salary grade ID from the path variable
-                    or from the request body.
+                    If a salary grade id is provided in the request body, it will be used to check if the salary data belongs to that salary data.
                     """,
             summary = "Update salary data",
             responses = {
@@ -180,20 +179,14 @@ public class SalaryDataController {
     @PutMapping("/{id}")
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> update(
             @PathVariable @NotNull String id,
-            @RequestParam @NotNull String salaryGradeId,
-            @RequestBody @Valid SalaryDataRequest salaryDataRequest,
-            @RequestParam(defaultValue = "FROM_PATH_VARIABLE") CreateType createType,
-            @RequestParam(defaultValue = "false") boolean useParentIdFromPathVariable
-    ) {
-        log.info("Request to update salary data with id {}: {}", id, salaryGradeId);
+            @RequestBody @Valid SalaryDataRequest salaryDataRequest
+    ) throws BadRequestException {
+        log.info("Request to update salary data with id [{}]", id);
         return ResponseEntity
                 .ok(StandardApiResponse
                         .success(salaryDataService.update(
                                         id,
-                                        salaryGradeId,
-                                        salaryDataRequest,
-                                        createType,
-                                        useParentIdFromPathVariable
+                                        salaryDataRequest
                                 )
                         )
                 );
@@ -202,7 +195,10 @@ public class SalaryDataController {
 
     @DeleteMapping("/{id}")
     @Operation(
-            description = "Delete a salary data entry by its ID.",
+            description = """
+                    Delete a specific salary data entry by its ID.
+                    Optionally, you can provide a salary grade ID to ensure the salary data belongs to that specific grade.
+                    """,
             summary = "Delete salary data",
             responses = {
                     @ApiResponse(
@@ -219,14 +215,17 @@ public class SalaryDataController {
                     )
             }
     )
-    public ResponseEntity<StandardApiResponse<Void>> delete(@PathVariable @NotNull String salaryGradeId, @PathVariable @NotNull String id) {
-        log.debug("Request to delete salaryData with id {}", id);
+    public ResponseEntity<StandardApiResponse<Void>> delete(
+            @PathVariable @NotNull String id,
+            @RequestParam(required = false) String salaryGradeId
+    ) {
+        log.debug("Request to delete salaryData with id [{}] and salaryGradeId [{}]", id, salaryGradeId);
         var isDeleted = salaryDataService.delete(id, salaryGradeId);
         if (!isDeleted) {
             return new ResponseEntity<>(
                     StandardApiResponse.failure(
                             ApiError.builder()
-                                    .message("SalaryData with id [%s] not found".formatted(id))
+                                    .message("SalaryData with id [%s] and SalaryGrade with [%s] not found".formatted(id, salaryGradeId))
                                     .build()
                     ), HttpStatus.NOT_FOUND
             );
