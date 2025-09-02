@@ -199,17 +199,19 @@ public class SalaryGradeService {
      * @return true if deleted
      */
     public boolean delete(String id) {
-        SalaryGrade entity = salaryGradeRepository.findById(id)
+        var SALARY_GRADE_TO_BE_REMOVED = salaryGradeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE));
-        salaryGradeRepository.deleteById(id);
+
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(redact(entity, REDACTED)),
+                Optional.of(redact(Mapper.toDto(SALARY_GRADE_TO_BE_REMOVED, false), REDACTED)), // Redact DTO instead of entity
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
+
+        salaryGradeRepository.deleteById(id);
         return true;
     }
 
