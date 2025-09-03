@@ -75,12 +75,12 @@ public class AuditController {
         Page<AuditResponse> auditsPage = auditService.findAll(PageRequest.of(page - 1, size));
         return ResponseEntity.ok(StandardApiResponse.success(
                 auditsPage.getContent(),
-                new PaginationMeta(
-                        auditsPage.getNumber() + 1,
-                        auditsPage.getSize(),
-                        auditsPage.getTotalElements(),
-                        auditsPage.getTotalPages()
-                )
+                PaginationMeta.builder()
+                        .page(auditsPage.getNumber() - 1)
+                        .size(auditsPage.getSize())
+                        .totalElements(auditsPage.getTotalElements())
+                        .totalPages(auditsPage.getTotalPages())
+                        .build()
         ));
     }
 
