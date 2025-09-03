@@ -41,7 +41,7 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     String remarks;
 
     @OneToOne
-    @JoinColumn(name = "employment_information_salary_override_id", nullable = false, unique = true)
+    @JoinColumn(name = "employment_information_salary_override_id", unique = true)
     EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
     @Column(nullable = false)
