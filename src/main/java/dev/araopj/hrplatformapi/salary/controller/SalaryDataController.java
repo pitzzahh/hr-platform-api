@@ -20,6 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,23 +44,24 @@ public class SalaryDataController {
     private final ISalaryDataService salaryDataService;
 
     /**
-     * Retrieves a paginated list of all salary data entries.
+     * Retrieves a paginated list of all salary data entries, optionally filtered by salary grade ID.
      *
-     * @param limit The maximum number of results to return (default is 10).
-     * @return A ResponseEntity containing a {@link StandardApiResponse} with a page of SalaryDataResponse.
+     * @param page The page number (1-based).
+     * @param size The number of records per page.
+     * @return A ResponseEntity containing a {@link StandardApiResponse} with a list of SalaryDataResponse and pagination metadata.
      * @throws BadRequestException If invalid parameters are provided.
      */
     @Operation(
             summary = "Get all salary data",
             description = """
-                    Retrieve a list of all salary data entries, optionally filtered by salary grade ID. \
-                    Use the 'limit' parameter to control the number of results. \
-                    Optionally include salary grade details with the 'withSalaryGrade' parameter.
+                    Retrieve a paginated list of all salary data entries. \
+                    Supports pagination through 'page' and 'size' query parameters.
+                    1-based page indexing is used (i.e., the first page is page 1).
                     """,
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Successfully retrieved list of salary data",
+                            description = "Successfully retrieved the list of salary data",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = StandardApiResponse.class)
@@ -85,11 +87,13 @@ public class SalaryDataController {
     )
     @GetMapping
     public ResponseEntity<StandardApiResponse<List<SalaryDataResponse>>> all(
-            @Parameter(description = "Maximum number of results to return", example = "10")
-            @RequestParam(defaultValue = "10", required = false) @Valid int limit
+            @Parameter(description = "Page number (1-based)", example = "1")
+            @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "Number of records per page", example = "10")
+            @RequestParam(defaultValue = "10") int size
     ) throws BadRequestException {
-        log.debug("Fetching all salary data with limit: {}", limit);
-        final var PAGE = salaryDataService.findAll(limit);
+        log.debug("Fetching all salary data with page: {} and size: {}", page, size);
+        final var PAGE = salaryDataService.findAll(PageRequest.of(page - 1, size));
         return ResponseEntity.ok(StandardApiResponse.success(
                 PAGE.getContent(),
                 PaginationMeta.builder()

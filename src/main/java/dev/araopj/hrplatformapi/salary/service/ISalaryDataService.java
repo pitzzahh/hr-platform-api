@@ -6,6 +6,7 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -25,13 +26,13 @@ public interface ISalaryDataService {
     /**
      * Retrieves a paginated list of all salary data records.
      * <p>
-     * This method fetches salary data records from the data layer, limited by the specified
-     * number of records. It returns a {@link Page} of {@link SalaryDataResponse} objects.
+     * This method fetches salary data records from the data layer, supporting pagination
+     * through the provided {@link Pageable} object.
      *
-     * @param limit the maximum number of records to retrieve
+     * @param pageable the pagination information (e.g., page number, size)
      * @return a {@link Page} of {@link SalaryDataResponse} objects containing the salary data records
      */
-    Page<SalaryDataResponse> findAll(int limit);
+    Page<SalaryDataResponse> findAll(Pageable pageable);
 
     /**
      * Retrieves a salary data record by its unique ID.

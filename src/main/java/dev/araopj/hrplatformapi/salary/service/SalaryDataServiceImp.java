@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -37,11 +37,8 @@ public class SalaryDataServiceImp implements ISalaryDataService {
     private final String ENTITY_NAME = "SalaryDataResponse";
 
     @Override
-    public Page<SalaryDataResponse> findAll(int limit) {
-
-        final var PAGEABLE = PageRequest.of(0, limit - 1);
-
-        final var SALARY_DATA = salaryDataRepository.findAll(PAGEABLE);
+    public Page<SalaryDataResponse> findAll(Pageable pageable) {
+        final var SALARY_DATA = salaryDataRepository.findAll(pageable);
 
         auditUtil.audit(
                 VIEW,
