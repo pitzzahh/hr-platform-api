@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.audit.service;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
-import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.audit.repository.AuditRepository;

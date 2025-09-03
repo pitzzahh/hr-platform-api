@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.salary.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import lombok.Builder;
 
 import java.time.Instant;
