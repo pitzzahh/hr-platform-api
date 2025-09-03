@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.salary.controller;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
-import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
+import dev.araopj.hrplatformapi.salary.service.SalaryGradeServiceImp;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ import java.util.List;
 @RequestMapping("api/v1/salary-grades")
 public class SalaryGradeController {
 
-    private final SalaryGradeService salaryGradeService;
+    private final SalaryGradeServiceImp salaryGradeService;
 
     /**
      * Retrieves a list of all salary grade entries.

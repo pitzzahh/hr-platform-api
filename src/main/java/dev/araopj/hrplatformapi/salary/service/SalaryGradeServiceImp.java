@@ -1,12 +1,10 @@
 package dev.araopj.hrplatformapi.salary.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
-import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
@@ -26,29 +24,17 @@ import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SA
 import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
-/**
- * Service class for managing SalaryGrade entities.
- * Provides methods for retrieving, creating, updating, and deleting salary grades,
- * with optional inclusion of associated salary data.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SalaryGradeService {
+public class SalaryGradeServiceImp implements ISalaryGradeService {
 
     private final SalaryGradeRepository salaryGradeRepository;
-    private final SalaryDataRepository salaryDataRepository;
-    private final ObjectMapper objectMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "salaryData");
     private final String ENTITY_NAME = "SalaryGradeResponse";
 
-    /**
-     * Retrieves all salary grades, optionally including associated salary data.
-     *
-     * @param includeSalaryData whether to include salary data in the response
-     * @return list of SalaryGradeResponse objects
-     */
+    @Override
     public List<SalaryGradeResponse> findAll(boolean includeSalaryData) {
         final var SALARY_GRADES = includeSalaryData ?
                 salaryGradeRepository.findAllWithSalaryData() : salaryGradeRepository.findAll();
@@ -69,13 +55,7 @@ public class SalaryGradeService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Retrieves a salary grade by ID, optionally including associated salary data.
-     *
-     * @param id                the ID of the salary grade
-     * @param includeSalaryData whether to include salary data in the response
-     * @return Optional containing SalaryGradeResponse if found
-     */
+    @Override
     public Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) throws BadRequestException {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("SalaryGrade ID must be provided as path");
@@ -92,14 +72,7 @@ public class SalaryGradeService {
         return OPTIONAL_SALARY_GRADE.map(entity -> Mapper.toDto(entity, includeSalaryData));
     }
 
-    /**
-     * Creates a new salary grade, optionally with associated salary data.
-     *
-     * @param salaryGradeRequest the request containing salary grade details
-     * @param includeSalaryData  whether to include salary data in creation
-     * @return SalaryGradeResponse of the created salary grade
-     * @throws BadRequestException if duplicate exists or invalid data
-     */
+    @Override
     public SalaryGradeResponse create(
             SalaryGradeRequest salaryGradeRequest,
             boolean includeSalaryData
@@ -143,14 +116,7 @@ public class SalaryGradeService {
         return Mapper.toDto(savedSalaryGrade, includeSalaryData);
     }
 
-    /**
-     * Creates a batch of salary grades, optionally with associated salary data, using saveAll.
-     *
-     * @param salaryGradeRequests the list of requests containing salary grade details
-     * @param includeSalaryData   whether to include salary data in creation
-     * @return List of created SalaryGradeResponse objects
-     * @throws BadRequestException if duplicates exist or invalid data
-     */
+    @Override
     public List<SalaryGradeResponse> createBatch(
             List<SalaryGradeRequest> salaryGradeRequests,
             boolean includeSalaryData
@@ -207,36 +173,7 @@ public class SalaryGradeService {
         return responses;
     }
 
-    private void validateSalaryGradeExistence(boolean includeSalaryData, SalaryGradeRequest request) throws BadRequestException {
-        final var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
-                request.salaryGrade(),
-                request.effectiveDate()
-        );
-
-        if (OPTIONAL_SALARY_GRADE.isPresent()) {
-            log.warn("salaryGrade {} and effectiveDate {} already exists in SalaryGrade with id {}",
-                    request.salaryGrade(), request.effectiveDate(), OPTIONAL_SALARY_GRADE.get().getId());
-            throw new BadRequestException(
-                    String.format("SalaryGrade with salaryGrade %d and effectiveDate %s already exists.",
-                            request.salaryGrade(), request.effectiveDate())
-            );
-        }
-
-        // Validate salary data if required
-        if (includeSalaryData) {
-            if (request.salaryData() == null || request.salaryData().isEmpty()) {
-                throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
-            }
-        }
-    }
-
-    /**
-     * Updates an existing salary grade.
-     *
-     * @param id                 the ID of the salary grade to update
-     * @param salaryGradeRequest the updated details
-     * @return the updated SalaryGradeResponse
-     */
+    @Override
     public SalaryGradeResponse update(
             @Nullable String id,
             SalaryGradeRequest salaryGradeRequest
@@ -268,12 +205,7 @@ public class SalaryGradeService {
         return NEW_DTO;
     }
 
-    /**
-     * Deletes a salary grade by ID.
-     *
-     * @param id the ID to delete
-     * @return true if deleted
-     */
+    @Override
     public boolean delete(String id) {
         var SALARY_GRADE_TO_BE_REMOVED = salaryGradeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE));
@@ -291,4 +223,26 @@ public class SalaryGradeService {
         return true;
     }
 
+    private void validateSalaryGradeExistence(boolean includeSalaryData, SalaryGradeRequest request) throws BadRequestException {
+        final var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
+                request.salaryGrade(),
+                request.effectiveDate()
+        );
+
+        if (OPTIONAL_SALARY_GRADE.isPresent()) {
+            log.warn("salaryGrade {} and effectiveDate {} already exists in SalaryGrade with id {}",
+                    request.salaryGrade(), request.effectiveDate(), OPTIONAL_SALARY_GRADE.get().getId());
+            throw new BadRequestException(
+                    String.format("SalaryGrade with salaryGrade %d and effectiveDate %s already exists.",
+                            request.salaryGrade(), request.effectiveDate())
+            );
+        }
+
+        // Validate salary data if required
+        if (includeSalaryData) {
+            if (request.salaryData() == null || request.salaryData().isEmpty()) {
+                throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
+            }
+        }
+    }
 }
