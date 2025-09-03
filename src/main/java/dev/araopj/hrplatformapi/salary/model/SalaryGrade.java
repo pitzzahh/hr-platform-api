@@ -29,7 +29,7 @@ public class SalaryGrade extends EntityTimestamp implements Serializable {
     private String legalBasis;
 
     @Column
-    private byte tranche;
+    private int tranche;
 
     @Column(nullable = false)
     private LocalDate effectiveDate;
@@ -37,7 +37,7 @@ public class SalaryGrade extends EntityTimestamp implements Serializable {
     @Column(nullable = false)
     @Min(value = 1, message = "Salary grade must be at least 1")
     @Max(value = 33, message = "Salary grade must be at most 33")
-    private byte salaryGrade;
+    private int salaryGrade;
 
     @JsonIgnore
     @JsonManagedReference

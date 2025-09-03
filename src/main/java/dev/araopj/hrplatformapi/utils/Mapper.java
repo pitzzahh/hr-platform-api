@@ -42,8 +42,8 @@ public class Mapper {
         if (salaryDataRequest == null) return null;
 
         return SalaryData.builder()
-                .step(salaryDataRequest.step())
-                .amount(salaryDataRequest.amount())
+                .step(salaryDataRequest.getStep())
+                .amount(salaryDataRequest.getAmount())
                 .build();
     }
 

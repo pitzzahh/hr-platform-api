@@ -92,9 +92,9 @@ public class SalaryGradeServiceImp implements ISalaryGradeService {
             }
             salaryGradeToSave.setSalaryData(
                     salaryGradeRequest.salaryData().stream()
-                            .map(sd -> SalaryData.builder()
-                                    .step(sd.step())
-                                    .amount(sd.amount())
+                            .map(salaryDataRequest -> SalaryData.builder()
+                                    .step(salaryDataRequest.getStep())
+                                    .amount(salaryDataRequest.getAmount())
                                     .salaryGrade(salaryGradeToSave)
                                     .build())
                             .collect(Collectors.toList())
@@ -142,8 +142,8 @@ public class SalaryGradeServiceImp implements ISalaryGradeService {
                 salaryGradeToSave.setSalaryData(
                         request.salaryData().stream()
                                 .map(sd -> SalaryData.builder()
-                                        .step(sd.step())
-                                        .amount(sd.amount())
+                                        .step(sd.getStep())
+                                        .amount(sd.getAmount())
                                         .salaryGrade(salaryGradeToSave)
                                         .build())
                                 .collect(Collectors.toList())

@@ -220,7 +220,7 @@ public class SalaryDataController {
     @PostMapping
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
             @Parameter(description = "Salary data details to create", required = true)
-            @RequestBody @NotNull @Valid SalaryDataRequest salaryDataRequest,
+            @RequestBody @Valid SalaryDataRequest salaryDataRequest,
             @Parameter(description = "Optional ID of the salary grade from query parameter")
             @RequestParam(required = false) @Nullable String salaryGradeId,
             @Parameter(description = "Validation strategy for salary grade ID", example = "CHECK_PARENT_FROM_REQUEST_BODY")

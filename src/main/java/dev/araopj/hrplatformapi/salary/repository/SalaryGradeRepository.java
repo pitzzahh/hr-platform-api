@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface SalaryGradeRepository extends JpaRepository<SalaryGrade, String> {
 
-    Optional<SalaryGrade> findBySalaryGradeAndEffectiveDate(byte salaryGrade, LocalDate localDate);
+    Optional<SalaryGrade> findBySalaryGradeAndEffectiveDate(int salaryGrade, LocalDate localDate);
 
     @Query("SELECT DISTINCT sg FROM SalaryGrade sg LEFT JOIN FETCH sg.salaryData")
     List<SalaryGrade> findAllWithSalaryData();

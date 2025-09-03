@@ -107,10 +107,10 @@ public class SalaryDataServiceImp implements ISalaryDataService {
                 yield salaryGradeRepository.findById(salaryGradeId);
             }
             case CHECK_PARENT_FROM_REQUEST_BODY -> {
-                if (salaryDataRequest.salaryGradeId() == null || salaryDataRequest.salaryGradeId().isEmpty()) {
+                if (salaryDataRequest.getSalaryGradeId() == null || salaryDataRequest.getSalaryGradeId().isEmpty()) {
                     throw new BadRequestException("Salary grade ID must be provided in request body when using CHECK_PARENT_FROM_REQUEST_BODY.");
                 }
-                yield salaryGradeRepository.findById(salaryDataRequest.salaryGradeId());
+                yield salaryGradeRepository.findById(salaryDataRequest.getSalaryGradeId());
             }
         };
 
@@ -118,12 +118,12 @@ public class SalaryDataServiceImp implements ISalaryDataService {
         final var SALARY_GRADE_ID_TO_CHECK = getId(salaryDataRequest, salaryGradeId, checkType);
         final var RESOLVED_SALARY_GRADE = OPTIONAL_SALARY_GRADE_CHECK.orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID_TO_CHECK, SALARY_GRADE));
 
-        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID_TO_CHECK)
+        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.getStep(), salaryDataRequest.getAmount(), SALARY_GRADE_ID_TO_CHECK)
                 .ifPresent(sd -> {
                     throw new IllegalArgumentException(
                             "Salary data with step %d amount %f, and salary grade %d already exists for salary grade ID [%s]".formatted(
-                                    salaryDataRequest.step(),
-                                    salaryDataRequest.amount(),
+                                    salaryDataRequest.getStep(),
+                                    salaryDataRequest.getAmount(),
                                     RESOLVED_SALARY_GRADE.getSalaryGrade(),
                                     SALARY_GRADE_ID_TO_CHECK
                             )
@@ -132,8 +132,8 @@ public class SalaryDataServiceImp implements ISalaryDataService {
 
 
         final var SALARY_DATA_TO_SAVE = SalaryData.builder()
-                .step(salaryDataRequest.step())
-                .amount(salaryDataRequest.amount())
+                .step(salaryDataRequest.getStep())
+                .amount(salaryDataRequest.getAmount())
                 .salaryGrade(RESOLVED_SALARY_GRADE)
                 .build();
 
@@ -159,7 +159,7 @@ public class SalaryDataServiceImp implements ISalaryDataService {
             throw new BadRequestException("SalaryData ID must be provided as path");
         }
 
-        final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
+        final var SALARY_GRADE_ID = salaryDataRequest.getSalaryGradeId();
         final var ORIGINAL_SALARY_DATA = salaryDataRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_DATA));
         var SALARY_DATA = MergeUtil.merge(ORIGINAL_SALARY_DATA,
@@ -175,15 +175,15 @@ public class SalaryDataServiceImp implements ISalaryDataService {
 
             // check for existing entity based on new update values
             salaryDataRepository.findByStepAndAmountAndSalaryGradeId(
-                    salaryDataRequest.step(),
-                    salaryDataRequest.amount(),
+                    salaryDataRequest.getStep(),
+                    salaryDataRequest.getAmount(),
                     SALARY_GRADE_ID
             ).ifPresent(e -> {
                 if (!Objects.equals(e.getId(), id)) {
                     throw new IllegalArgumentException(
                             "Salary data with step %d amount %s, and salary grade %d already exists for salary grade ID [%s]".formatted(
-                                    salaryDataRequest.step(),
-                                    salaryDataRequest.amount() % 1 == 0 ? String.format("%.0f", salaryDataRequest.amount()) : String.format("%.2f", salaryDataRequest.amount()),
+                                    salaryDataRequest.getStep(),
+                                    salaryDataRequest.getAmount() % 1 == 0 ? String.format("%.0f", salaryDataRequest.getAmount()) : String.format("%.2f", salaryDataRequest.getAmount()),
                                     e.getSalaryGrade().getSalaryGrade(),
                                     SALARY_GRADE_ID
                             )
@@ -236,9 +236,9 @@ public class SalaryDataServiceImp implements ISalaryDataService {
                 return salaryGradeId;
             }
             case CHECK_PARENT_FROM_REQUEST_BODY -> {
-                if (request.salaryGradeId() == null || request.salaryGradeId().isEmpty())
+                if (request.getSalaryGradeId() == null || request.getSalaryGradeId().isEmpty())
                     throw new BadRequestException("Salary grade ID must be provided in request body when using CHECK_PARENT_FROM_REQUEST_BODY.");
-                return request.salaryGradeId();
+                return request.getSalaryGradeId();
             }
             default -> throw new BadRequestException("Invalid CheckType provided.");
         }

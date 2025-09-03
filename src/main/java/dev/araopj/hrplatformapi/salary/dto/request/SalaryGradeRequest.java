@@ -12,12 +12,12 @@ import java.util.List;
 public record SalaryGradeRequest(
         @NotNull(message = "Legal basis cannot be null")
         String legalBasis,
-        byte tranche,
+        int tranche,
         @NotNull(message = "Effective date cannot be null")
         LocalDate effectiveDate,
         @Min(value = 1, message = "Salary grade must be at least 1")
         @Max(value = 33, message = "Salary grade must be at most 33")
-        byte salaryGrade,
+        int salaryGrade,
         List<SalaryDataRequest.WithoutSalaryGradeId> salaryData
 ) {
 }

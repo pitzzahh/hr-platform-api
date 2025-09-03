@@ -25,7 +25,7 @@ public class SalaryData extends EntityTimestamp implements Serializable {
     @Column(nullable = false)
     @Min(value = 1, message = "Salary step must be at least 1")
     @Max(value = 8, message = "Salary step must be at most 8")
-    private byte step;
+    private int step;
 
     @Column(nullable = false)
     private double amount;

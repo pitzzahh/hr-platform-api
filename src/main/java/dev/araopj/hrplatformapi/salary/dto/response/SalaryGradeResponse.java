@@ -11,9 +11,9 @@ import java.util.List;
 public record SalaryGradeResponse(
         String id,
         String legalBasis,
-        byte tranche,
+        int tranche,
         LocalDate effectiveDate,
-        byte salaryGrade,
+        int salaryGrade,
         Instant createdAt,
         Instant updatedAt,
         @JsonInclude(JsonInclude.Include.NON_NULL)

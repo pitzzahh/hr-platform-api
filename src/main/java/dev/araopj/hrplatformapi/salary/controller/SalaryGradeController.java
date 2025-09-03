@@ -197,7 +197,7 @@ public class SalaryGradeController {
     @PostMapping
     public ResponseEntity<StandardApiResponse<List<SalaryGradeResponse>>> create(
             @Parameter(description = "Salary grade details to create (single object or array)", required = true)
-            @RequestBody @Valid List<SalaryGradeRequest> salaryGradeRequests,
+            @RequestBody List<SalaryGradeRequest> salaryGradeRequests,
             @Parameter(description = "Include associated salary data in the creation process", example = "false")
             @RequestParam(defaultValue = "false", required = false) boolean includeSalaryData
     ) throws BadRequestException {

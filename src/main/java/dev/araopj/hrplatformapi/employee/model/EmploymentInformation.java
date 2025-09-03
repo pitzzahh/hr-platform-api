@@ -46,11 +46,11 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
 
     @Column(nullable = false)
     @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
-    byte step;
+    int step;
 
     @Column
     @Size(min = 1, max = 8, message = "Anticipated step must be between 1 and 8")
-    byte anticipatedStep;
+    int anticipatedStep;
 
     @OneToOne
     @JoinColumn(name = "position_id", nullable = false, unique = true)

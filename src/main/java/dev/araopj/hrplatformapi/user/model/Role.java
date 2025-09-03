@@ -27,7 +27,7 @@ public class Role extends EntityTimestamp implements Serializable {
     String description;
 
     @Column(nullable = false)
-    byte maxUser = 1; // Number of users that can be assigned to this role
+    int maxUser = 1; // Number of users that can be assigned to this role
 
     @OneToOne(mappedBy = "role", cascade = CascadeType.ALL)
     User user;

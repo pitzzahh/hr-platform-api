@@ -9,7 +9,7 @@ import java.time.Instant;
 @Builder
 public record SalaryDataResponse(
         String id,
-        byte step,
+        int step,
         double amount,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         SalaryGradeResponse salaryGrade,

@@ -81,7 +81,8 @@ public class AuditUtil {
      * @see AuditServiceImp
      */
     public ApiError audit(Exception ex, String message, Optional<ApiError> existingError) {
-        var error = existingError.orElse(ApiError.builder()
+        var error = existingError
+                .orElse(ApiError.builder()
                 .message(message)
                 .details(List.of(ex.getMessage()))
                 .build());

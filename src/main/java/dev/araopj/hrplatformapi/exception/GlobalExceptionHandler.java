@@ -10,9 +10,11 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
@@ -20,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -62,6 +65,40 @@ public class GlobalExceptionHandler {
                                                 .stream()
                                                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                                                 .toList())
+                                        .build()
+                                )
+                        )
+                ));
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
+        log.warn("""
+                \nERROR: Validation Failure
+                  TYPE: HandlerMethodValidationException
+                  MESSAGE: {}
+                  DETAILS: Validation errors occurred in method parameters""", ex.getMessage());
+
+        // Extract validation errors
+        var details = ex.getAllErrors().stream()
+                .map(error -> {
+                    if (error instanceof FieldError fieldError) {
+                        return fieldError.getField() + ": " + fieldError.getDefaultMessage();
+                    } else {
+                        return error.getDefaultMessage();
+                    }
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity
+                .badRequest()
+                .body(StandardApiResponse.failure(
+                        auditUtil.audit(
+                                ex,
+                                "Validation failed",
+                                Optional.of(ApiError.builder()
+                                        .message("Validation failed")
+                                        .details(details)
                                         .build()
                                 )
                         )
