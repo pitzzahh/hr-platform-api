@@ -2,7 +2,10 @@ package dev.araopj.hrplatformapi.utils;
 
 import dev.araopj.hrplatformapi.audit.dto.AuditDto;
 import dev.araopj.hrplatformapi.audit.model.Audit;
+import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
+import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
+import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
@@ -56,6 +59,16 @@ public class Mapper {
                 .build();
     }
 
+    public static DivisionStationPlaceOfAssignment toEntity(DivisionStationPlaceOfAssignmentRequest divisionStationPlaceOfAssignmentRequest) {
+        if (divisionStationPlaceOfAssignmentRequest == null) return null;
+
+        return DivisionStationPlaceOfAssignment.builder()
+                .code(divisionStationPlaceOfAssignmentRequest.code())
+                .name(divisionStationPlaceOfAssignmentRequest.name())
+                .shortName(divisionStationPlaceOfAssignmentRequest.shortName())
+                .build();
+    }
+
     public static SalaryGrade toEntity(SalaryGradeRequest salaryGradeRequest) {
         if (salaryGradeRequest == null) return null;
 
@@ -95,28 +108,43 @@ public class Mapper {
     public static SalaryGradeResponse toDto(SalaryGrade salaryGrade, boolean includeSalaryData) {
         if (salaryGrade == null) return null;
 
-        var builder = SalaryGradeResponse.builder()
+        return SalaryGradeResponse.builder()
                 .id(salaryGrade.getId())
                 .legalBasis(salaryGrade.getLegalBasis())
                 .effectiveDate(salaryGrade.getEffectiveDate())
                 .tranche(salaryGrade.getTranche())
                 .salaryGrade(salaryGrade.getSalaryGrade())
                 .createdAt(salaryGrade.getCreatedAt())
-                .updatedAt(salaryGrade.getUpdatedAt());
+                .salaryData(
+                        includeSalaryData && salaryGrade.getSalaryData() != null ?
+                                salaryGrade.getSalaryData().stream()
+                                        .map(sd -> toDto(sd, false)) // Avoid circular reference
+                                        .toList() : null
+                )
+                .updatedAt(salaryGrade.getUpdatedAt()).build();
+    }
 
-        if (includeSalaryData && salaryGrade.getSalaryData() != null) {
-            builder.salaryData(
-                    salaryGrade.getSalaryData().stream()
-                            .map(sd -> toDto(sd, false)) // Avoid circular reference
-                            .toList()
-            );
-        }
+    public static DivisionStationPlaceOfAssignmentResponse toDto(DivisionStationPlaceOfAssignment entity, boolean includeEmployee) {
+        if (entity == null) return null;
 
-        return builder.build();
+        return DivisionStationPlaceOfAssignmentResponse.builder()
+                .id(entity.getId())
+                .code(entity.getCode())
+                .name(entity.getName())
+                .shortName(entity.getShortName())
+                .employee(includeEmployee ? entity.getEmploymentInformation().getEmployee() : null)
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
     }
 
     // fallback for existing usages (defaults with parent)
     public static SalaryDataResponse toDto(SalaryData entity) {
         return toDto(entity, true);
     }
+
+    public static DivisionStationPlaceOfAssignmentResponse toDto(DivisionStationPlaceOfAssignment entity) {
+        return toDto(entity, true);
+    }
+
 }
