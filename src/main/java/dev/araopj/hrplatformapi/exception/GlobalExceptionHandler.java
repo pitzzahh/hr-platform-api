@@ -13,7 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -22,6 +27,20 @@ import java.util.Optional;
 public class GlobalExceptionHandler {
 
     private final AuditUtil auditUtil;
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        var body = new LinkedHashMap<String, Object>();
+        body.put("timestamp", Instant.now().toString());
+        body.put("error", Map.of(
+                "message", String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
+                        ex.getValue(),
+                        ex.getName(),
+                        ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown"),
+                "details", List.of(ex.getMessage())
+        ));
+        return ResponseEntity.badRequest().body(body);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleValidationExceptions(MethodArgumentNotValidException ex) {

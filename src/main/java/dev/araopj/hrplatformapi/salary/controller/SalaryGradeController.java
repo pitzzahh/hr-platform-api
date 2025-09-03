@@ -199,7 +199,7 @@ public class SalaryGradeController {
             @Parameter(description = "Salary grade details to create", required = true)
             @RequestBody @Valid SalaryGradeRequest salaryGradeRequest,
             @Parameter(description = "Include associated salary data in the creation process", example = "false")
-            @RequestParam(defaultValue = "false", required = false) boolean includeSalaryData
+            @RequestParam(defaultValue = "false", required = false) @Valid boolean includeSalaryData
     ) throws BadRequestException {
         log.debug("Request to create salaryGradeRequest: {}", salaryGradeRequest);
         return salaryGradeService.create(salaryGradeRequest, includeSalaryData)
