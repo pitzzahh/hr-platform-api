@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface DivisionStationPlaceOfAssignmentRepository extends JpaRepository<DivisionStationPlaceOfAssignment, String> {
     Optional<DivisionStationPlaceOfAssignment> findByIdAndEmploymentInformation_Id(String id, String employeeId);
+
+    Optional<DivisionStationPlaceOfAssignment> findByCodeAndNameAndEmploymentInformationId(String code, String name, String employmentInformationId);
 }

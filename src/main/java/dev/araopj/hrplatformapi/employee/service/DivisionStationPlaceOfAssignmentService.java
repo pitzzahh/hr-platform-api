@@ -7,26 +7,18 @@ import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssi
 import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.repository.DivisionStationPlaceOfAssignmentRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.CommonValidation;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
-import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.enums.FetchType;
+import dev.araopj.hrplatformapi.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.DIVISION_STATION_PLACE_OF_ASSIGNMENT;
-import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
-import static dev.araopj.hrplatformapi.utils.MergeUtil.merge;
 
 /**
  * Service class for managing DivisionStationPlaceOfAssignment entities.
@@ -142,7 +134,7 @@ public class DivisionStationPlaceOfAssignmentService {
         );
 
         return Optional.of(data
-                .map(e -> objectMapper.convertValue(e, DivisionStationPlaceOfAssignmentResponse.class))
+                .map(Mapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, employmentInformationId, DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId")));
     }
 
@@ -190,61 +182,62 @@ public class DivisionStationPlaceOfAssignmentService {
      * Update an existing {@link DivisionStationPlaceOfAssignment} record identified by its ID, with optional employment information ID verification, and log the action in the audit utility.
      *
      * @param id                                      The ID of the {@link DivisionStationPlaceOfAssignment} record to update.
-     * @param employmentInformationId                 The ID of the associated employment information (used if {@code useParentIdFromPathVariable} is true).
      * @param divisionStationPlaceOfAssignmentRequest The request object containing updated DivisionStationPlaceOfAssignment details.
-     * @param fetchType                               The method to fetch the existing {@link DivisionStationPlaceOfAssignment} record (by path variable or with parent path variable).
-     * @param useParentIdFromPathVariable             Flag indicating whether to use the employment information ID from the path variable or from the request.
      * @return {@link DivisionStationPlaceOfAssignmentResponse} containing the updated DivisionStationPlaceOfAssignment record.
      * @throws NotFoundException if no DivisionStationPlaceOfAssignment record is found with the given criteria.
      */
     public DivisionStationPlaceOfAssignmentResponse update(
             String id,
-            String employmentInformationId,
-            DivisionStationPlaceOfAssignmentRequest divisionStationPlaceOfAssignmentRequest,
-            FetchType fetchType,
-            boolean useParentIdFromPathVariable
-    ) {
-        var divisionPlaceOfAssignmentResponse = switch (fetchType) {
-            case BY_PATH_VARIABLE -> findById(id);
-            case WITH_PARENT_PATH_VARIABLE ->
-                    findByIdAndEmploymentInformationId(id, useParentIdFromPathVariable ? employmentInformationId : divisionStationPlaceOfAssignmentRequest.employmentInformationId());
-            default -> Optional.<DivisionStationPlaceOfAssignmentResponse>empty();
-        };
+            DivisionStationPlaceOfAssignmentRequest divisionStationPlaceOfAssignmentRequest
+    ) throws BadRequestException {
 
-        if (divisionPlaceOfAssignmentResponse.isEmpty()) {
-            log.warn("DivisionStationPlaceOfAssignment with id {} and employment information id {} not found", id, employmentInformationId);
-            throw new NotFoundException(
-                    id,
-                    employmentInformationId,
-                    DIVISION_STATION_PLACE_OF_ASSIGNMENT,
-                    "employmentInformationId"
-            );
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("DivisionStationPlaceOfAssignment ID must be provided as path");
         }
 
-        var oldData = divisionPlaceOfAssignmentResponse.get(); // Keep the old data for auditing
-        var newData = MergeUtil.merge(divisionPlaceOfAssignmentResponse.get(), divisionStationPlaceOfAssignmentRequest); // Merge old divisionPlaceOfAssignmentResponse with new request divisionPlaceOfAssignmentResponse
-        var changes = DiffUtil.diff(divisionPlaceOfAssignmentResponse.get(), divisionStationPlaceOfAssignmentRequest); // Compute the diff between old and new data
+        final var EMPLOYMENT_INFORMATION_ID = divisionStationPlaceOfAssignmentRequest.employmentInformationId();
 
-        if (changes.isEmpty()) {
-            log.info("No changes detected for DivisionStationPlaceOfAssignment with id {}", id);
-            return oldData;
+        final var ORIGINAL_DIVISION_STATION_PLACE_OF_ASSIGNMENT = divisionStationPlaceOfAssignmentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, DIVISION_STATION_PLACE_OF_ASSIGNMENT));
+        final var DIVISION_STATION_PLACE_OF_ASSIGNMENT_DATA = MergeUtil.<DivisionStationPlaceOfAssignment>merge(
+                ORIGINAL_DIVISION_STATION_PLACE_OF_ASSIGNMENT,
+                Mapper.toEntity(divisionStationPlaceOfAssignmentRequest)
+        );
+
+        if (EMPLOYMENT_INFORMATION_ID != null && !EMPLOYMENT_INFORMATION_ID.isEmpty()) {
+            final var EMPLOYMENT_INFORMATION_PARENT = findByIdAndEmploymentInformationId(id, EMPLOYMENT_INFORMATION_ID)
+                    .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION_ID, DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId"));
+
+            if (!Objects.equals(EMPLOYMENT_INFORMATION_PARENT.id(), DIVISION_STATION_PLACE_OF_ASSIGNMENT_DATA.getEmploymentInformation().getId())) {
+                throw new BadRequestException("DivisionStationPlaceOfAssignment with id %s does not belong to EmploymentInformation with id %s".formatted(id, EMPLOYMENT_INFORMATION_ID));
+            }
+
+            divisionStationPlaceOfAssignmentRepository.findByCodeAndNameAndEmploymentInformationId(
+                    divisionStationPlaceOfAssignmentRequest.code(),
+                    divisionStationPlaceOfAssignmentRequest.name(),
+                    EMPLOYMENT_INFORMATION_ID
+            ).ifPresent(existing -> {
+                if (!existing.getId().equals(id)) {
+                    throw new IllegalArgumentException("DivisionStationPlaceOfAssignment with code %s and name %s already exists for EmploymentInformation with id %s".formatted(
+                            divisionStationPlaceOfAssignmentRequest.code(),
+                            divisionStationPlaceOfAssignmentRequest.name(),
+                            EMPLOYMENT_INFORMATION_ID
+                    ));
+                }
+            });
         }
 
         auditUtil.audit(
                 UPDATE,
                 id,
-                Optional.of(redact(oldData, REDACTED)),
-                redact(merge(newData, divisionStationPlaceOfAssignmentRequest), REDACTED),
-                Optional.of(redact(diff(oldData, divisionStationPlaceOfAssignmentRequest), REDACTED)),
+                Optional.of(redact(ORIGINAL_DIVISION_STATION_PLACE_OF_ASSIGNMENT, REDACTED)),
+                redact(DIVISION_STATION_PLACE_OF_ASSIGNMENT_DATA, REDACTED),
+                Optional.of(redact(DiffUtil.diff(ORIGINAL_DIVISION_STATION_PLACE_OF_ASSIGNMENT, DIVISION_STATION_PLACE_OF_ASSIGNMENT_DATA), REDACTED)),
                 ENTITY_NAME
         );
 
-        return objectMapper.convertValue(
-                divisionStationPlaceOfAssignmentRepository.saveAndFlush(
-                        objectMapper.convertValue(divisionPlaceOfAssignmentResponse, DivisionStationPlaceOfAssignment.class)
-                ),
-                DivisionStationPlaceOfAssignmentResponse.class
-        );
+        return Mapper.toDto(divisionStationPlaceOfAssignmentRepository.saveAndFlush(DIVISION_STATION_PLACE_OF_ASSIGNMENT_DATA));
+
     }
 
     /**
