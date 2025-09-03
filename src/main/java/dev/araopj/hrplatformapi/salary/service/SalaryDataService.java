@@ -29,7 +29,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class SalaryDataService {
+public class SalaryDataService implements ISalaryDataService {
 
     private final SalaryGradeRepository salaryGradeRepository;
     private final SalaryDataRepository salaryDataRepository;
@@ -37,6 +37,7 @@ public class SalaryDataService {
     private final Set<String> REDACTED = Set.of("id", "salaryGrade");
     private final String ENTITY_NAME = "SalaryDataResponse";
 
+    @Override
     public List<SalaryDataResponse> findAll(String salaryGradeId, boolean withSalaryGrade, int limit) {
 
         var pageable = PageRequest.of(0, limit);
@@ -71,6 +72,7 @@ public class SalaryDataService {
                 .toList();
     }
 
+    @Override
     public Optional<SalaryDataResponse> findById(String id) {
         auditUtil.audit(
                 id,
@@ -82,6 +84,7 @@ public class SalaryDataService {
 
     }
 
+    @Override
     public Optional<SalaryDataResponse> findByIdAndSalaryGradeId(String id, String salaryGradeId) {
         var data = salaryDataRepository.findByIdAndSalaryGradeId(id, salaryGradeId);
 
@@ -104,6 +107,7 @@ public class SalaryDataService {
                 .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId")));
     }
 
+    @Override
     public SalaryDataResponse create(
             SalaryDataRequest salaryDataRequest,
             @Nullable String salaryGradeId, // salary grade id from request param
@@ -159,6 +163,7 @@ public class SalaryDataService {
 
     }
 
+    @Override
     public SalaryDataResponse update(
             String id,
             SalaryDataRequest salaryDataRequest
@@ -213,6 +218,7 @@ public class SalaryDataService {
         return Mapper.toDto(salaryDataRepository.saveAndFlush(SALARY_DATA));
     }
 
+    @Override
     public boolean delete(String id, String salaryGradeId) {
         var data = findByIdAndSalaryGradeId(id, salaryGradeId);
         if (data.isEmpty()) {

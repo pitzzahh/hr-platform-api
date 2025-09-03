@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.salary.controller;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
+import dev.araopj.hrplatformapi.salary.service.ISalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
@@ -42,7 +42,7 @@ import static dev.araopj.hrplatformapi.utils.enums.FetchType.BY_PATH_VARIABLE;
 )
 public class SalaryDataController {
 
-    private final SalaryDataService salaryDataService;
+    private final ISalaryDataService salaryDataService;
 
     /**
      * Retrieves a list of salary data entries, optionally filtered by salary grade ID.
