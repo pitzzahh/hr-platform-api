@@ -79,8 +79,9 @@ public class UuidGenerator extends SequenceStyleGenerator {
             throw new IllegalStateException(
                     String.format("Failed to access ID getter for entity %s: %s",
                             owner.getClass().getSimpleName(), e.getMessage()), e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(
+                String.format("No suitable ID getter method found for entity %s: %s",
+                    owner.getClass().getSimpleName(), e.getMessage()), e);
         }
     }
 
