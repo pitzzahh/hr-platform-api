@@ -15,7 +15,6 @@ import java.util.List;
 public class ApiError {
     @NotNull
     private String message;
-    @Null
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> details;
 }
