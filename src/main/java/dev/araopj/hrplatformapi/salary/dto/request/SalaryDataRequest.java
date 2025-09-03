@@ -7,11 +7,11 @@ public record SalaryDataRequest(
         byte step,
         double amount,
         String salaryGradeId
-) implements SalaryDataBase {
+) implements ISalaryData {
     @Builder
     public record WithoutSalaryGradeId(
             byte step,
             double amount
-    ) implements SalaryDataBase {
+    ) implements ISalaryData {
     }
 }
