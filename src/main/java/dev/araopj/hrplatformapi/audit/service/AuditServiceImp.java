@@ -1,6 +1,7 @@
 package dev.araopj.hrplatformapi.audit.service;
 
-import dev.araopj.hrplatformapi.audit.dto.request.IAuditRequest;
+import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
+import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.audit.repository.AuditRepository;
@@ -23,7 +24,7 @@ import java.util.Optional;
  *
  * @see IAuditService
  * @see Audit
- * @see IAuditRequest
+ * @see AuditRequest
  * @see AuditResponse
  * @see AuditRepository
  */
@@ -49,7 +50,7 @@ public class AuditServiceImp implements IAuditService {
     }
 
     @Override
-    public AuditResponse create(@NotNull IAuditRequest request) {
+    public AuditResponse create(@NotNull AuditRequest request) {
         log.debug("Creating audit record: {}", request);
 
         // Validate audit data consistency

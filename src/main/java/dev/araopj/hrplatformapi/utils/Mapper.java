@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.utils;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
-import dev.araopj.hrplatformapi.audit.dto.request.IAuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
@@ -130,12 +129,12 @@ public class Mapper {
     }
 
     /**
-     * Converts an {@link IAuditRequest} to an {@link Audit} entity.
+     * Converts an {@link AuditRequest} to an {@link Audit} entity.
      *
      * @param request the audit request DTO (e.g., {@link AuditRequest}, {@link AuditRequest.WithChanges}, {@link AuditRequest.WithoutChanges})
      * @return the corresponding audit entity
      */
-    public static Audit toEntity(IAuditRequest request) {
+    public static Audit toEntity(AuditRequest request) {
         return Audit.builder()
                 .entityType(request.entityType())
                 .action(request.action())

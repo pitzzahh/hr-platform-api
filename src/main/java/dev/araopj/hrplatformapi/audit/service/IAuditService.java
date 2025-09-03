@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.audit.service;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
-import dev.araopj.hrplatformapi.audit.dto.request.IAuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import jakarta.validation.constraints.NotNull;
@@ -50,8 +49,8 @@ public interface IAuditService {
      * The method validates the input and persists the audit record, logging a warning
      * if the audit record indicates no changes (e.g., no old or new data).
      *
-     * @param request the {@link IAuditRequest} containing audit details
+     * @param request the {@link AuditRequest} containing audit details
      * @return the created {@link AuditResponse} object
      */
-    AuditResponse create(@NotNull IAuditRequest request);
+    AuditResponse create(@NotNull AuditRequest request);
 }
