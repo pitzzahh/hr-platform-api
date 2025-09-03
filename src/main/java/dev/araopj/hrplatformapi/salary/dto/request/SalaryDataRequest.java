@@ -10,7 +10,6 @@ import lombok.Builder;
 public record SalaryDataRequest(
         @Min(value = 1, message = "step must be at least 1")
         @Max(value = 8, message = "step must be at most 8")
-        @NotNull(message = "step is required")
         int step,
         @NotNull(message = "amount is required")
         double amount,
@@ -21,7 +20,6 @@ public record SalaryDataRequest(
     public record WithoutSalaryGradeId(
             @Min(value = 1, message = "step must be at least 1")
             @Max(value = 8, message = "step must be at most 8")
-            @NotNull(message = "step is required")
             int step,
             @NotNull(message = "amount is required")
             double amount
