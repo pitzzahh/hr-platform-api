@@ -1,7 +1,7 @@
 package dev.araopj.hrplatformapi.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.araopj.hrplatformapi.audit.dto.AuditDto;
+import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.audit.service.AuditService;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +33,11 @@ public class AuditUtil {
      * @param changes    Optional object representing the changes between old and new data, see {@link Optional}.
      * @param entityType The type of the entity being audited (e.g., "Gsis").
      * @see AuditAction
-     * @see AuditDto
+     * @see AuditRequest
      * @see AuditService
      */
     public void audit(AuditAction action, String entityId, Optional<Object> oldData, Object newData, Optional<Object> changes, String entityType) {
-        var builder = AuditDto.builder()
+        var builder = AuditRequest.builder()
                 .action(action)
                 .newData(objectMapper.valueToTree(newData))
                 .performedBy("system")
@@ -77,7 +77,7 @@ public class AuditUtil {
      * @param existingError An optional existing ApiError to augment, see {@link Optional}.
      * @return An ApiError object representing the audited error.
      * @see ApiError
-     * @see AuditDto
+     * @see AuditRequest
      * @see AuditService
      */
     public ApiError audit(Exception ex, String message, Optional<ApiError> existingError) {
@@ -86,7 +86,7 @@ public class AuditUtil {
                 .details(List.of(ex.getMessage()))
                 .build());
         auditService.create(
-                AuditDto.builder()
+                AuditRequest.builder()
                         .entityType(ex.getClass().getTypeName())
                         .entityId(ex.getClass().getPackageName())
                         .action(AuditAction.ERROR)

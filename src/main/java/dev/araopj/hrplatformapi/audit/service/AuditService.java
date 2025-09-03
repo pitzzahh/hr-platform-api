@@ -1,8 +1,10 @@
 package dev.araopj.hrplatformapi.audit.service;
 
-import dev.araopj.hrplatformapi.audit.dto.AuditDto;
+import dev.araopj.hrplatformapi.audit.dto.request.IAuditRequest;
+import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.audit.repository.AuditRepository;
+import dev.araopj.hrplatformapi.utils.Mapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,57 +14,56 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service implementation for managing audit records.
+ * <p>
+ * This class provides methods for retrieving and creating audit records, handling
+ * validation, and mapping between entities and DTOs. It interacts with the
+ * {@link AuditRepository} for data persistence.
+ *
+ * @see IAuditService
+ * @see Audit
+ * @see IAuditRequest
+ * @see AuditResponse
+ * @see AuditRepository
+ */
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class AuditService {
+public class AuditService implements IAuditService {
+
     private final AuditRepository auditRepository;
 
-    public Page<Audit> findAll(Pageable pageable) {
-        return auditRepository.findAll(pageable);
+    @Override
+    public Page<AuditResponse> findAll(Pageable pageable) {
+        log.debug("Retrieving audit records with pagination: {}", pageable);
+        return auditRepository.findAll(pageable)
+                .map(Mapper::toDto);
     }
 
-    public Optional<Audit> findById(@NotNull String id) {
-        return auditRepository.findById(id);
-    }
-
-    public Audit create(@NotNull AuditDto request) {
-        var no_changes_when_no_old_data = request.getOldData() == null && request.getNewData() != null;
-        var no_changes_when_no_new_data = request.getOldData() != null && request.getNewData() == null;
-        if (no_changes_when_no_old_data || no_changes_when_no_new_data) {
-            log.warn("Creating audit with no changes: {}", request);
-        }
-        return auditRepository.saveAndFlush(Audit.builder()
-                .entityType(request.getEntityType())
-                .entityId(request.getEntityId())
-                .action(request.getAction())
-                .performedBy(request.getPerformedBy())
-                .oldData(request.getOldData())
-                .newData(request.getNewData())
-                .changes(request.getChanges())
-                .build());
-
-    }
-
-    public Optional<Audit> update(@NotNull String id, AuditDto request) {
+    @Override
+    public Optional<AuditResponse> findById(@NotNull String id) {
+        log.debug("Retrieving audit record with ID: {}", id);
         return auditRepository.findById(id)
-                .map(audit -> {
-                    audit.setEntityType(request.getEntityType());
-                    audit.setAction(request.getAction());
-                    audit.setEntityId(request.getEntityId());
-                    audit.setOldData(request.getOldData());
-                    audit.setNewData(request.getNewData());
-                    audit.setChanges(request.getChanges());
-                    audit.setPerformedBy(request.getPerformedBy());
-                    return auditRepository.save(audit);
-                });
+                .map(Mapper::toDto);
     }
 
-    public boolean delete(@NotNull String id) {
-        if (!auditRepository.existsById(id)) {
-            return false;
+    @Override
+    public AuditResponse create(@NotNull IAuditRequest request) {
+        log.debug("Creating audit record: {}", request);
+
+        // Validate audit data consistency
+        boolean noChangesWhenNoOldData = request.oldData() == null && request.newData() != null;
+        boolean noChangesWhenNoNewData = request.oldData() != null && request.newData() == null;
+        if (noChangesWhenNoOldData || noChangesWhenNoNewData) {
+            log.warn("Creating audit with inconsistent data: oldData={}, newData={}, changes={}",
+                    request.oldData(), request.newData(), request.changes());
         }
-        auditRepository.deleteById(id);
-        return true;
+
+        Audit audit = Mapper.toEntity(request);
+        Audit savedAudit = auditRepository.saveAndFlush(audit);
+        log.debug("Saved audit record with ID: {}", savedAudit.getId());
+
+        return Mapper.toDto(savedAudit);
     }
 }
