@@ -20,6 +20,7 @@ import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.CREATE;
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.VIEW;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.IDENTIFIER;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.IDENTIFIER_TYPE;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
@@ -73,7 +74,7 @@ public class IdentifierTypeService {
             log.warn("Checking identifier with path variable identifierId: {}", identifierId);
             optionalIdentifier = identifierRepository.findById(identifierId);
             if (optionalIdentifier.isEmpty()) {
-                throw new NotFoundException(identifierId, IDENTIFIER_TYPE);
+                throw new NotFoundException(identifierId, IDENTIFIER);
             }
         }
 
