@@ -239,10 +239,8 @@ public class SalaryGradeServiceImp implements ISalaryGradeService {
         }
 
         // Validate salary data if required
-        if (includeSalaryData) {
-            if (request.salaryData() == null || request.salaryData().isEmpty()) {
-                throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
-            }
+        if (includeSalaryData && request.salaryData() == null || request.salaryData().isEmpty()) {
+            throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
         }
     }
 }
