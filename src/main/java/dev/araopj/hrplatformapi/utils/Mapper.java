@@ -132,7 +132,7 @@ public class Mapper {
                 .code(entity.getCode())
                 .name(entity.getName())
                 .shortName(entity.getShortName())
-                .employee(includeEmployee ? entity.getEmploymentInformation().getEmployee() : null)
+                .employmentInformation(includeEmployee ? entity.getEmploymentInformation() : null)
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
