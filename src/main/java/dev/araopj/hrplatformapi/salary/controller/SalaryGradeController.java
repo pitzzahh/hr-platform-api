@@ -148,15 +148,15 @@ public class SalaryGradeController {
     /**
      * Creates a new salary grade entry.
      *
-     * @param salaryGradeRequest The salary grade details to create.
-     * @param includeSalaryData  If true, includes associated salary data in the creation process.
+     * @param salaryGradeRequests The salary grade details to create.
+     * @param includeSalaryData   If true, includes associated salary data in the creation process.
      * @return A ResponseEntity containing a StandardApiResponse with the created SalaryGradeResponse.
      * @throws BadRequestException If the salary grade already exists with the same salary grade and effective date or if invalid data is provided.
      */
     @Operation(
             summary = "Create salary grade",
             description = """
-                     Create a new salary grade entry.\s
+                     Creates salary grades from a single SalaryGradeRequest or an array of SalaryGradeRequests\s
                      Optionally include associated salary data using the 'includeSalaryData' parameter.
                     \s""",
             responses = {
@@ -195,17 +195,14 @@ public class SalaryGradeController {
             }
     )
     @PostMapping
-    public ResponseEntity<StandardApiResponse<SalaryGradeResponse>> create(
-            @Parameter(description = "Salary grade details to create", required = true)
-            @RequestBody @Valid SalaryGradeRequest salaryGradeRequest,
+    public ResponseEntity<StandardApiResponse<List<SalaryGradeResponse>>> create(
+            @Parameter(description = "Salary grade details to create (single object or array)", required = true)
+            @RequestBody @Valid List<SalaryGradeRequest> salaryGradeRequests,
             @Parameter(description = "Include associated salary data in the creation process", example = "false")
-            @RequestParam(defaultValue = "false", required = false) @Valid boolean includeSalaryData
+            @RequestParam(defaultValue = "false", required = false) boolean includeSalaryData
     ) throws BadRequestException {
-        log.debug("Request to create salaryGradeRequest: {}", salaryGradeRequest);
-        return salaryGradeService.create(salaryGradeRequest, includeSalaryData)
-                .map(StandardApiResponse::success)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new BadRequestException("Failed to create salary grade"));
+        log.debug("Request to create salaryGradeRequests: {}", salaryGradeRequests);
+        return ResponseEntity.ok(StandardApiResponse.success(salaryGradeService.createBatch(salaryGradeRequests, includeSalaryData)));
     }
 
     /**
