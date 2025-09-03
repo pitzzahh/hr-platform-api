@@ -5,6 +5,7 @@ import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.service.ISalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,12 +43,10 @@ public class SalaryDataController {
     private final ISalaryDataService salaryDataService;
 
     /**
-     * Retrieves a list of salary data entries, optionally filtered by salary grade ID.
+     * Retrieves a paginated list of all salary data entries.
      *
-     * @param salaryGradeId   Optional ID of the salary grade to filter salary data.
-     * @param withSalaryGrade If true, includes salary grade details in the response.
-     * @param limit           Maximum number of results to return (default: 10).
-     * @return A {@link ResponseEntity} containing a {@link StandardApiResponse} with a list of SalaryDataResponse objects.
+     * @param limit The maximum number of results to return (default is 10).
+     * @return A ResponseEntity containing a {@link StandardApiResponse} with a page of SalaryDataResponse.
      * @throws BadRequestException If invalid parameters are provided.
      */
     @Operation(
@@ -90,9 +89,16 @@ public class SalaryDataController {
             @RequestParam(defaultValue = "10", required = false) @Valid int limit
     ) throws BadRequestException {
         log.debug("Fetching all salary data with limit: {}", limit);
-        return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.findAll(
-                limit
-        )));
+        final var PAGE = salaryDataService.findAll(limit);
+        return ResponseEntity.ok(StandardApiResponse.success(
+                PAGE.getContent(),
+                PaginationMeta.builder()
+                        .page(PAGE.getNumber() - 1)
+                        .size(PAGE.getSize())
+                        .totalElements(PAGE.getTotalElements())
+                        .totalPages(PAGE.getTotalPages())
+                        .build()
+        ));
     }
 
     /**

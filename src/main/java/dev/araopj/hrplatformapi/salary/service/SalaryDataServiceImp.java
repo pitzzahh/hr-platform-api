@@ -12,10 +12,10 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class SalaryDataServiceImp implements ISalaryDataService {
     private final String ENTITY_NAME = "SalaryDataResponse";
 
     @Override
-    public List<SalaryDataResponse> findAll(int limit) {
+    public Page<SalaryDataResponse> findAll(int limit) {
 
         final var PAGEABLE = PageRequest.of(0, limit - 1);
 
@@ -57,9 +57,8 @@ public class SalaryDataServiceImp implements ISalaryDataService {
                 ENTITY_NAME
         );
 
-        return SALARY_DATA.stream()
-                .map(Mapper::toDto)
-                .toList();
+        return SALARY_DATA
+                .map(Mapper::toDto);
     }
 
     @Override

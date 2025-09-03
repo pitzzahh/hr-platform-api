@@ -5,8 +5,8 @@ import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,14 +23,15 @@ import java.util.Optional;
 public interface ISalaryDataService {
 
     /**
-     * Retrieves a list of all salary data records, limited to the specified number.
+     * Retrieves a paginated list of all salary data records.
      * <p>
-     * If the {@code limit} is less than or equal to zero, an empty list is returned.
+     * This method fetches salary data records from the data layer, limited by the specified
+     * number of records. It returns a {@link Page} of {@link SalaryDataResponse} objects.
      *
-     * @param limit the maximum number of salary data records to retrieve
-     * @return a list of {@link SalaryDataResponse} objects, up to the specified limit
+     * @param limit the maximum number of records to retrieve
+     * @return a {@link Page} of {@link SalaryDataResponse} objects containing the salary data records
      */
-    List<SalaryDataResponse> findAll(int limit);
+    Page<SalaryDataResponse> findAll(int limit);
 
     /**
      * Retrieves a salary data record by its unique ID.
