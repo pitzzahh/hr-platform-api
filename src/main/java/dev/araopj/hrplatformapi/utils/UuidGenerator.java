@@ -75,13 +75,10 @@ public class UuidGenerator extends SequenceStyleGenerator {
                 return null;
             }
 
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException(
-                    String.format("Failed to access ID getter for entity %s: %s",
+                    String.format("No suitable ID getter method found for entity %s: %s",
                             owner.getClass().getSimpleName(), e.getMessage()), e);
-            throw new IllegalStateException(
-                String.format("No suitable ID getter method found for entity %s: %s",
-                    owner.getClass().getSimpleName(), e.getMessage()), e);
         }
     }
 
