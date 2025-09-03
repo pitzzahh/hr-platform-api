@@ -12,7 +12,7 @@ public record SalaryDataResponse(
         byte step,
         double amount,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        SalaryGrade salaryGrade,
+        SalaryGradeResponse salaryGrade,
         Instant createdAt,
         Instant updatedAt
 ) {

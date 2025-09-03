@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.salary.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
@@ -38,7 +39,8 @@ public class SalaryGrade extends EntityTimestamp implements Serializable {
     @Max(value = 33, message = "Salary grade must be at most 33")
     private byte salaryGrade;
 
-    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     @JsonManagedReference
+    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SalaryData> salaryData;
 }

@@ -86,18 +86,11 @@ public class SalaryDataController {
     )
     @GetMapping
     public ResponseEntity<StandardApiResponse<List<SalaryDataResponse>>> all(
-            @Parameter(description = "Optional ID of the salary grade to filter salary data")
-            @RequestParam(required = false) String salaryGradeId,
-            @Parameter(description = "Include salary grade details in the response")
-            @RequestParam(required = false) boolean withSalaryGrade,
             @Parameter(description = "Maximum number of results to return", example = "10")
             @RequestParam(defaultValue = "10", required = false) @Valid int limit
     ) throws BadRequestException {
-        log.debug("Fetching all salary data with salaryGradeId: {}, withSalaryGrade: {}, limit: {}",
-                salaryGradeId, withSalaryGrade, limit);
+        log.debug("Fetching all salary data with limit: {}", limit);
         return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.findAll(
-                salaryGradeId,
-                withSalaryGrade,
                 limit
         )));
     }

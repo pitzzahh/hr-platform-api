@@ -6,10 +6,7 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
-import dev.araopj.hrplatformapi.utils.Mapper;
-import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.utils.*;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +15,10 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SALARY_DATA;
@@ -38,37 +37,28 @@ public class SalaryDataServiceImp implements ISalaryDataService {
     private final String ENTITY_NAME = "SalaryDataResponse";
 
     @Override
-    public List<SalaryDataResponse> findAll(String salaryGradeId, boolean withSalaryGrade, int limit) {
+    public List<SalaryDataResponse> findAll(int limit) {
 
-        var pageable = PageRequest.of(0, limit);
+        final var PAGEABLE = PageRequest.of(0, limit - 1);
 
-        var data = withSalaryGrade ?
-                salaryDataRepository.findAllWithParent(pageable)
-                : salaryDataRepository.findAll(pageable).getContent();
-
-        if (salaryGradeId != null) {
-            if (!salaryGradeRepository.existsById(salaryGradeId)) {
-                log.warn("SalaryGrade with id {} not found", salaryGradeId);
-                throw new NotFoundException(salaryGradeId, NotFoundException.EntityType.SALARY_GRADE);
-            }
-            data = salaryDataRepository.findBySalaryGradeId(salaryGradeId, pageable);
-        }
+        final var SALARY_DATA = salaryDataRepository.findAll(PAGEABLE);
 
         auditUtil.audit(
                 VIEW,
                 "[]",
                 Optional.empty(),
-                Map.of(
-                        "timestamp", Instant.now().toString(),
-                        "entity", ENTITY_NAME,
-                        "count", data.size()
-                ),
+                PaginationMeta.builder()
+                        .totalElements(SALARY_DATA.getTotalElements())
+                        .size(SALARY_DATA.getSize())
+                        .page(SALARY_DATA.getNumber() + 1)
+                        .totalPages(SALARY_DATA.getTotalPages())
+                        .build(),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        return data.stream()
-                .map(entity -> Mapper.toDto(entity, withSalaryGrade))
+        return SALARY_DATA.stream()
+                .map(Mapper::toDto)
                 .toList();
     }
 
@@ -132,7 +122,7 @@ public class SalaryDataServiceImp implements ISalaryDataService {
         final var SALARY_GRADE_ID_TO_CHECK = getId(salaryDataRequest, salaryGradeId, checkType);
         final var RESOLVED_SALARY_GRADE = OPTIONAL_SALARY_GRADE_CHECK.orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID_TO_CHECK, SALARY_GRADE));
 
-        salaryDataRepository.findByStepAndAmountAndSalaryGrade_Id(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID_TO_CHECK)
+        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID_TO_CHECK)
                 .ifPresent(sd -> {
                     throw new IllegalArgumentException(
                             "Salary data with step %d amount %f, and salary grade %d already exists for salary grade ID [%s]".formatted(
@@ -188,7 +178,7 @@ public class SalaryDataServiceImp implements ISalaryDataService {
             }
 
             // check for existing entity based on new update values
-            salaryDataRepository.findByStepAndAmountAndSalaryGrade_Id(
+            salaryDataRepository.findByStepAndAmountAndSalaryGradeId(
                     salaryDataRequest.step(),
                     salaryDataRequest.amount(),
                     SALARY_GRADE_ID

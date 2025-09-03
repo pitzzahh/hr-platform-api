@@ -78,6 +78,8 @@ public class Mapper {
                 .effectiveDate(grade.getEffectiveDate())
                 .tranche(grade.getTranche())
                 .salaryGrade(grade.getSalaryGrade())
+                .createdAt(grade.getCreatedAt())
+                .updatedAt(grade.getUpdatedAt())
                 .build();
     }
 
@@ -88,7 +90,7 @@ public class Mapper {
                 .id(entity.getId())
                 .step(entity.getStep())
                 .amount(entity.getAmount())
-                .salaryGrade(withSalaryGrade ? entity.getSalaryGrade() : null)
+                .salaryGrade(withSalaryGrade ? toDto(entity.getSalaryGrade()) : null)
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

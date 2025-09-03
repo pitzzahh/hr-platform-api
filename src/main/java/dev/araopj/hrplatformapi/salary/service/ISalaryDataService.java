@@ -23,18 +23,14 @@ import java.util.Optional;
 public interface ISalaryDataService {
 
     /**
-     * Retrieves a list of salary data records, optionally filtered by salary grade ID.
+     * Retrieves a list of all salary data records, limited to the specified number.
      * <p>
-     * This method supports pagination through a limit parameter and can include or exclude
-     * associated salary grade details based on the {@code withSalaryGrade} flag. If a
-     * {@code salaryGradeId} is provided, only records associated with that salary grade are returned.
+     * If the {@code limit} is less than or equal to zero, an empty list is returned.
      *
-     * @param salaryGradeId   the ID of the salary grade to filter by, or {@code null} to retrieve all records
-     * @param withSalaryGrade whether to include salary grade details in the response
-     * @param limit           the maximum number of records to return (used for pagination)
-     * @return a {@link List} of {@link SalaryDataResponse} objects containing the salary data
+     * @param limit the maximum number of salary data records to retrieve
+     * @return a list of {@link SalaryDataResponse} objects, up to the specified limit
      */
-    List<SalaryDataResponse> findAll(String salaryGradeId, boolean withSalaryGrade, int limit);
+    List<SalaryDataResponse> findAll(int limit);
 
     /**
      * Retrieves a salary data record by its unique ID.
@@ -72,7 +68,7 @@ public interface ISalaryDataService {
      * @param checkType         the {@link CheckType} indicating how to validate the salary grade ID
      * @return the created {@link SalaryDataResponse} object
      * @throws BadRequestException if the request is invalid (e.g., missing or invalid salary grade ID)
-     * @throws NotFoundException if the specified salary grade does not exist
+     * @throws NotFoundException   if the specified salary grade does not exist
      */
     SalaryDataResponse create(SalaryDataRequest salaryDataRequest, String salaryGradeId, CheckType checkType)
             throws BadRequestException;
@@ -87,7 +83,7 @@ public interface ISalaryDataService {
      * @param salaryDataRequest the {@link SalaryDataRequest} containing updated salary data details
      * @return the updated {@link SalaryDataResponse} object
      * @throws BadRequestException if the request is invalid (e.g., missing ID or invalid salary grade)
-     * @throws NotFoundException if the salary data record or salary grade does not exist
+     * @throws NotFoundException   if the salary data record or salary grade does not exist
      */
     SalaryDataResponse update(String id, SalaryDataRequest salaryDataRequest)
             throws BadRequestException;
