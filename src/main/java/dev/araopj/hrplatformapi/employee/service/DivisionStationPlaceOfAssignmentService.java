@@ -1,16 +1,19 @@
 package dev.araopj.hrplatformapi.employee.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
 import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.repository.DivisionStationPlaceOfAssignmentRepository;
+import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.enums.CheckType;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -49,36 +52,36 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 public class DivisionStationPlaceOfAssignmentService {
 
     private final DivisionStationPlaceOfAssignmentRepository divisionStationPlaceOfAssignmentRepository;
+    private final EmploymentInformationRepository employmentInformationRepository;
     private final CommonValidation commonValidation;
     private final ObjectMapper objectMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "employmentInformation");
     private final String ENTITY_NAME = "DivisionStationPlaceOfAssignmentResponse";
 
-    /**
-     * Retrieve all {@link DivisionStationPlaceOfAssignment} records and log the action in the audit service.
-     *
-     * @return List of {@link DivisionStationPlaceOfAssignmentResponse} containing all records.
-     */
-    public List<DivisionStationPlaceOfAssignmentResponse> findAll() {
-        var data = divisionStationPlaceOfAssignmentRepository.findAll()
-                .stream()
-                .map(entity -> objectMapper.convertValue(entity, DivisionStationPlaceOfAssignmentResponse.class))
-                .toList();
+    public List<DivisionStationPlaceOfAssignmentResponse> findAll(boolean includeEmploymentInformation, int limit) {
+
+        final var PAGEABLE = PageRequest.of(0, limit);
+
+        final var DATA = divisionStationPlaceOfAssignmentRepository.findAll(PAGEABLE)
+                .getContent();
+
         auditUtil.audit(
-                AuditAction.VIEW,
+                VIEW,
                 "[]",
                 Optional.empty(),
                 Map.of(
                         "timestamp", Instant.now().toString(),
                         "entity", ENTITY_NAME,
-                        "count", data.size()
+                        "count", DATA.size()
                 ),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        return data;
+        return DATA.stream()
+                .map(entity -> Mapper.toDto(entity, includeEmploymentInformation))
+                .toList();
     }
 
     /**
@@ -90,50 +93,40 @@ public class DivisionStationPlaceOfAssignmentService {
      */
     public Optional<DivisionStationPlaceOfAssignmentResponse> findById(String id) throws NotFoundException {
         auditUtil.audit(
-                AuditAction.VIEW,
-                "[]",
-                Optional.empty(),
-                Map.of("timestamp", Instant.now().toString(),
-                        "entity", ENTITY_NAME,
-                        "request_id", id),
-                Optional.empty(),
+                id,
                 ENTITY_NAME
         );
-        return Optional.ofNullable(divisionStationPlaceOfAssignmentRepository.findById(id)
-                .map(e -> objectMapper.convertValue(e, DivisionStationPlaceOfAssignmentResponse.class))
+        return Optional.of(divisionStationPlaceOfAssignmentRepository.findById(id)
+                .map(Mapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, DIVISION_STATION_PLACE_OF_ASSIGNMENT)));
-
     }
 
     /**
-     * Retrieve a DivisionStationPlaceOfAssignment record by its ID and associated employee ID, logging the action in the audit service.
+     * Retrieve a DivisionStationPlaceOfAssignment record by its ID and associated employmentInformation ID, logging the action in the audit service.
      *
      * @param id                      The ID of the DivisionStationPlaceOfAssignment record.
-     * @param employmentInformationId The ID of the associated employee.
+     * @param employmentInformationId The ID of the associated employmentInformation.
      * @return DivisionStationPlaceOfAssignmentResponse containing the DivisionStationPlaceOfAssignment record.
-     * @throws NotFoundException() if no DivisionStationPlaceOfAssignment record is found with the given ID and employee ID.
+     * @throws NotFoundException() if no DivisionStationPlaceOfAssignment record is found with the given ID and employmentInformation ID.
      */
     public Optional<DivisionStationPlaceOfAssignmentResponse> findByIdAndEmploymentInformationId(String id, String employmentInformationId) {
-        var data = divisionStationPlaceOfAssignmentRepository.findByIdAndEmploymentInformation_Id(id, employmentInformationId);
+        final var DATA = divisionStationPlaceOfAssignmentRepository.findByIdAndEmploymentInformation_Id(id, employmentInformationId);
 
-        if (data.isEmpty()) {
+        if (DATA.isEmpty()) {
             log.warn("{} not found with id {} and employmentInformationId {}", ENTITY_NAME, id, employmentInformationId);
             throw new NotFoundException(id, employmentInformationId, DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId");
         }
 
         auditUtil.audit(
-                AuditAction.VIEW,
+                VIEW,
                 id,
                 Optional.empty(),
-                redact(
-                        data.get(),
-                        REDACTED
-                ),
+                redact(DATA.get(), REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        return Optional.of(data
+        return Optional.of(DATA
                 .map(Mapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, employmentInformationId, DIVISION_STATION_PLACE_OF_ASSIGNMENT, "employmentInformationId")));
     }
@@ -142,40 +135,59 @@ public class DivisionStationPlaceOfAssignmentService {
      * Create a new DivisionStationPlaceOfAssignment record associated with an employment information, logging the action in the audit service.
      *
      * @param divisionStationPlaceOfAssignmentRequest The request object containing DivisionStationPlaceOfAssignment details.
-     * @param employmentInformationId                 The ID of the associated employment information (used as a fallback if not found in the request).
+     * @param employmentInformationId                 (Optional) The ID of the associated employment information. Required if checkType is CHECK_PARENT_FROM_REQUEST_PARAM.
+     * @param checkType                               The method to determine the employment information ID (from request param or request body).
      * @return DivisionStationPlaceOfAssignmentResponse containing the created DivisionStationPlaceOfAssignment record.
      * @throws NotFoundException if no employment information is found with the given ID from the request or path variable.
      */
     public DivisionStationPlaceOfAssignmentResponse create(
             DivisionStationPlaceOfAssignmentRequest divisionStationPlaceOfAssignmentRequest,
-            String employmentInformationId
-    ) {
-        var optionalEmploymentInformation = commonValidation.validateEmploymentInformationExists(
-                divisionStationPlaceOfAssignmentRequest.employmentInformationId(),
-                employmentInformationId,
-                DIVISION_STATION_PLACE_OF_ASSIGNMENT
-        );
-        var data = objectMapper.convertValue(
-                divisionStationPlaceOfAssignmentRepository.saveAndFlush(
-                        DivisionStationPlaceOfAssignment.builder()
-                                .code(divisionStationPlaceOfAssignmentRequest.code())
-                                .name(divisionStationPlaceOfAssignmentRequest.name())
-                                .shortName(divisionStationPlaceOfAssignmentRequest.shortName())
-                                .employmentInformation(optionalEmploymentInformation)
-                                .build()
-                ),
-                DivisionStationPlaceOfAssignmentResponse.class
-        );
+            @Nullable String employmentInformationId,
+            CheckType checkType
+    ) throws BadRequestException {
+
+        final var OPTIONAL_EMPLOYMENT_INFORMATION_CHECK = switch (checkType) {
+            case CHECK_PARENT_FROM_REQUEST_PARAM -> {
+                if (employmentInformationId == null || employmentInformationId.isEmpty()) {
+                    throw new BadRequestException("EmploymentInformation ID must be provided as request parameter when checkType is CHECK_PARENT_FROM_REQUEST_PARAM");
+                }
+                yield employmentInformationRepository.findById(employmentInformationId);
+            }
+            case CHECK_PARENT_FROM_REQUEST_BODY -> {
+                if (divisionStationPlaceOfAssignmentRequest.employmentInformationId() == null || divisionStationPlaceOfAssignmentRequest.employmentInformationId().isEmpty()) {
+                    throw new BadRequestException("EmploymentInformation ID must be provided as request body when checkType is CHECK_PARENT_FROM_REQUEST_BODY");
+                }
+                yield employmentInformationRepository.findById(divisionStationPlaceOfAssignmentRequest.employmentInformationId());
+            }
+        };
+
+        final var EMPLOYMENT_INFORMATION_ID_TO_CHECK = getId(divisionStationPlaceOfAssignmentRequest, employmentInformationId, checkType);
+        final var RESOLVED_EMPLOYMENT_INFORMATION = OPTIONAL_EMPLOYMENT_INFORMATION_CHECK
+                .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_ID_TO_CHECK, NotFoundException.EntityType.EMPLOYMENT_INFORMATION));
+
+        divisionStationPlaceOfAssignmentRepository.findByCodeAndNameAndEmploymentInformationId(
+                divisionStationPlaceOfAssignmentRequest.code(),
+                divisionStationPlaceOfAssignmentRequest.name(),
+                EMPLOYMENT_INFORMATION_ID_TO_CHECK
+        ).ifPresent(existing -> {
+            throw new IllegalArgumentException("DivisionStationPlaceOfAssignment with code %s and name %s already exists for EmploymentInformation with id %s".formatted(
+                    divisionStationPlaceOfAssignmentRequest.code(),
+                    divisionStationPlaceOfAssignmentRequest.name(),
+                    EMPLOYMENT_INFORMATION_ID_TO_CHECK
+            ));
+        });
+
+        final var DIVISION_STATION_PLACE_OF_ASSIGNMENT_TO_SAVE = Mapper.toEntity(divisionStationPlaceOfAssignmentRequest);
 
         auditUtil.audit(
                 CREATE,
-                divisionStationPlaceOfAssignmentRequest.code(),
+                String.valueOf(DIVISION_STATION_PLACE_OF_ASSIGNMENT_TO_SAVE.getId()),
                 Optional.empty(),
-                redact(data, REDACTED),
+                redact(DIVISION_STATION_PLACE_OF_ASSIGNMENT_TO_SAVE, REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return data;
+        return Mapper.toDto(divisionStationPlaceOfAssignmentRepository.save(DIVISION_STATION_PLACE_OF_ASSIGNMENT_TO_SAVE));
     }
 
     /**
@@ -250,6 +262,14 @@ public class DivisionStationPlaceOfAssignmentService {
      */
     public boolean delete(String id, String employmentInformationId) {
         var data = findByIdAndEmploymentInformationId(id, employmentInformationId);
+        if (data.isEmpty()) {
+            log.warn("DivisionStationPlaceOfAssignment with id {} and employmentInformationId {} not found for deletion", id, employmentInformationId);
+            return false;
+        }
+        if (!divisionStationPlaceOfAssignmentRepository.existsById(id)) {
+            log.warn("DivisionStationPlaceOfAssignment with id {} not found for deletion", id);
+            return false;
+        }
 
         divisionStationPlaceOfAssignmentRepository.deleteById(id);
 
@@ -264,5 +284,21 @@ public class DivisionStationPlaceOfAssignmentService {
         return true;
     }
 
+    private static String getId(DivisionStationPlaceOfAssignmentRequest request, String employmentInformationId, CheckType checkType) throws
+            BadRequestException {
+        switch (checkType) {
+            case CHECK_PARENT_FROM_REQUEST_PARAM -> {
+                if (employmentInformationId == null || employmentInformationId.isEmpty())
+                    throw new BadRequestException("EmploymentInformation ID must be provided as query parameter when checkType CHECK_PARENT_FROM_REQUEST_PARAM.");
+                return employmentInformationId;
+            }
+            case CHECK_PARENT_FROM_REQUEST_BODY -> {
+                if (request.employmentInformationId() == null || request.employmentInformationId().isEmpty())
+                    throw new BadRequestException("EmploymentInformation ID must be provided in request body when checkType CHECK_PARENT_FROM_REQUEST_BODY.");
+                return request.employmentInformationId();
+            }
+            default -> throw new BadRequestException("Invalid CheckType provided.");
+        }
+    }
 
 }
