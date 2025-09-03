@@ -18,10 +18,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
@@ -107,16 +104,7 @@ public class SalaryGradeService {
             SalaryGradeRequest salaryGradeRequest,
             boolean includeSalaryData
     ) throws BadRequestException {
-        final var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
-                salaryGradeRequest.salaryGrade(),
-                salaryGradeRequest.effectiveDate()
-        );
-
-        if (OPTIONAL_SALARY_GRADE.isPresent()) {
-            log.warn("salaryGrade {} and effectiveDate {} already exists in SalaryGrade with id {}",
-                    salaryGradeRequest.salaryGrade(), salaryGradeRequest.effectiveDate(), OPTIONAL_SALARY_GRADE.get().getId());
-            throw new BadRequestException("SalaryGrade with the same salaryGrade and effectiveDate already exists.");
-        }
+        validateSalaryGradeExistence(includeSalaryData, salaryGradeRequest);
 
         var salaryGradeToSave = SalaryGrade.builder()
                 .legalBasis(salaryGradeRequest.legalBasis())
@@ -156,6 +144,93 @@ public class SalaryGradeService {
     }
 
     /**
+     * Creates a batch of salary grades, optionally with associated salary data, using saveAll.
+     *
+     * @param salaryGradeRequests the list of requests containing salary grade details
+     * @param includeSalaryData   whether to include salary data in creation
+     * @return List of created SalaryGradeResponse objects
+     * @throws BadRequestException if duplicates exist or invalid data
+     */
+    public List<SalaryGradeResponse> createBatch(
+            List<SalaryGradeRequest> salaryGradeRequests,
+            boolean includeSalaryData
+    ) throws BadRequestException {
+        var salaryGradesToSave = new ArrayList<SalaryGrade>();
+        var responses = new ArrayList<SalaryGradeResponse>();
+
+        // Validate all requests first
+        for (var request : salaryGradeRequests) {
+            validateSalaryGradeExistence(includeSalaryData, request);
+        }
+
+        // Build salary grade entities
+        for (var request : salaryGradeRequests) {
+            var salaryGradeToSave = SalaryGrade.builder()
+                    .legalBasis(request.legalBasis())
+                    .tranche(request.tranche())
+                    .effectiveDate(request.effectiveDate())
+                    .salaryGrade(request.salaryGrade())
+                    .build();
+
+            if (includeSalaryData) {
+                salaryGradeToSave.setSalaryData(
+                        request.salaryData().stream()
+                                .map(sd -> SalaryData.builder()
+                                        .step(sd.step())
+                                        .amount(sd.amount())
+                                        .salaryGrade(salaryGradeToSave)
+                                        .build())
+                                .collect(Collectors.toList())
+                );
+            }
+
+            salaryGradesToSave.add(salaryGradeToSave);
+        }
+
+        // Save all salary grades in a single batch
+        var savedSalaryGrades = salaryGradeRepository.saveAll(salaryGradesToSave);
+        log.debug("Saved {} salary grades in batch", savedSalaryGrades.size());
+
+        // Audit each saved salary grade
+        for (var savedSalaryGrade : savedSalaryGrades) {
+            auditUtil.audit(
+                    CREATE,
+                    savedSalaryGrade.getId(),
+                    Optional.empty(),
+                    redact(savedSalaryGrade, REDACTED),
+                    Optional.empty(),
+                    ENTITY_NAME
+            );
+            responses.add(Mapper.toDto(savedSalaryGrade, includeSalaryData));
+        }
+
+        return responses;
+    }
+
+    private void validateSalaryGradeExistence(boolean includeSalaryData, SalaryGradeRequest request) throws BadRequestException {
+        final var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
+                request.salaryGrade(),
+                request.effectiveDate()
+        );
+
+        if (OPTIONAL_SALARY_GRADE.isPresent()) {
+            log.warn("salaryGrade {} and effectiveDate {} already exists in SalaryGrade with id {}",
+                    request.salaryGrade(), request.effectiveDate(), OPTIONAL_SALARY_GRADE.get().getId());
+            throw new BadRequestException(
+                    String.format("SalaryGrade with salaryGrade %d and effectiveDate %s already exists.",
+                            request.salaryGrade(), request.effectiveDate())
+            );
+        }
+
+        // Validate salary data if required
+        if (includeSalaryData) {
+            if (request.salaryData() == null || request.salaryData().isEmpty()) {
+                throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
+            }
+        }
+    }
+
+    /**
      * Updates an existing salary grade.
      *
      * @param id                 the ID of the salary grade to update
@@ -171,25 +246,26 @@ public class SalaryGradeService {
             throw new BadRequestException("SalaryGrade ID must be provided as path");
         }
 
-        final var SALARY_GRADE = MergeUtil.merge(salaryGradeRepository.findById(id)
-                        .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.SALARY_GRADE)),
-                Mapper.toEntity(salaryGradeRequest)
-        );
+        final var EXISTING_SALARY_GRADE = salaryGradeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.SALARY_GRADE));
+        final var OLD_DTO = Mapper.toDto(EXISTING_SALARY_GRADE, false);
+        final var SALARY_GRADE = MergeUtil.merge(EXISTING_SALARY_GRADE, Mapper.toEntity(salaryGradeRequest));
 
-        final var OLD_REDACTED = redact(SALARY_GRADE, REDACTED);
+        final var OLD_REDACTED = redact(EXISTING_SALARY_GRADE, REDACTED);
 
         final var SAVED_SALARY_GRADE = salaryGradeRepository.saveAndFlush(SALARY_GRADE);
+        final var NEW_DTO = Mapper.toDto(SAVED_SALARY_GRADE, false);
 
         auditUtil.audit(
                 UPDATE,
                 id,
                 Optional.of(OLD_REDACTED),
                 redact(SAVED_SALARY_GRADE, REDACTED),
-                Optional.of(redact(diff(Mapper.toDto(SALARY_GRADE, false), salaryGradeRequest), REDACTED)), // Adjust diff if needed
+                Optional.of(redact(diff(OLD_DTO, NEW_DTO), REDACTED)),
                 ENTITY_NAME
         );
 
-        return Mapper.toDto(SAVED_SALARY_GRADE, false); // false as update doesn't include data yet
+        return NEW_DTO;
     }
 
     /**
