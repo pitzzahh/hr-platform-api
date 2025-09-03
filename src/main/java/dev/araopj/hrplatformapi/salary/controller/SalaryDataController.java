@@ -7,7 +7,6 @@ import dev.araopj.hrplatformapi.salary.service.ISalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
-import dev.araopj.hrplatformapi.utils.enums.FetchType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,8 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static dev.araopj.hrplatformapi.utils.enums.FetchType.BY_PATH_VARIABLE;
 
 /**
  * REST controller for managing salary data associated with specific salary grades.
@@ -50,7 +47,7 @@ public class SalaryDataController {
      * @param salaryGradeId   Optional ID of the salary grade to filter salary data.
      * @param withSalaryGrade If true, includes salary grade details in the response.
      * @param limit           Maximum number of results to return (default: 10).
-     * @return A ResponseEntity containing a StandardApiResponse with a list of SalaryDataResponse objects.
+     * @return A {@link ResponseEntity} containing a {@link StandardApiResponse} with a list of SalaryDataResponse objects.
      * @throws BadRequestException If invalid parameters are provided.
      */
     @Operation(
@@ -108,17 +105,14 @@ public class SalaryDataController {
     /**
      * Retrieves a specific salary data entry by its ID, optionally validating against a salary grade ID.
      *
-     * @param id            The ID of the salary data to retrieve.
-     * @param salaryGradeId Optional ID of the salary grade to validate association.
-     * @param fetchType     The fetching strategy (default: BY_PATH_VARIABLE).
-     * @return A ResponseEntity containing a StandardApiResponse with the SalaryDataResponse.
+     * @param id The ID of the salary data to retrieve.
+     * @return A ResponseEntity containing a {@link StandardApiResponse} with the SalaryDataResponse.
      * @throws NotFoundException If the salary data or salary grade is not found.
      */
     @Operation(
             summary = "Get salary data by ID",
             description = """
-                    Retrieve a specific salary data entry by its ID. Optionally validate it belongs to a specific salary grade using the 'salaryGradeId' parameter. \
-                    Choose the fetching strategy with the 'fetchType' parameter.
+                    Retrieve a specific salary data entry by its ID.
                     """,
             responses = {
                     @ApiResponse(
@@ -158,16 +152,10 @@ public class SalaryDataController {
     @GetMapping("/{id}")
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> get(
             @Parameter(description = "ID of the salary data to retrieve", required = true)
-            @PathVariable String id,
-            @Parameter(description = "Optional ID of the salary grade to validate association")
-            @RequestParam(required = false) String salaryGradeId,
-            @Parameter(description = "Fetching strategy for the salary data", example = "BY_PATH_VARIABLE")
-            @RequestParam(defaultValue = "BY_PATH_VARIABLE", required = false) @Valid FetchType fetchType
+            @PathVariable String id
     ) {
-        log.debug("Fetching salary data with id: {}, salaryGradeId: {}, fetchType: {}", id, salaryGradeId, fetchType);
-        var response = fetchType == BY_PATH_VARIABLE
-                ? salaryDataService.findById(id)
-                : salaryDataService.findByIdAndSalaryGradeId(id, salaryGradeId);
+        log.debug("Fetching salary data with id: {}", id);
+        var response = salaryDataService.findById(id);
 
         return response
                 .map(StandardApiResponse::success)
