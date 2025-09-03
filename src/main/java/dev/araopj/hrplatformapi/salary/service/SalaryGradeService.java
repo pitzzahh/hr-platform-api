@@ -97,10 +97,10 @@ public class SalaryGradeService {
      *
      * @param salaryGradeRequest the request containing salary grade details
      * @param includeSalaryData  whether to include salary data in creation
-     * @return Optional containing the created SalaryGradeResponse
+     * @return SalaryGradeResponse of the created salary grade
      * @throws BadRequestException if duplicate exists or invalid data
      */
-    public Optional<SalaryGradeResponse> create(
+    public SalaryGradeResponse create(
             SalaryGradeRequest salaryGradeRequest,
             boolean includeSalaryData
     ) throws BadRequestException {
@@ -140,7 +140,7 @@ public class SalaryGradeService {
                 ENTITY_NAME
         );
 
-        return Optional.of(Mapper.toDto(savedSalaryGrade, includeSalaryData));
+        return Mapper.toDto(savedSalaryGrade, includeSalaryData);
     }
 
     /**
