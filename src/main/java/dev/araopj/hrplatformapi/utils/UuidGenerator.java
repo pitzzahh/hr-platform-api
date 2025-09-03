@@ -24,11 +24,6 @@ public class UuidGenerator extends SequenceStyleGenerator {
         if (allowAssignedIdentifiers()) {
             var existingId = getExistingId(owner);
             if (existingId != null) {
-                if (!(existingId instanceof String)) {
-                    throw new IllegalStateException(
-                            String.format("Entity %s has an existing ID of type %s, but a String is required",
-                                    owner.getClass().getSimpleName(), existingId.getClass().getSimpleName()));
-                }
                 log.debug("Using client-assigned ID: {}", existingId);
                 return existingId;
             }
@@ -43,25 +38,49 @@ public class UuidGenerator extends SequenceStyleGenerator {
      *
      * @param owner The entity object.
      * @return The existing ID, or null if none is found.
-     * @throws IllegalStateException If the ID getter method cannot be found or invoked.
+     * @throws IllegalStateException If the ID getter method cannot be accessed or invoked.
      */
-    private Object getExistingId(Object owner) {
+    private String getExistingId(Object owner) {
+        if (owner == null) {
+            log.warn("Owner entity is null. Cannot retrieve existing ID.");
+            return null;
+        }
+
         try {
+            // 1. Look for @Uuid annotation
             for (var field : owner.getClass().getDeclaredFields()) {
                 if (field.isAnnotationPresent(Uuid.class)) {
-                    return owner.getClass().getMethod(field.getAnnotation(Uuid.class).getterMethod()).invoke(owner);
+                    var annotation = field.getAnnotation(Uuid.class);
+                    var methodName = annotation.getterMethod();
+
+                    if (methodName == null || methodName.isBlank()) {
+                        log.warn("@Uuid annotation on {} has no valid getterMethod defined.",
+                                owner.getClass().getSimpleName());
+                        return null;
+                    }
+
+                    var value = owner.getClass().getMethod(methodName).invoke(owner);
+                    return value != null ? value.toString() : null;
                 }
             }
 
-            return owner.getClass().getMethod("getId").invoke(owner);
-        } catch (NoSuchMethodException e) {
-            log.warn("No ID getter method found for entity: {}. Generating new UUID. Error: {}",
-                    owner.getClass().getSimpleName(), e.getMessage());
-            return null;
+            // 2. Fallback to default getId()
+            try {
+                var getIdMethod = owner.getClass().getMethod("getId");
+                var idValue = getIdMethod.invoke(owner);
+                return idValue != null ? idValue.toString() : null;
+            } catch (NoSuchMethodException e) {
+                log.warn("No getId() method found on {}. Generating new UUID.",
+                        owner.getClass().getSimpleName());
+                return null;
+            }
+
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(
                     String.format("Failed to access ID getter for entity %s: %s",
                             owner.getClass().getSimpleName(), e.getMessage()), e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 
