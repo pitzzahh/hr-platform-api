@@ -21,6 +21,9 @@ spring:
         format_sql: true
         default_schema: public
     open-in-view: false
+  jackson:
+    deserialization:
+      accept-single-value-as-array: true
 logging:
   level:
     dev.araopj.hrplatformapi: debug
