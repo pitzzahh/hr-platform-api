@@ -104,7 +104,7 @@ public class SalaryDataService {
                 .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId")));
     }
 
-    public Optional<SalaryDataResponse> create(
+    public SalaryDataResponse create(
             SalaryDataRequest salaryDataRequest,
             @Nullable String salaryGradeId, // salary grade id from request param
             CheckType checkType
@@ -155,7 +155,7 @@ public class SalaryDataService {
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return Optional.of(Mapper.toDto(salaryDataRepository.saveAndFlush(SALARY_DATA_TO_SAVE)));
+        return Mapper.toDto(salaryDataRepository.save(SALARY_DATA_TO_SAVE));
 
     }
 

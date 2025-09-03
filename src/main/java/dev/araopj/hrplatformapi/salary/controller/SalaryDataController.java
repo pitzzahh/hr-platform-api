@@ -236,10 +236,10 @@ public class SalaryDataController {
             @RequestParam(defaultValue = "CHECK_PARENT_FROM_REQUEST_BODY") @NotNull CheckType checkType
     ) throws BadRequestException {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
-        return salaryDataService.create(salaryDataRequest, salaryGradeId, checkType)
-                .map(StandardApiResponse::success)
-                .map(ResponseEntity::ok)
-                .orElseThrow(); // Exception handled globally
+
+        return ResponseEntity.ok(
+                StandardApiResponse.success(salaryDataService.create(salaryDataRequest, salaryGradeId, checkType)
+                ));
     }
 
     /**
