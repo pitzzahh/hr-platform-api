@@ -1,7 +1,7 @@
 package dev.araopj.hrplatformapi.employee.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.araopj.hrplatformapi.audit.service.AuditService;
+import dev.araopj.hrplatformapi.audit.service.AuditServiceImp;
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
@@ -128,7 +128,7 @@ public class EmploymentInformationSalaryOverrideService {
      * <p>
      * This method validates the **employmentInformationId** from the request body or path variable, ensuring it exists
      * back to the path variable's ID. If neither ID is valid, an {@link NotFoundException()} is thrown.
-     * Upon successful validation, the salary override is saved, and an audit record is created via {@link AuditService}.
+     * Upon successful validation, the salary override is saved, and an audit record is created via {@link AuditServiceImp}.
      *
      * @param employmentInformationSalaryOverrideRequest The request object containing the salary override details, such as
      *                                                   `salary`, `effectiveDate`, and optionally an
@@ -142,7 +142,7 @@ public class EmploymentInformationSalaryOverrideService {
      * @throws NotFoundException() If neither the **employmentInformationId** from the request nor the
      *                             path variable corresponds to a valid {@link EmploymentInformation}.
      * @see EmploymentInformationSalaryOverride
-     * @see AuditService
+     * @see AuditServiceImp
      */
     public Optional<EmploymentInformationSalaryOverrideResponse> create(
             EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest,
@@ -246,7 +246,7 @@ public class EmploymentInformationSalaryOverrideService {
      * @return true if the deletion was successful
      * @throws NotFoundException() if the salary override with the specified IDs does not exist
      * @see EmploymentInformationSalaryOverrideRepository
-     * @see dev.araopj.hrplatformapi.audit.service.AuditService
+     * @see AuditServiceImp
      */
     public boolean delete(String id, String employmentInformationId) {
         var data = findByIdAndEmploymentInformationId(id, employmentInformationId);

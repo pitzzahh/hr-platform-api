@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
-import dev.araopj.hrplatformapi.audit.service.AuditService;
+import dev.araopj.hrplatformapi.audit.service.AuditServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuditUtil {
 
-    private final AuditService auditService;
+    private final AuditServiceImp auditService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -34,7 +34,7 @@ public class AuditUtil {
      * @param entityType The type of the entity being audited (e.g., "Gsis").
      * @see AuditAction
      * @see AuditRequest
-     * @see AuditService
+     * @see AuditServiceImp
      */
     public void audit(AuditAction action, String entityId, Optional<Object> oldData, Object newData, Optional<Object> changes, String entityType) {
         var builder = AuditRequest.builder()
@@ -78,7 +78,7 @@ public class AuditUtil {
      * @return An ApiError object representing the audited error.
      * @see ApiError
      * @see AuditRequest
-     * @see AuditService
+     * @see AuditServiceImp
      */
     public ApiError audit(Exception ex, String message, Optional<ApiError> existingError) {
         var error = existingError.orElse(ApiError.builder()

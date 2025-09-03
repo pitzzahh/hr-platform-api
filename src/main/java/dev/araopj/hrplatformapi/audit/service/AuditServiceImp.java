@@ -30,7 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class AuditService implements IAuditService {
+public class AuditServiceImp implements IAuditService {
 
     private final AuditRepository auditRepository;
 
