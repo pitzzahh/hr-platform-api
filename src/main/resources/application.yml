@@ -31,6 +31,7 @@ scalar:
   enabled: true
   path: /docs
   hide-models: true
+  layout: classic
 
 springdoc:
   swagger-ui:
