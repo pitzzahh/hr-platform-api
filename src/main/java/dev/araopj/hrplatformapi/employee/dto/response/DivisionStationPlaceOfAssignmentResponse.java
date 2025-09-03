@@ -1,7 +1,7 @@
 package dev.araopj.hrplatformapi.employee.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import dev.araopj.hrplatformapi.employee.model.Employee;
+import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -15,7 +15,7 @@ public record DivisionStationPlaceOfAssignmentResponse(
         Instant createdAt,
         Instant updatedAt,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        Employee employee
+        EmploymentInformation employmentInformation
 ) {
 }
 
