@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
         info = @Info(
                 title = "HR Platform API",
                 version = "0.0.1-SNAPSHOT",
-                description = "A SpringBoot RESTful API for managing HR data, including employee CRUD, salary tracking, audit logging, and role-based authentication. Features robust exception handling, pagination, and modular structure. See README or controller classes for endpoint details.",
+                description = "A SpringBoot RESTful API for managing HR data, including employee CRUD, salary tracking, audit logging, and role-based authentication. Features robust exception handling, pagination, and modular structure..",
                 license = @License(
                         name = "Apache 2.0",
                         url = "https://www.apache.org/licenses/LICENSE-2.0.html"
