@@ -82,12 +82,12 @@ public interface ISalaryDataService {
      * checking for conflicts with existing records (e.g., duplicate step and amount for a salary grade).
      *
      * @param id                the unique ID of the salary data record to update
-     * @param salaryDataRequest the {@link SalaryDataRequest} containing updated salary data details
+     * @param salaryDataRequest the {@link SalaryDataRequest.WithoutSalaryGradeId} containing updated salary data details
      * @return the updated {@link SalaryDataResponse} object
      * @throws BadRequestException if the request is invalid (e.g., missing ID or invalid salary grade)
      * @throws NotFoundException   if the salary data record or salary grade does not exist
      */
-    SalaryDataResponse update(String id, SalaryDataRequest salaryDataRequest)
+    SalaryDataResponse update(String id, SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest)
             throws BadRequestException;
 
     /**

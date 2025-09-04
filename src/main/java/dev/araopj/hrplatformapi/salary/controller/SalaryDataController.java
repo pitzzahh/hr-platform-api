@@ -288,7 +288,7 @@ public class SalaryDataController {
             @Parameter(description = "ID of the salary data to update", required = true)
             @PathVariable @NotNull String id,
             @Parameter(description = "Updated salary data details", required = true)
-            @RequestBody @Valid SalaryDataRequest salaryDataRequest
+            @RequestBody @Valid SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest
     ) throws BadRequestException {
         log.info("Request to update salary data with id [{}]", id);
         return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.update(id, salaryDataRequest)));

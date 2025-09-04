@@ -38,7 +38,7 @@ public class Mapper {
                 .build();
     }
 
-    public static SalaryData toEntity(SalaryDataRequest salaryDataRequest) {
+    public static SalaryData toEntity(SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest) {
         if (salaryDataRequest == null) return null;
 
         return SalaryData.builder()

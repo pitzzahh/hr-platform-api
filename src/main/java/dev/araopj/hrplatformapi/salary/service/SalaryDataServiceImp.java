@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -152,45 +151,18 @@ public class SalaryDataServiceImp implements ISalaryDataService {
     @Override
     public SalaryDataResponse update(
             String id,
-            SalaryDataRequest salaryDataRequest
+            SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest
     ) throws BadRequestException {
 
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("SalaryData ID must be provided as path");
         }
 
-        final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
         final var ORIGINAL_SALARY_DATA = salaryDataRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_DATA));
         var SALARY_DATA = MergeUtil.merge(ORIGINAL_SALARY_DATA,
                 Mapper.toEntity(salaryDataRequest)
         );
-
-        if (SALARY_GRADE_ID != null && !SALARY_GRADE_ID.isEmpty()) {
-            final var SALARY_GRADE_PARENT = findByIdAndSalaryGradeId(id, SALARY_GRADE_ID)
-                    .orElseThrow(() -> new NotFoundException(id, SALARY_GRADE_ID, NotFoundException.EntityType.SALARY_DATA, "salaryGradeId"));
-            if (!Objects.equals(SALARY_GRADE_PARENT.id(), SALARY_DATA.getSalaryGrade().getId())) {
-                throw new BadRequestException("SalaryData with id %s does not belong to SalaryGrade with id %s".formatted(id, SALARY_GRADE_ID));
-            }
-
-            // check for existing entity based on new update values
-            salaryDataRepository.findByStepAndAmountAndSalaryGradeId(
-                    salaryDataRequest.step(),
-                    salaryDataRequest.amount(),
-                    SALARY_GRADE_ID
-            ).ifPresent(e -> {
-                if (!Objects.equals(e.getId(), id)) {
-                    throw new IllegalArgumentException(
-                            "Salary data with step %d amount %s, and salary grade %d already exists for salary grade ID [%s]".formatted(
-                                    salaryDataRequest.step(),
-                                    salaryDataRequest.amount() % 1 == 0 ? String.format("%.0f", salaryDataRequest.amount()) : String.format("%.2f", salaryDataRequest.amount()),
-                                    e.getSalaryGrade().getSalaryGrade(),
-                                    SALARY_GRADE_ID
-                            )
-                    );
-                }
-            });
-        }
 
         auditUtil.audit(
                 UPDATE,
