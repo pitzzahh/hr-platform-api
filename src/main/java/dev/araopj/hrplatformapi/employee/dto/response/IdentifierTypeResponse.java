@@ -2,9 +2,11 @@ package dev.araopj.hrplatformapi.employee.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.araopj.hrplatformapi.employee.model.Identifier;
+import lombok.Builder;
 
 import java.time.Instant;
 
+@Builder
 public record IdentifierTypeResponse(
         String id,
         String code,

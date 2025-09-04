@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,12 +10,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class IdentifierType {
+public class IdentifierType extends EntityTimestamp implements Serializable {
     @Id
     @Uuid
     private String id;
