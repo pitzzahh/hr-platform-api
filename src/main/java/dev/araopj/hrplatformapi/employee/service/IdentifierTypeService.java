@@ -27,7 +27,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IdentifierTypeService {
+public class IdentifierTypeService implements IIdentifierTypeService {
 
     private final IdentifierTypeRepository identifierTypeRepository;
     private final IdentifierRepository identifierRepository;
@@ -36,6 +36,7 @@ public class IdentifierTypeService {
     private final Set<String> REDACTED = Set.of("id", "identifier");
     private final String ENTITY_NAME = "IdentifierTypeResponse";
 
+    @Override
     public List<IdentifierTypeResponse> findAll() {
         var data = identifierTypeRepository.findAll().stream()
                 .map(entity -> objectMapper.convertValue(entity, IdentifierTypeResponse.class))
@@ -65,20 +66,21 @@ public class IdentifierTypeService {
                 .orElseThrow(() -> new NotFoundException(id, IDENTIFIER_TYPE)));
     }
 
-    public Optional<IdentifierTypeResponse> create(IdentifierTypeRequest identifierTypeRequest, String identifierId) {
-        var identifier_id = identifierTypeRequest.identifierId();
+    @Override
+    public IdentifierTypeResponse create(IdentifierTypeRequest identifierTypeRequest) {
+        final var identifier_id = identifierTypeRequest.identifierId();
 
         var optionalIdentifier = identifierRepository.findById(identifier_id);
 
         if (optionalIdentifier.isEmpty()) {
-            log.warn("Checking identifier with path variable identifierId: {}", identifierId);
-            optionalIdentifier = identifierRepository.findById(identifierId);
+            log.warn("Checking identifier with path variable identifierId: {}", identifier_id);
+            optionalIdentifier = identifierRepository.findById(identifier_id);
             if (optionalIdentifier.isEmpty()) {
-                throw new NotFoundException(identifierId, IDENTIFIER);
+                throw new NotFoundException(identifier_id, IDENTIFIER);
             }
         }
 
-        var data = objectMapper.convertValue(identifierTypeRepository.saveAndFlush(
+        final var data = objectMapper.convertValue(identifierTypeRepository.saveAndFlush(
                 objectMapper.convertValue(identifierTypeRequest, IdentifierType.class)
         ), IdentifierTypeResponse.class);
 
@@ -90,6 +92,6 @@ public class IdentifierTypeService {
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return Optional.of(data);
+        return data;
     }
 }
