@@ -1,26 +1,31 @@
 package dev.araopj.hrplatformapi.employee.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 public record IdentifierTypeRequest(
-        @NotBlank(message = "Code is required")
+        @NotBlank(message = "code is required")
+        @NotNull(message = "code cannot be null")
         String code,
-        @NotBlank(message = "Name is required")
+        @NotBlank(message = "name is required")
+        @NotNull(message = "name cannot be null")
         String name,
-        @NotBlank(message = "Description is required")
+        @NotBlank(message = "description is required")
         String description,
-        @NotBlank(message = "Identifier ID is required")
+        @NotBlank(message = "identifierId is required")
         String identifierId
 ) {
     @Builder
     public record WithoutIdentifierId(
             @NotBlank(message = "Code is required")
+            @NotNull(message = "code cannot be null")
             String code,
-            @NotBlank(message = "Name is required")
+            @NotBlank(message = "name is required")
+            @NotNull(message = "name cannot be null")
             String name,
-            @NotBlank(message = "Description is required")
+            @NotBlank(message = "description is required")
             String description
     ) {
     }
