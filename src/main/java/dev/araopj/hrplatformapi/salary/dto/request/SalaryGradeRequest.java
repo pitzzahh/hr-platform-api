@@ -13,7 +13,6 @@ public record SalaryGradeRequest(
         String legalBasis,
         int tranche,
         @NotNull(message = "Effective date cannot be null")
-        @FutureOrPresent(message = "Effective date must be in the present or future")
         LocalDate effectiveDate,
         @Min(value = 1, message = "Salary grade must be at least 1")
         @Max(value = 33, message = "Salary grade must be at most 33")
