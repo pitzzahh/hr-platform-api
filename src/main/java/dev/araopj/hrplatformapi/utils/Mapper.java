@@ -4,6 +4,8 @@ import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
+import dev.araopj.hrplatformapi.employee.dto.request.IdentifierRequest;
+import dev.araopj.hrplatformapi.employee.dto.request.IdentifierTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
@@ -18,6 +20,8 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -160,6 +164,27 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .build();
     }
 
+    public static Identifier toEntity(IdentifierRequest dto) {
+        if (dto == null) return null;
+
+        return Identifier.builder()
+                .identifierNumber(dto.identifierNumber())
+                .type(toEntity(dto.identifierTypeRequest()))
+                .issuedDate(dto.issuedDate())
+                .issuedPlace(dto.issuedPlace())
+                .build();
+    }
+
+    private static IdentifierType toEntity(@NotNull(message = "identifierTypeRequest cannot be null") @NotBlank(message = "identifierTypeRequest cannot be blank") IdentifierTypeRequest identifierTypeRequest) {
+        if (identifierTypeRequest == null) return null;
+
+        return IdentifierType.builder()
+                .code(identifierTypeRequest.code())
+                .name(identifierTypeRequest.name())
+                .description(identifierTypeRequest.description())
+                .build();
+    }
+
     /**
      * Converts an {@link AuditRequest} to an {@link Audit} entity.
      *
@@ -206,6 +231,10 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
 
     public static DivisionStationPlaceOfAssignmentResponse toDto(DivisionStationPlaceOfAssignment entity) {
         return toDto(entity, true);
+    }
+
+    public static IdentifierResponse toDto(Identifier identifier) {
+        return toDto(identifier, false);
     }
 
 }
