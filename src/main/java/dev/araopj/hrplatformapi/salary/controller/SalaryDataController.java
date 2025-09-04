@@ -97,7 +97,7 @@ public class SalaryDataController {
         return ResponseEntity.ok(StandardApiResponse.success(
                 PAGE.getContent(),
                 PaginationMeta.builder()
-                        .page(PAGE.getNumber() - 1)
+                        .page(PAGE.getNumber() + 1)
                         .size(PAGE.getSize())
                         .totalElements(PAGE.getTotalElements())
                         .totalPages(PAGE.getTotalPages())
@@ -171,7 +171,6 @@ public class SalaryDataController {
      *
      * @param salaryDataRequest The salary data details to create.
      * @param salaryGradeId     Optional ID of the salary grade from query parameter.
-     * @param checkType         The validation strategy for the salary grade ID.
      * @return A ResponseEntity containing a StandardApiResponse with the created SalaryDataResponse.
      * @throws BadRequestException If invalid data or parameters are provided.
      * @throws NotFoundException   If the salary grade is not found.

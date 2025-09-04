@@ -76,7 +76,7 @@ public class AuditController {
         return ResponseEntity.ok(StandardApiResponse.success(
                 auditsPage.getContent(),
                 PaginationMeta.builder()
-                        .page(auditsPage.getNumber() - 1)
+                        .page(auditsPage.getNumber() + 1)
                         .size(auditsPage.getSize())
                         .totalElements(auditsPage.getTotalElements())
                         .totalPages(auditsPage.getTotalPages())
