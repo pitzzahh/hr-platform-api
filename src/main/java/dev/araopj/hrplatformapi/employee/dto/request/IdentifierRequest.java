@@ -13,9 +13,9 @@ public record IdentifierRequest(
         @NotBlank(message = "identifierNumber cannot be blank")
         String identifierNumber,
 
-        @NotNull(message = "identifierTypeId cannot be null")
-        @NotBlank(message = "identifierTypeId cannot be blank")
-        String identifierTypeId,
+        @NotNull(message = "identifierTypeRequest cannot be null")
+        @NotBlank(message = "identifierTypeRequest cannot be blank")
+        IdentifierTypeRequest identifierTypeRequest,
 
         LocalDate issuedDate,
         String issuedPlace,
