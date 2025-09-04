@@ -51,19 +51,6 @@ public class AuditServiceImp implements IAuditService {
     @Override
     public AuditResponse create(@NotNull AuditRequest request) {
         log.debug("Creating audit record: {}", request);
-
-        // Validate audit data consistency
-        boolean noChangesWhenNoOldData = request.oldData() == null && request.newData() != null;
-        boolean noChangesWhenNoNewData = request.oldData() != null && request.newData() == null;
-        if (noChangesWhenNoOldData || noChangesWhenNoNewData) {
-            log.warn("Creating audit with inconsistent data: oldData={}, newData={}, changes={}",
-                    request.oldData(), request.newData(), request.changes());
-        }
-
-        Audit audit = Mapper.toEntity(request);
-        Audit savedAudit = auditRepository.saveAndFlush(audit);
-        log.debug("Saved audit record with ID: {}", savedAudit.getId());
-
-        return Mapper.toDto(savedAudit);
+        return Mapper.toDto(auditRepository.save(Mapper.toEntity(request)));
     }
 }
