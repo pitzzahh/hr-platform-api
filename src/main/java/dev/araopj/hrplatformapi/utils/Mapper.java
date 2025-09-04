@@ -6,8 +6,12 @@ import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.IdentifierTypeResponse;
 import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
+import dev.araopj.hrplatformapi.employee.model.Identifier;
+import dev.araopj.hrplatformapi.employee.model.IdentifierType;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
@@ -17,7 +21,7 @@ import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Mapper {
+public class Mapper { // TODO: convert to a component with DI, and split into multiple mappers if needed
     public static EmploymentInformationSalaryOverrideResponse toDto(EmploymentInformationSalaryOverride override) {
         log.info("Mapping EmploymentInformationSalaryOverride to DTO: {}", override);
         return EmploymentInformationSalaryOverrideResponse.builder()
@@ -125,6 +129,34 @@ public class Mapper {
                 .employmentInformation(includeEmployee ? entity.getEmploymentInformation() : null)
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
+                .build();
+    }
+
+    public static IdentifierTypeResponse toDto(IdentifierType identifierType) {
+        if (identifierType == null) return null;
+
+        return IdentifierTypeResponse.builder()
+                .id(identifierType.getId())
+                .code(identifierType.getCode())
+                .name(identifierType.getName())
+                .description(identifierType.getDescription())
+                .createdAt(identifierType.getCreatedAt())
+                .updatedAt(identifierType.getUpdatedAt())
+                .build();
+    }
+
+    public static IdentifierResponse toDto(Identifier identifier, boolean includeEmployee) {
+        if (identifier == null) return null;
+
+        return IdentifierResponse.builder()
+                .id(identifier.getId())
+                .identifierNumber(identifier.getIdentifierNumber())
+                .type(toDto(identifier.getType()))
+                .issuedDate(identifier.getIssuedDate())
+                .issuedPlace(identifier.getIssuedPlace())
+                .employee(includeEmployee ? identifier.getEmployee() : null)
+                .createdAt(identifier.getCreatedAt())
+                .updatedAt(identifier.getUpdatedAt())
                 .build();
     }
 
