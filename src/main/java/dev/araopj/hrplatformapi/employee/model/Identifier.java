@@ -5,6 +5,7 @@ import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Data
-public class Identifier extends EntityTimestamp {
+public class Identifier extends EntityTimestamp implements Serializable {
     @Id
     @Uuid
     private String id;
