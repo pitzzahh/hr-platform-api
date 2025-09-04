@@ -1,12 +1,11 @@
 package dev.araopj.hrplatformapi.audit.model;
 
-import dev.araopj.hrplatformapi.utils.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum AuditAction implements EnumUtil.HasCode {
+public enum AuditAction {
 
     CREATE("C", "Create operation"),
     UPDATE("U", "Update operation"),

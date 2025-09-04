@@ -1,6 +1,5 @@
 package dev.araopj.hrplatformapi.exception;
 
-import dev.araopj.hrplatformapi.utils.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -31,7 +30,7 @@ public class NotFoundException extends RuntimeException {
 
     @Getter
     @AllArgsConstructor
-    public enum EntityType implements EnumUtil.HasCode {
+    public enum EntityType {
         EMPLOYEE("EMPLOYEE", "Employee"),
         GSIS("GSIS", "Government Service Insurance System"),
         DIVISION_STATION_PLACE_OF_ASSIGNMENT("DIVISION_STATION_PLACE_OF_ASSIGNMENT", "Division Station Place Of Assignment"),

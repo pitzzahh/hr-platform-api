@@ -1,12 +1,11 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-import dev.araopj.hrplatformapi.utils.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum Gender implements EnumUtil.HasCode {
+public enum Gender {
     MALE("M", "Male"),
     FEMALE("F", "Female"),
     OTHER("O", "Other");
