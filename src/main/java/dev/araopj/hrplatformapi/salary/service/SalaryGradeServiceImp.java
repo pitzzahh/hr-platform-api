@@ -9,7 +9,6 @@ import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -175,7 +174,7 @@ public class SalaryGradeServiceImp implements ISalaryGradeService {
 
     @Override
     public SalaryGradeResponse update(
-            @Nullable String id,
+            String id,
             SalaryGradeRequest salaryGradeRequest
     ) throws BadRequestException {
 

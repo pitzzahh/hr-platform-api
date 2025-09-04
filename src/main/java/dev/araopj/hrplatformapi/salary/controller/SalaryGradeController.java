@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -74,8 +75,10 @@ public class SalaryGradeController {
     )
     @GetMapping
     public ResponseEntity<StandardApiResponse<List<SalaryGradeResponse>>> all(
+            @Valid
+            @RequestParam(defaultValue = "false", required = false)
             @Parameter(description = "Include associated salary data in the response", example = "false")
-            @RequestParam(defaultValue = "false", required = false) @Valid boolean includeSalaryData
+            boolean includeSalaryData
     ) {
         log.debug("Fetching all salary grades with includeSalaryData: {}", includeSalaryData);
         return ResponseEntity.ok(StandardApiResponse.success(salaryGradeService.findAll(includeSalaryData)));
@@ -133,10 +136,14 @@ public class SalaryGradeController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<StandardApiResponse<SalaryGradeResponse>> get(
+            @NotBlank
+            @PathVariable
             @Parameter(description = "ID of the salary grade to retrieve", required = true)
-            @PathVariable @NotBlank String id,
+            String id,
+            @Valid
+            @RequestParam(defaultValue = "false", required = false)
             @Parameter(description = "Include associated salary data in the response", example = "false")
-            @RequestParam(defaultValue = "false", required = false) @Valid boolean includeSalaryData
+            boolean includeSalaryData
     ) throws BadRequestException {
         log.debug("Fetching salary grade with id: {}, includeSalaryData: {}", id, includeSalaryData);
         var response = salaryGradeService.findById(id, includeSalaryData);
@@ -197,10 +204,14 @@ public class SalaryGradeController {
     )
     @PostMapping
     public ResponseEntity<StandardApiResponse<List<SalaryGradeResponse>>> create(
+            @Valid
+            @RequestBody
             @Parameter(description = "Salary grade details to create (single object or array)", required = true)
-            @RequestBody @Valid List<SalaryGradeRequest> salaryGradeRequests,
+            List<SalaryGradeRequest> salaryGradeRequests,
+            @Valid
             @Parameter(description = "Include associated salary data in the creation process", example = "false")
-            @RequestParam(defaultValue = "false", required = false) boolean includeSalaryData
+            @RequestParam(defaultValue = "false", required = false)
+            boolean includeSalaryData
     ) throws BadRequestException {
         log.debug("Request to create salaryGradeRequests: {}", salaryGradeRequests);
         final var batch = salaryGradeService.createBatch(salaryGradeRequests, includeSalaryData);
@@ -263,10 +274,15 @@ public class SalaryGradeController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<StandardApiResponse<SalaryGradeResponse>> update(
+            @PathVariable
+            @NotNull(message = "id of salary grade must not be null")
+            @NotBlank(message = "id of salary grade must not be blank")
             @Parameter(description = "ID of the salary grade to update", required = true)
-            @PathVariable @NotBlank String id,
+            String id,
+            @Valid
+            @RequestBody
             @Parameter(description = "Updated salary grade details", required = true)
-            @RequestBody @Valid SalaryGradeRequest salaryGradeRequest
+            SalaryGradeRequest salaryGradeRequest
     ) throws BadRequestException {
         log.debug("Request to update salary grade with id: {}, salaryGradeRequest: {}", id, salaryGradeRequest);
         SalaryGradeResponse updatedSalaryGrade = salaryGradeService.update(id, salaryGradeRequest);
@@ -274,7 +290,7 @@ public class SalaryGradeController {
     }
 
     /**
-     * Deletes a salary grade entry by its ID.
+     * Deletes a salary grade entry by its ID. All associated salary data will also be deleted.
      *
      * @param id The ID of the salary grade to delete.
      * @return A ResponseEntity containing a StandardApiResponse with a boolean indicating deletion success.
@@ -322,7 +338,10 @@ public class SalaryGradeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<StandardApiResponse<Boolean>> delete(
             @Parameter(description = "ID of the salary grade to delete", required = true)
-            @PathVariable @NotBlank String id
+            @PathVariable
+            @NotBlank(message = "id of salary grade must not be blank")
+            @NotNull(message = "id of salary grade must not be null")
+            String id
     ) throws BadRequestException {
         log.debug("Request to delete salary grade with id: {}", id);
         boolean deleted = salaryGradeService.delete(id);
