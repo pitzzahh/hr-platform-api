@@ -27,7 +27,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IdentifierTypeService implements IIdentifierTypeService {
+public class IdentifierTypeServiceImp implements IIdentifierTypeService {
 
     private final IdentifierTypeRepository identifierTypeRepository;
     private final IdentifierRepository identifierRepository;
