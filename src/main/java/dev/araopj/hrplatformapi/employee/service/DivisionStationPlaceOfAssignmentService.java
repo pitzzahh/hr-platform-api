@@ -53,8 +53,6 @@ public class DivisionStationPlaceOfAssignmentService {
 
     private final DivisionStationPlaceOfAssignmentRepository divisionStationPlaceOfAssignmentRepository;
     private final EmploymentInformationRepository employmentInformationRepository;
-    private final CommonValidation commonValidation;
-    private final ObjectMapper objectMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "employmentInformation");
     private final String ENTITY_NAME = "DivisionStationPlaceOfAssignmentResponse";
@@ -110,7 +108,7 @@ public class DivisionStationPlaceOfAssignmentService {
      * @throws NotFoundException() if no DivisionStationPlaceOfAssignment record is found with the given ID and employmentInformation ID.
      */
     public Optional<DivisionStationPlaceOfAssignmentResponse> findByIdAndEmploymentInformationId(String id, String employmentInformationId) {
-        final var DATA = divisionStationPlaceOfAssignmentRepository.findByIdAndEmploymentInformation_Id(id, employmentInformationId);
+        final var DATA = divisionStationPlaceOfAssignmentRepository.findByIdAndEmploymentInformationId(id, employmentInformationId);
 
         if (DATA.isEmpty()) {
             log.warn("{} not found with id {} and employmentInformationId {}", ENTITY_NAME, id, employmentInformationId);

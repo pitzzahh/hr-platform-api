@@ -13,7 +13,7 @@ import java.util.Optional;
 @NonNullApi
 @Repository
 public interface DivisionStationPlaceOfAssignmentRepository extends JpaRepository<DivisionStationPlaceOfAssignment, String> {
-    Optional<DivisionStationPlaceOfAssignment> findByIdAndEmploymentInformation_Id(String id, String employeeId);
+    Optional<DivisionStationPlaceOfAssignment> findByIdAndEmploymentInformationId(String id, String employeeId);
 
     Optional<DivisionStationPlaceOfAssignment> findByCodeAndNameAndEmploymentInformationId(String code, String name, String employmentInformationId);
 
