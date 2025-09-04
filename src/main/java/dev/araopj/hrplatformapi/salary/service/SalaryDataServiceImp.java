@@ -8,7 +8,6 @@ import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.*;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -94,47 +93,29 @@ public class SalaryDataServiceImp implements ISalaryDataService {
 
     @Override
     public SalaryDataResponse create(
-            SalaryDataRequest salaryDataRequest,
-            @Nullable String salaryGradeId, // salary grade id from request param
-            CheckType checkType
-    ) throws BadRequestException {
-        final var OPTIONAL_SALARY_GRADE_CHECK = switch (checkType) {
-            case CHECK_PARENT_FROM_REQUEST_PARAM -> {
-                if (salaryGradeId == null || salaryGradeId.isEmpty()) {
-                    throw new BadRequestException("Salary grade ID must be provided as query parameter when using CHECK_PARENT_FROM_REQUEST_PARAM.");
-                }
-                yield salaryGradeRepository.findById(salaryGradeId);
-            }
-            case CHECK_PARENT_FROM_REQUEST_BODY -> {
-                if (salaryDataRequest.salaryGradeId() == null || salaryDataRequest.salaryGradeId().isEmpty()) {
-                    throw new BadRequestException("Salary grade ID must be provided in request body when using CHECK_PARENT_FROM_REQUEST_BODY.");
-                }
-                yield salaryGradeRepository.findById(salaryDataRequest.salaryGradeId());
-            }
-        };
+            SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest,
+            String salaryGradeId
+    ) {
 
-
-        final var SALARY_GRADE_ID_TO_CHECK = getId(salaryDataRequest, salaryGradeId, checkType);
-        final var RESOLVED_SALARY_GRADE = OPTIONAL_SALARY_GRADE_CHECK.orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID_TO_CHECK, SALARY_GRADE));
-
-        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID_TO_CHECK)
+        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), salaryGradeId)
                 .ifPresent(sd -> {
                     throw new IllegalArgumentException(
                             "Salary data with step %d amount %f, and salary grade %d already exists for salary grade ID [%s]".formatted(
                                     salaryDataRequest.step(),
                                     salaryDataRequest.amount(),
-                                    RESOLVED_SALARY_GRADE.getSalaryGrade(),
-                                    SALARY_GRADE_ID_TO_CHECK
+                                    sd.getSalaryGrade().getSalaryGrade(),
+                                    salaryGradeId
                             )
                     );
                 });
 
-
         final var SALARY_DATA_TO_SAVE = SalaryData.builder()
                 .step(salaryDataRequest.step())
                 .amount(salaryDataRequest.amount())
-                .salaryGrade(RESOLVED_SALARY_GRADE)
-                .build();
+                .salaryGrade(salaryGradeRepository
+                        .findById(salaryGradeId)
+                        .orElseThrow(() -> new NotFoundException(salaryGradeId, SALARY_GRADE))
+                ).build();
 
         auditUtil.audit(
                 CREATE,

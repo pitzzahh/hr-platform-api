@@ -3,7 +3,6 @@ package dev.araopj.hrplatformapi.salary.service;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,15 +64,12 @@ public interface ISalaryDataService {
      * The {@code checkType} parameter determines how the salary grade ID is validated
      * (e.g., from the request body or query parameter).
      *
-     * @param salaryDataRequest the {@link SalaryDataRequest} containing salary data details (e.g., step, amount)
+     * @param salaryDataRequest the {@link SalaryDataRequest.WithoutSalaryGradeId} containing salary data details (e.g., step, amount)
      * @param salaryGradeId     the ID of the associated salary grade, or {@code null} if provided in the request
-     * @param checkType         the {@link CheckType} indicating how to validate the salary grade ID
      * @return the created {@link SalaryDataResponse} object
-     * @throws BadRequestException if the request is invalid (e.g., missing or invalid salary grade ID)
-     * @throws NotFoundException   if the specified salary grade does not exist
+     * @throws NotFoundException if the specified salary grade does not exist
      */
-    SalaryDataResponse create(SalaryDataRequest salaryDataRequest, String salaryGradeId, CheckType checkType)
-            throws BadRequestException;
+    SalaryDataResponse create(SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest, String salaryGradeId);
 
     /**
      * Updates an existing salary data record with the provided request data.

@@ -220,16 +220,14 @@ public class SalaryDataController {
     @PostMapping
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
             @Parameter(description = "Salary data details to create", required = true)
-            @RequestBody @Valid SalaryDataRequest salaryDataRequest,
-            @Parameter(description = "Optional ID of the salary grade from query parameter")
-            @RequestParam(required = false) @Nullable String salaryGradeId,
-            @Parameter(description = "Validation strategy for salary grade ID", example = "CHECK_PARENT_FROM_REQUEST_BODY")
-            @RequestParam(defaultValue = "CHECK_PARENT_FROM_REQUEST_BODY") @NotNull CheckType checkType
+            @RequestBody @Valid SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest,
+            @Parameter(description = "ID of the salary grade from query parameter")
+            @RequestParam String salaryGradeId
     ) throws BadRequestException {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
 
         return ResponseEntity.ok(
-                StandardApiResponse.success(salaryDataService.create(salaryDataRequest, salaryGradeId, checkType)
+                StandardApiResponse.success(salaryDataService.create(salaryDataRequest, salaryGradeId)
                 ));
     }
 
