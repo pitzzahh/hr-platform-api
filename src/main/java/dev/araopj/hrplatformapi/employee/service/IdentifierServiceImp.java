@@ -5,7 +5,9 @@ import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.JsonRedactor;
 import dev.araopj.hrplatformapi.utils.Mapper;
+import dev.araopj.hrplatformapi.utils.MergeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -17,7 +19,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.VIEW;
+import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.IDENTIFIER;
+import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
+import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 @Slf4j
 @Service
@@ -76,12 +81,48 @@ public class IdentifierServiceImp implements IIdentifierService {
     }
 
     @Override
-    public IdentifierResponse update(IdentifierRequest request) {
-        return null;
+    public IdentifierResponse update(String id, IdentifierRequest request) throws BadRequestException {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("Identifier ID must be provided as path");
+        }
+
+        final var EXISTING_IDENTIFIER = identifierRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.IDENTIFIER));
+
+        final var OLD_DTO = Mapper.toDto(EXISTING_IDENTIFIER);
+        final var IDENTIFIER = MergeUtil.merge(EXISTING_IDENTIFIER, Mapper.toEntity(request));
+
+        final var OLD_REDACTED = JsonRedactor.redact(EXISTING_IDENTIFIER, REDACTED);
+        final var UPDATED_IDENTIFIER = identifierRepository.save(IDENTIFIER);
+        final var NEW_DTO = Mapper.toDto(UPDATED_IDENTIFIER, false);
+
+        auditUtil.audit(
+                UPDATE,
+                id,
+                Optional.of(OLD_REDACTED),
+                redact(UPDATED_IDENTIFIER, REDACTED),
+                Optional.of(redact(diff(OLD_DTO, NEW_DTO), REDACTED)),
+                ENTITY_NAME
+        );
+
+        return NEW_DTO;
     }
 
     @Override
-    public void deleteById(String id) {
+    public boolean deleteById(String id) {
+        final var IDENTIFIER_TO_BE_REMOVED = identifierRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, IDENTIFIER));
 
+        auditUtil.audit(
+                DELETE,
+                id,
+                Optional.of(redact(Mapper.toDto(IDENTIFIER_TO_BE_REMOVED, false), REDACTED)),
+                Optional.empty(),
+                Optional.empty(),
+                ENTITY_NAME
+        );
+
+        identifierRepository.deleteById(id);
+        return true;
     }
 }
