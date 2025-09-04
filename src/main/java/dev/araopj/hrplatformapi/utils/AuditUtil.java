@@ -59,7 +59,7 @@ public class AuditUtil {
     public void audit(String id, String entityName) {
         audit(
                 AuditAction.VIEW,
-                "[]",
+                id,
                 Optional.empty(),
                 Map.of("timestamp", Instant.now().toString(),
                         "entity", entityName,
@@ -83,9 +83,9 @@ public class AuditUtil {
     public ApiError audit(Exception ex, String message, Optional<ApiError> existingError) {
         var error = existingError
                 .orElse(ApiError.builder()
-                .message(message)
-                .details(List.of(ex.getMessage()))
-                .build());
+                        .message(message)
+                        .details(List.of(ex.getMessage()))
+                        .build());
         auditService.create(
                 AuditRequest.builder()
                         .entityType(ex.getClass().getTypeName())
