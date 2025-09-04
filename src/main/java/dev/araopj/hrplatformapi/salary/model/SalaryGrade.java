@@ -1,49 +1,46 @@
 package dev.araopj.hrplatformapi.salary.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Set;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class SalaryGrade {
+public class SalaryGrade extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String id;
+    @Uuid
+    private String id;
 
     @Column(nullable = false)
-    String legalBasis;
+    private String legalBasis;
 
     @Column
-    byte tranche;
-
-    @Column
-    LocalDate effectiveDate;
+    private int tranche;
 
     @Column(nullable = false)
-    @Size(min = 1, max = 33, message = "Salary grade must be between 1 and 33")
-    byte salaryGrade;
+    private LocalDate effectiveDate;
 
-    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Set<SalaryData> salaryData;
+    @Column(nullable = false)
+    @Min(value = 1, message = "Salary grade must be at least 1")
+    @Max(value = 33, message = "Salary grade must be at most 33")
+    private int salaryGrade;
 
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @JsonIgnore
+    @JsonManagedReference
+    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<SalaryData> salaryData;
 }

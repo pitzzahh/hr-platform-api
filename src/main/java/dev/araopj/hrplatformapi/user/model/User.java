@@ -1,28 +1,25 @@
 package dev.araopj.hrplatformapi.user.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-@Entity
+@EqualsAndHashCode(callSuper = true)
+@Entity(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class User {
+public class User extends EntityTimestamp implements Serializable { // TODO: implement UserDetails interface for Spring Security
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Pattern(
@@ -45,13 +42,13 @@ public class User {
     @Column
     String name;
 
-    @ColumnDefault("DISABLED")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    UserStatus status;
+    UserStatus status = UserStatus.DISABLED;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    Object totp_key;
+    String totp_key;
 
     @Column
     boolean registered_two_factor;
@@ -61,12 +58,4 @@ public class User {
 
     @Column
     boolean archived;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

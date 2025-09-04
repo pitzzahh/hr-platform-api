@@ -1,25 +1,24 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class EmploymentInformation {
+public class EmploymentInformation extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @ManyToOne
@@ -41,31 +40,23 @@ public class EmploymentInformation {
     @Column
     String remarks;
 
-    @ManyToOne
-    @JoinColumn(name = "employment_information_salary_override_id")
-    EmploymentInformationSalaryOverride salaryOverride;
+    @OneToOne
+    @JoinColumn(name = "employment_information_salary_override_id", unique = true)
+    EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
     @Column(nullable = false)
     @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
-    byte step;
+    int step;
 
     @Column
     @Size(min = 1, max = 8, message = "Anticipated step must be between 1 and 8")
-    byte anticipatedStep;
+    int anticipatedStep;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "position_id")
+    @OneToOne
+    @JoinColumn(name = "position_id", nullable = false, unique = true)
     Position position;
 
-    @ManyToOne
-    @JoinColumn(name = "station_org_id")
+    @OneToOne
+    @JoinColumn(name = "division_station_place_of_assignment_id", nullable = false, unique = true)
     DivisionStationPlaceOfAssignment divisionStationPlaceOfAssignment;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

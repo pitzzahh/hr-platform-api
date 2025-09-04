@@ -1,23 +1,22 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
+import lombok.*;
 
+import java.io.Serializable;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Position {
+public class Position extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Column(nullable = false, unique = true)
@@ -26,11 +25,6 @@ public class Position {
     @Column(nullable = false, unique = true)
     String description;
 
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @OneToOne(mappedBy = "position", cascade = CascadeType.ALL)
+    EmploymentInformation employmentInformation;
 }

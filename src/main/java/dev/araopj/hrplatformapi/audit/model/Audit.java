@@ -1,55 +1,49 @@
 package dev.araopj.hrplatformapi.audit.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
 
+import java.io.Serializable;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Audit {
+public class Audit extends EntityTimestamp implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String id;
+    @Uuid
+    private String id;
 
     @Column(nullable = false)
-    String entityType;
+    private String entityType;
 
     @Column(nullable = false)
-    AuditAction action;
+    @Enumerated(EnumType.STRING)
+    private AuditAction action;
 
     @Column(nullable = false)
-    String entity_id;
+    private String entityId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column
-    Object oldData;
+    @Column(columnDefinition = "json")
+    private JsonNode oldData;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column
-    Object newData;
+    @Column(columnDefinition = "json")
+    private JsonNode newData;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column
-    Object changes;
+    @Column(columnDefinition = "json")
+    private JsonNode changes;
 
     @Column(nullable = false)
-    String performedBy;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private String performedBy;
 }

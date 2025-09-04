@@ -1,0 +1,20 @@
+package dev.araopj.hrplatformapi.utils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import lombok.*;
+
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ApiError {
+    @NotNull
+    private String message;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> details;
+}

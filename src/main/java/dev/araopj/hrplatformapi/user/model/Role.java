@@ -1,45 +1,34 @@
 package dev.araopj.hrplatformapi.user.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
+import lombok.*;
 
+import java.io.Serializable;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Role {
+public class Role extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
-    @ColumnDefault("EMPLOYEE")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    UserRole role;
+    UserRole role = UserRole.EMPLOYEE;
 
     @Column(nullable = false, unique = true)
     String description;
 
-    @ColumnDefault("1")
     @Column(nullable = false)
-    byte maxUser; // Number of users that can be assigned to this role
+    int maxUser = 1; // Number of users that can be assigned to this role
 
     @OneToOne(mappedBy = "role", cascade = CascadeType.ALL)
     User user;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

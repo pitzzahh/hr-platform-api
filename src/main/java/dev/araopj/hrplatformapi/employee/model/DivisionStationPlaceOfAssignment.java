@@ -1,39 +1,32 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-@Entity(name = "station_org")
+@EqualsAndHashCode(callSuper = true)
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class DivisionStationPlaceOfAssignment {
+public class DivisionStationPlaceOfAssignment extends EntityTimestamp implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String id;
+    @Uuid
+    private String id;
 
     @Column(nullable = false)
-    String code;
+    private String code;
 
     @Column(nullable = false, unique = true)
-    String name;
+    private String name;
 
     @Column
-    String shortName;
+    private String shortName;
 
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @OneToOne(mappedBy = "divisionStationPlaceOfAssignment", cascade = CascadeType.ALL)
+    private EmploymentInformation employmentInformation;
 }

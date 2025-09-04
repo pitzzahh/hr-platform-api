@@ -1,31 +1,32 @@
 package dev.araopj.hrplatformapi.user.model;
 
-import jakarta.persistence.*;
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
+import lombok.*;
 
+import java.io.Serializable;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Permission {
+public class Permission extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Uuid
     String id;
 
     @Column(nullable = false)
     @Pattern(
-        regexp = "^[A-Z_]+$",
-        message = "Permission code must be uppercase letters and underscores only"
+            regexp = "^[A-Z_]+$",
+            message = "Permission code must be uppercase letters and underscores only"
     )
     String code;
 
@@ -35,16 +36,8 @@ public class Permission {
 
     @Column(nullable = false)
     @Pattern(
-        regexp = "^[A-Z_]+$",
-        message = "Permission category must be uppercase letters and underscores only"
+            regexp = "^[A-Z_]+$",
+            message = "Permission category must be uppercase letters and underscores only"
     )
     String category;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

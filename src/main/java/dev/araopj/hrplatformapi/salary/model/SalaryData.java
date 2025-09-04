@@ -1,43 +1,37 @@
 package dev.araopj.hrplatformapi.salary.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import dev.araopj.hrplatformapi.utils.EntityTimestamp;
+import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class SalaryData {
+public class SalaryData extends EntityTimestamp implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String id;
+    @Uuid
+    private String id;
 
     @Column(nullable = false)
-    @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
-    byte step;
+    @Min(value = 1, message = "Salary step must be at least 1")
+    @Max(value = 8, message = "Salary step must be at most 8")
+    private int step;
 
     @Column(nullable = false)
-    Double amount;
+    private double amount;
 
-    @ManyToOne
+    @JsonBackReference
+    @ManyToOne(optional = false)
     @JoinColumn(name = "salary_grade_id", nullable = false)
-    SalaryGrade salaryGrade;
-
-    @Column(nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, updatable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private SalaryGrade salaryGrade;
 }
