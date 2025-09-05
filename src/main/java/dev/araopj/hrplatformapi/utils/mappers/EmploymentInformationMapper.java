@@ -34,6 +34,26 @@ public class EmploymentInformationMapper {
 
     public EmploymentInformation toEntity(
             EmploymentInformationRequest employmentInformationRequest,
+            @Nullable EmploymentInformationSalaryOverride employmentInformationSalaryOverride
+    ) {
+        if (employmentInformationRequest == null) {
+            throw new IllegalArgumentException("employmentInformationRequest cannot be null");
+        }
+
+        return EmploymentInformation.builder()
+                .startDate(employmentInformationRequest.startDate())
+                .endDate(employmentInformationRequest.endDate())
+                .employmentStatus(employmentInformationRequest.employmentStatus())
+                .sourceOfFund(employmentInformationRequest.sourceOfFund())
+                .remarks(employmentInformationRequest.remarks())
+                .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
+                .step(employmentInformationRequest.step())
+                .anticipatedStep(employmentInformationRequest.anticipatedStep())
+                .build();
+    }
+
+    public EmploymentInformation toEntity(
+            EmploymentInformationRequest employmentInformationRequest,
             Employee employee,
             @Nullable EmploymentInformationSalaryOverride employmentInformationSalaryOverride,
             Position position,

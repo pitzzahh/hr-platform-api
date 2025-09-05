@@ -2,6 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -54,7 +55,7 @@ public interface EmploymentInformationService {
      * @param employmentInformationRequest the request object containing updated employment information details
      * @return the updated {@link EmploymentInformationResponse} object
      */
-    EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest);
+    EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws BadRequestException;
 
     /**
      * Deletes an employment information record by its unique id.
