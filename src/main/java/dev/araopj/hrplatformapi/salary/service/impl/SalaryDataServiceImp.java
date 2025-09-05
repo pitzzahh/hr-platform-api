@@ -1,10 +1,11 @@
-package dev.araopj.hrplatformapi.salary.service;
+package dev.araopj.hrplatformapi.salary.service.impl;
 
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
+import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.*;
 import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import lombok.RequiredArgsConstructor;

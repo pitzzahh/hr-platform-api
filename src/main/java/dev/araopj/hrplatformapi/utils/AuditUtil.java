@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
-import dev.araopj.hrplatformapi.audit.service.AuditServiceImp;
+import dev.araopj.hrplatformapi.audit.service.impl.AuditServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

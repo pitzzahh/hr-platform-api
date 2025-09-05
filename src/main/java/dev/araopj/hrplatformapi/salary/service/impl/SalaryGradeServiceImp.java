@@ -1,4 +1,4 @@
-package dev.araopj.hrplatformapi.salary.service;
+package dev.araopj.hrplatformapi.salary.service.impl;
 
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
@@ -6,6 +6,7 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
+import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;

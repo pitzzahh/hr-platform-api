@@ -1,9 +1,10 @@
-package dev.araopj.hrplatformapi.audit.service;
+package dev.araopj.hrplatformapi.audit.service.impl;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.audit.repository.AuditRepository;
+import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.Mapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

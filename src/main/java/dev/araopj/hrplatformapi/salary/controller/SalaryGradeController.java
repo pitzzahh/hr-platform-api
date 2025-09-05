@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.salary.controller;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
-import dev.araopj.hrplatformapi.salary.service.SalaryGradeServiceImp;
+import dev.araopj.hrplatformapi.salary.service.impl.SalaryGradeServiceImp;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
