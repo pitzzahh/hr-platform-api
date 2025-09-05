@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 public class EmployeeMapper {
 
     private final IdDocumentMapper idDocumentMapper;
+    private final EmploymentInformationMapper employmentInformationMapper;
+    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
 
     public Employee toEntity(EmployeeResponse employeeResponse) {
         if (employeeResponse == null) {
@@ -60,8 +62,19 @@ public class EmployeeMapper {
                 .archived(employeeRequest.archived())
                 .userId(employeeRequest.userId())
                 .idDocuments(employeeRequest.idDocumentRequests()
-                        .stream().map(idDocumentMapper::toEntity)
+                        .stream().
+                        map(idDocumentMapper::toEntity)
                         .collect(Collectors.toSet())
+                )
+                .employmentInformation(
+                        employeeRequest.employmentInformationRequests()
+                                .stream()
+                                .map(e -> employmentInformationMapper.toEntity(
+                                                e,
+                                                employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
+                                        )
+                                )
+                                .collect(Collectors.toSet())
                 )
                 .build();
     }
