@@ -32,7 +32,7 @@ public class SalaryDataServiceImp implements SalaryDataService {
     private final SalaryDataRepository salaryDataRepository;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "salaryGrade");
-    private final String ENTITY_NAME = "SalaryDataResponse";
+    private final String ENTITY_NAME = SalaryDataResponse.class.getName();
 
     @Override
     public Page<SalaryDataResponse> findAll(Pageable pageable) {

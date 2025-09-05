@@ -44,7 +44,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
     private final EmploymentInformationRepository employmentInformationRepository;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformation");
-    private final String ENTITY_NAME = "EmploymentInformationSalaryOverride";
+    private final String ENTITY_NAME = EmploymentInformationSalaryOverrideResponse.class.getName();
 
     @Override
     public List<EmploymentInformationSalaryOverrideResponse> findAll() {

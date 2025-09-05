@@ -34,7 +34,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
     private final SalaryGradeRepository salaryGradeRepository;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "salaryData");
-    private final String ENTITY_NAME = "SalaryGradeResponse";
+    private final String ENTITY_NAME = SalaryGradeResponse.class.getName();
 
     @Override
     public Page<SalaryGradeResponse> findAll(Pageable pageable, boolean includeSalaryData) {
