@@ -29,6 +29,7 @@ public record EmployeeResponse(
         String bankAccountNumber,
         boolean archived,
         String userId,
-        Set<IdDocumentResponse> identifiers
+        Set<IdDocumentResponse> identifiers,
+        Set<EmploymentInformationResponse> employmentInformation
 ) {
 }
