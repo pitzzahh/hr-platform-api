@@ -3,12 +3,13 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentTypeResponse;
+import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
 import dev.araopj.hrplatformapi.employee.repository.IdDocumentRepository;
 import dev.araopj.hrplatformapi.employee.repository.IdDocumentTypeRepository;
 import dev.araopj.hrplatformapi.employee.service.IdDocumentTypeService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.Mapper;
+import dev.araopj.hrplatformapi.utils.mappers.IdDocumentTypeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,20 @@ import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.CREATE;
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.VIEW;
-import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.IDENTIFIER;
-import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.IDENTIFIER_TYPE;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.ID_DOCUMENT;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.ID_DOCUMENT_TYPE;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
+/**
+ * Service class for managing {@link IdDocumentType} entities.
+ * <p>
+ * This service provides methods to create, read, and list IdDocumentType records.
+ * It also integrates with the AuditUtil to log actions performed on these records.
+ *
+ * @see IdDocumentTypeRepository
+ * @see IdDocumentTypeMapper
+ * @see AuditUtil
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,6 +43,7 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
 
     private final IdDocumentTypeRepository idDocumentTypeRepository;
     private final IdDocumentRepository idDocumentRepository;
+    private final IdDocumentTypeMapper idDocumentTypeMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "idDocument");
     private final String ENTITY_NAME = IdDocumentResponse.class.getName();
@@ -52,7 +64,7 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
                 ENTITY_NAME
         );
         return DATA.stream()
-                .map(Mapper::toDto)
+                .map(e -> idDocumentTypeMapper.toDto(e, true))
                 .toList();
     }
 
@@ -62,8 +74,8 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
                 ENTITY_NAME
         );
         return Optional.ofNullable(idDocumentTypeRepository.findById(id)
-                .map(Mapper::toDto)
-                .orElseThrow(() -> new NotFoundException(id, IDENTIFIER_TYPE)));
+                .map(e -> idDocumentTypeMapper.toDto(e, true))
+                .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT_TYPE)));
     }
 
     @Override
@@ -76,12 +88,12 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
             log.warn("Checking idDocument with path variable identifierId: {}", identifier_id);
             optionalIdentifier = idDocumentRepository.findById(identifier_id);
             if (optionalIdentifier.isEmpty()) {
-                throw new NotFoundException(identifier_id, IDENTIFIER);
+                throw new NotFoundException(identifier_id, ID_DOCUMENT);
             }
         }
 
         final var SAVED_DATA = idDocumentTypeRepository.save(
-                Mapper.toEntity(idDocumentTypeRequest)
+                idDocumentTypeMapper.toEntity(idDocumentTypeRequest)
         );
 
         auditUtil.audit(
@@ -92,6 +104,6 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return Mapper.toDto(SAVED_DATA);
+        return idDocumentTypeMapper.toDto(SAVED_DATA, false);
     }
 }
