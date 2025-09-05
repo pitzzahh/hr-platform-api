@@ -1,10 +1,8 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serializable;
@@ -46,17 +44,9 @@ public class Employee extends EntityTimestamp implements Serializable {
     LocalDate dateOfBirth;
 
     @Column(nullable = false, unique = true)
-    @Pattern(
-            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
-            message = "Email must be a valid email address"
-    )
     String email;
 
     @Column
-    @Pattern(
-            regexp = "^(09\\d{9}|9\\d{9}|\\+639\\d{9})$",
-            message = "Phone number must be: 11 digits starting with 09, or 10 digits starting with 9, or 13 characters starting with +639"
-    )
     String phoneNumber;
 
     @Enumerated(EnumType.STRING)
