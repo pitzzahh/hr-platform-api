@@ -20,7 +20,7 @@ public sealed interface IPositionService permits PositionServiceImp {
      * @param pageable the pagination and sorting parameters
      * @return a {@link Page} containing {@link Position} objects
      */
-    Page<Position> findAll(Pageable pageable);
+    Page<PositionResponse> findAll(Pageable pageable);
 
     /**
      * Retrieves a position by its unique identifier.
@@ -28,7 +28,7 @@ public sealed interface IPositionService permits PositionServiceImp {
      * @param id the unique identifier of the position
      * @return an {@link Optional} containing the {@link Position} if found, or empty if not found
      */
-    Optional<Position> findById(String id);
+    Optional<PositionResponse> findById(String id);
 
     /**
      * Creates a new position based on the provided request data.
