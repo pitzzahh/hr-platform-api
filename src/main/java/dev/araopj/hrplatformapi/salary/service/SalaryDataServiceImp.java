@@ -93,18 +93,18 @@ public class SalaryDataServiceImp implements ISalaryDataService {
 
     @Override
     public SalaryDataResponse create(
-            SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest,
-            String salaryGradeId
+            SalaryDataRequest salaryDataRequest
     ) {
 
-        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), salaryGradeId)
+        final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
+        salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID)
                 .ifPresent(sd -> {
                     throw new IllegalArgumentException(
                             "Salary data with step %d amount %f, and salary grade %d already exists for salary grade ID [%s]".formatted(
                                     salaryDataRequest.step(),
                                     salaryDataRequest.amount(),
                                     sd.getSalaryGrade().getSalaryGrade(),
-                                    salaryGradeId
+                                    SALARY_GRADE_ID
                             )
                     );
                 });
@@ -113,8 +113,8 @@ public class SalaryDataServiceImp implements ISalaryDataService {
                 .step(salaryDataRequest.step())
                 .amount(salaryDataRequest.amount())
                 .salaryGrade(salaryGradeRepository
-                        .findById(salaryGradeId)
-                        .orElseThrow(() -> new NotFoundException(salaryGradeId, SALARY_GRADE))
+                        .findById(SALARY_GRADE_ID)
+                        .orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID, SALARY_GRADE))
                 ).build();
 
         auditUtil.audit(

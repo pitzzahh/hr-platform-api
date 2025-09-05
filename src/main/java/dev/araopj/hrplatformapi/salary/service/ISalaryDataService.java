@@ -58,18 +58,17 @@ public interface ISalaryDataService {
     Optional<SalaryDataResponse> findByIdAndSalaryGradeId(String id, String salaryGradeId);
 
     /**
-     * Creates a new salary data record based on the provided request data.
+     * Creates a new salary data record with the provided request data.
      * <p>
-     * The method validates the input and ensures the associated salary grade exists.
-     * The {@code checkType} parameter determines how the salary grade ID is validated
-     * (e.g., from the request body or query parameter).
+     * The method validates the request data, including checking for the existence
+     * of the associated salary grade and ensuring no conflicts with existing records.
      *
-     * @param salaryDataRequest the {@link SalaryDataRequest.WithoutSalaryGradeId} containing salary data details (e.g., step, amount)
-     * @param salaryGradeId     the ID of the associated salary grade, or {@code null} if provided in the request
+     * @param salaryDataRequest the {@link SalaryDataRequest} containing salary data details
      * @return the created {@link SalaryDataResponse} object
-     * @throws NotFoundException if the specified salary grade does not exist
+     * @throws IllegalArgumentException if the request is invalid (e.g., missing salary grade or duplicate step and amount)
+     * @throws NotFoundException        if the associated salary grade does not exist
      */
-    SalaryDataResponse create(SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest, String salaryGradeId);
+    SalaryDataResponse create(SalaryDataRequest salaryDataRequest);
 
     /**
      * Updates an existing salary data record with the provided request data.

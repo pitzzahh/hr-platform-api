@@ -167,17 +167,13 @@ public class SalaryDataController {
     /**
      * Creates a new salary data entry for a specific salary grade.
      *
-     * @param salaryDataRequest The salary data details to create.
-     * @param salaryGradeId     Optional ID of the salary grade from query parameter.
-     * @return A ResponseEntity containing a StandardApiResponse with the created SalaryDataResponse.
-     * @throws BadRequestException If invalid data or parameters are provided.
-     * @throws NotFoundException   If the salary grade is not found.
+     * @param salaryDataRequest the details of the salary data to create
+     * @return a ResponseEntity containing a StandardApiResponse with the created SalaryDataResponse
      */
     @Operation(
             summary = "Create salary data",
             description = """
-                    Create a new salary data entry for a specific salary grade. \
-                    Validate the salary grade ID using the 'checkType' parameter to specify whether it comes from the request body or query parameter.
+                    Create a new salary data entry for a specific salary grade.
                     """,
             responses = {
                     @ApiResponse(
@@ -216,16 +212,13 @@ public class SalaryDataController {
     )
     @PostMapping
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
+            @Valid
+            @RequestBody
             @Parameter(description = "Salary data details to create", required = true)
-            @RequestBody @Valid SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest,
-            @Parameter(description = "ID of the salary grade from query parameter")
-            @RequestParam String salaryGradeId
-    ) throws BadRequestException {
+            SalaryDataRequest salaryDataRequest
+    ) {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
-
-        return ResponseEntity.ok(
-                StandardApiResponse.success(salaryDataService.create(salaryDataRequest, salaryGradeId)
-                ));
+        return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.create(salaryDataRequest)));
     }
 
     /**
