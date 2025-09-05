@@ -49,16 +49,12 @@ public class IdDocumentMapper {
         return IdDocumentResponse.builder()
                 .id(idDocument.getId())
                 .identifierNumber(idDocument.getIdentifierNumber())
-                .type(idDocumentTypeMapper.toDto(idDocument.getIdDocumentType()))
+                .type(idDocumentTypeMapper.toDto(idDocument.getIdDocumentType(), false))
                 .issuedDate(idDocument.getIssuedDate())
                 .issuedPlace(idDocument.getIssuedPlace())
                 .employee(includeEmployee ? idDocument.getEmployee() : null)
                 .createdAt(idDocument.getCreatedAt())
                 .updatedAt(idDocument.getUpdatedAt())
                 .build();
-    }
-
-    public IdDocumentResponse toDto(IdDocument idDocument) {
-        return toDto(idDocument, false);
     }
 }

@@ -111,7 +111,7 @@ public class IdDocumentServiceImp implements IdDocumentService {
     }
 
     @Override
-    public boolean deleteById(String id) throws BadRequestException {
+    public boolean delete(String id) throws BadRequestException {
         findById(id).orElseThrow();
         auditUtil.audit(
                 DELETE,

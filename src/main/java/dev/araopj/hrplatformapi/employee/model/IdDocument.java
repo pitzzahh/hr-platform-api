@@ -22,8 +22,8 @@ public class IdDocument extends EntityTimestamp implements Serializable {
     @Column(nullable = false, unique = true)
     private String identifierNumber;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_document_type_id")
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_document_type_id", nullable = false, unique = true)
     private IdDocumentType idDocumentType;
 
     @Column
