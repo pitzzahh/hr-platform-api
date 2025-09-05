@@ -43,13 +43,13 @@ public class WorkplaceServiceImp implements IWorkplaceService {
         auditUtil.audit(
                 VIEW,
                 "[]",
-                Optional.empty(),
-                PaginationMeta.builder()
+                Optional.of(PaginationMeta.builder()
                         .totalElements(WORKPLACE_DATA.getTotalElements())
                         .size(WORKPLACE_DATA.getSize())
                         .page(WORKPLACE_DATA.getNumber() + 1)
                         .totalPages(WORKPLACE_DATA.getTotalPages())
-                        .build(),
+                        .build()),
+                Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
