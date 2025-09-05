@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.salary.controller;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import dev.araopj.hrplatformapi.salary.service.ISalaryDataService;
+import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
@@ -39,7 +39,7 @@ import java.util.List;
 )
 public class SalaryDataController {
 
-    private final ISalaryDataService salaryDataService;
+    private final SalaryDataService salaryDataService;
 
     /**
      * Retrieves a paginated list of all salary data entries, optionally filtered by salary grade ID.

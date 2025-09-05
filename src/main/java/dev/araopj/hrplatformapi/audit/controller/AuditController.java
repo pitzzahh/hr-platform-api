@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.audit.controller;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
-import dev.araopj.hrplatformapi.audit.service.IAuditService;
+import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
@@ -29,7 +29,7 @@ import java.util.List;
  * supporting pagination and validation. All responses are wrapped in a
  * {@link StandardApiResponse} for consistent API output.
  *
- * @see IAuditService
+ * @see AuditService
  * @see AuditRequest
  * @see AuditResponse
  * @see StandardApiResponse
@@ -41,7 +41,7 @@ import java.util.List;
 @Tag(name = "Audit", description = "Endpoints for managing audit records, including retrieval and creation.")
 public class AuditController {
 
-    private final IAuditService auditService;
+    private final AuditService auditService;
 
     /**
      * Retrieves a paginated list of all audit records.

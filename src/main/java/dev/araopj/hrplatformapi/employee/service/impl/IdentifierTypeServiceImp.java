@@ -5,7 +5,7 @@ import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierTypeResponse;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierRepository;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierTypeRepository;
-import dev.araopj.hrplatformapi.employee.service.IIdentifierTypeService;
+import dev.araopj.hrplatformapi.employee.service.IdentifierTypeService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.Mapper;
@@ -28,7 +28,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IdentifierTypeServiceImp implements IIdentifierTypeService {
+public class IdentifierTypeServiceImp implements IdentifierTypeService {
 
     private final IdentifierTypeRepository identifierTypeRepository;
     private final IdentifierRepository identifierRepository;

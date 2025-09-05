@@ -4,7 +4,7 @@ import dev.araopj.hrplatformapi.employee.dto.request.PositionRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.PositionResponse;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
-import dev.araopj.hrplatformapi.employee.service.IPositionService;
+import dev.araopj.hrplatformapi.employee.service.PositionService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
@@ -26,13 +26,13 @@ import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.PO
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
- * Implementation of {@link IPositionService} for managing position-related operations.
+ * Implementation of {@link PositionService} for managing position-related operations.
  * Provides functionality for retrieving, creating, updating, and deleting position records.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PositionServiceImp implements IPositionService {
+public class PositionServiceImp implements PositionService {
 
     private final EmploymentInformationRepository employmentInformationRepository;
     private final PositionRepository positionRepository;

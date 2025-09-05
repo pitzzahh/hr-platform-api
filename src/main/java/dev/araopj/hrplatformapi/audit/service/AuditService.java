@@ -20,7 +20,7 @@ import java.util.Optional;
  * @see AuditRequest
  * @see AuditResponse
  */
-public interface IAuditService {
+public interface AuditService {
 
     /**
      * Retrieves a paginated list of all audit records.

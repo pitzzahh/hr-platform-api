@@ -20,7 +20,7 @@ import java.util.Optional;
  * @see SalaryDataResponse
  * @see SalaryDataRequest
  */
-public interface ISalaryDataService {
+public interface SalaryDataService {
 
     /**
      * Retrieves a paginated list of all salary data records.

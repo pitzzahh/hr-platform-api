@@ -12,7 +12,7 @@ import java.util.Optional;
  * Service interface for managing workplace-related operations.
  * Provides methods for retrieving, creating, updating, and deleting workplace records.
  */
-public interface IWorkplaceService {
+public interface WorkplaceService {
 
     /**
      * Retrieves a paginated list of all workplaces.

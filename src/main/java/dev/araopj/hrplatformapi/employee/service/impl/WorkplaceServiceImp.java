@@ -4,7 +4,7 @@ import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
-import dev.araopj.hrplatformapi.employee.service.IWorkplaceService;
+import dev.araopj.hrplatformapi.employee.service.WorkplaceService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,13 @@ import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.WO
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
- * Implementation of {@link IWorkplaceService} for managing workplace-related operations.
+ * Implementation of {@link WorkplaceService} for managing workplace-related operations.
  * Provides functionality for retrieving, creating, updating, and deleting workplace records.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class WorkplaceServiceImp implements IWorkplaceService {
+public class WorkplaceServiceImp implements WorkplaceService {
 
     private final EmploymentInformationRepository employmentInformationRepository;
     private final WorkplaceRepository workplaceRepository;

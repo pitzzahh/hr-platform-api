@@ -23,7 +23,7 @@ import java.util.Optional;
  * @see NotFoundException
  * @see BadRequestException
  */
-public interface ISalaryGradeService {
+public interface SalaryGradeService {
 
     /**
      * Retrieves a page of salary grade records, optionally including associated salary data.

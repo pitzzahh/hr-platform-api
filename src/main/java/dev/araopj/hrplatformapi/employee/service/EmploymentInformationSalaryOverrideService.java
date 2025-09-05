@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Service interface for managing Employment Information Salary Overrides.
  */
-public interface IEmploymentInformationSalaryOverrideService {
+public interface EmploymentInformationSalaryOverrideService {
 
     /**
      * Retrieves all Employment Information Salary Overrides.

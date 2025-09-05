@@ -14,7 +14,7 @@ import java.util.Optional;
  * @see IdentifierTypeResponse
  * @see IdentifierTypeRequest
  */
-public interface IIdentifierTypeService {
+public interface IdentifierTypeService {
 
     /**
      * Retrieves all identifier types.

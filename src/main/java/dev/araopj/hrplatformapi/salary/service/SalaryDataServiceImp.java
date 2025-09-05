@@ -25,7 +25,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class SalaryDataServiceImp implements ISalaryDataService {
+public class SalaryDataServiceImp implements SalaryDataService {
 
     private final SalaryGradeRepository salaryGradeRepository;
     private final SalaryDataRepository salaryDataRepository;

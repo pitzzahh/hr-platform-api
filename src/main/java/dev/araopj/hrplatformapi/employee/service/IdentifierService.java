@@ -15,7 +15,7 @@ import java.util.Optional;
  * @see IdentifierResponse
  * @see IdentifierRequest
  */
-public interface IIdentifierService {
+public interface IdentifierService {
 
     /**
      * Retrieves all identifiers.

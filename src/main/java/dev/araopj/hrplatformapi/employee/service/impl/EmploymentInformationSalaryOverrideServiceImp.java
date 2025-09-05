@@ -5,7 +5,7 @@ import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalar
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
-import dev.araopj.hrplatformapi.employee.service.IEmploymentInformationSalaryOverrideService;
+import dev.araopj.hrplatformapi.employee.service.EmploymentInformationSalaryOverrideService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EmploymentInformationSalaryOverrideServiceImp implements IEmploymentInformationSalaryOverrideService {
+public class EmploymentInformationSalaryOverrideServiceImp implements EmploymentInformationSalaryOverrideService {
 
     private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
     private final EmploymentInformationRepository employmentInformationRepository;

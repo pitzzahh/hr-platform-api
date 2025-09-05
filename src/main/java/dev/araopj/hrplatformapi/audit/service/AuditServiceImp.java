@@ -21,7 +21,7 @@ import java.util.Optional;
  * validation, and mapping between entities and DTOs. It interacts with the
  * {@link AuditRepository} for data persistence.
  *
- * @see IAuditService
+ * @see AuditService
  * @see Audit
  * @see AuditRequest
  * @see AuditResponse
@@ -30,7 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class AuditServiceImp implements IAuditService {
+public class AuditServiceImp implements AuditService {
 
     private final AuditRepository auditRepository;
 
