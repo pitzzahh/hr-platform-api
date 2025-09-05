@@ -1,6 +1,7 @@
 package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierTypeRequest;
+import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierTypeResponse;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierRepository;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierTypeRepository;
@@ -33,27 +34,26 @@ public class IdentifierTypeServiceImp implements IIdentifierTypeService {
     private final IdentifierRepository identifierRepository;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "identifier");
-    private final String ENTITY_NAME = "IdentifierTypeResponse";
+    private final String ENTITY_NAME = IdentifierResponse.class.getName();
 
     @Override
     public List<IdentifierTypeResponse> findAll() {
-        var data = identifierTypeRepository.findAll()
-                .stream()
-                .map(Mapper::toDto)
-                .toList();
+        final var DATA = identifierTypeRepository.findAll();
         auditUtil.audit(
                 VIEW,
                 "[]",
-                Optional.empty(),
-                Map.of(
+                Optional.of(Map.of(
                         "timestamp", Instant.now().toString(),
                         "entity", ENTITY_NAME,
-                        "count", data.size()
-                ),
+                        "count", DATA.size()
+                )),
+                Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return data;
+        return DATA.stream()
+                .map(Mapper::toDto)
+                .toList();
     }
 
     public Optional<IdentifierTypeResponse> findById(String id) {
