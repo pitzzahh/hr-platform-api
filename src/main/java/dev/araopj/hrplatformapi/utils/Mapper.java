@@ -3,10 +3,6 @@ package dev.araopj.hrplatformapi.utils;
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
-import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
-import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
-import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
-import dev.araopj.hrplatformapi.employee.model.Workplace;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
@@ -15,30 +11,8 @@ import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import lombok.extern.slf4j.Slf4j;
 
-// TODO: split into multiple entity specific mapper class, technical debt for now
 @Slf4j
 public class Mapper { // TODO: convert to a component with DI, and split into multiple mappers if needed
-
-    public static Workplace toEntity(WorkplaceRequest workplaceRequest, EmploymentInformation employmentInformation) {
-        if (workplaceRequest == null) return null;
-
-        return Workplace.builder()
-                .code(workplaceRequest.code())
-                .name(workplaceRequest.name())
-                .shortName(workplaceRequest.shortName())
-                .employmentInformation(employmentInformation)
-                .build();
-    }
-
-    public static Workplace toEntity(WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest) {
-        if (workplaceRequest == null) return null;
-
-        return Workplace.builder()
-                .code(workplaceRequest.code())
-                .name(workplaceRequest.name())
-                .shortName(workplaceRequest.shortName())
-                .build();
-    }
 
     public static SalaryGrade toEntity(SalaryGradeRequest salaryGradeRequest) {
         if (salaryGradeRequest == null) return null;
@@ -114,20 +88,6 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .updatedAt(salaryGrade.getUpdatedAt()).build();
     }
 
-    public static WorkplaceResponse toDto(Workplace entity, boolean includeEmploymentInformation) {
-        if (entity == null) return null;
-
-        return WorkplaceResponse.builder()
-                .id(entity.getId())
-                .code(entity.getCode())
-                .name(entity.getName())
-                .shortName(entity.getShortName())
-                .employmentInformation(includeEmploymentInformation ? entity.getEmploymentInformation() : null)
-                .createdAt(entity.getCreatedAt())
-                .updatedAt(entity.getUpdatedAt())
-                .build();
-    }
-
 
     /**
      * Converts an {@link AuditRequest} to an {@link Audit} entity.
@@ -170,10 +130,6 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
 
     // fallback for existing usages (defaults with parent)
     public static SalaryDataResponse toDto(SalaryData entity) {
-        return toDto(entity, true);
-    }
-
-    public static WorkplaceResponse toDto(Workplace entity) {
         return toDto(entity, true);
     }
 

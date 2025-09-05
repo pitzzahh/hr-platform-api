@@ -72,4 +72,15 @@ public class PositionMapper {
                 .description(positionRequest.description())
                 .build();
     }
+
+    public Position toEntity(PositionResponse positionResponse) {
+        if (positionResponse == null) {
+            throw new IllegalArgumentException("positionResponse cannot be null");
+        }
+
+        return Position.builder()
+                .code(positionResponse.code())
+                .description(positionResponse.description())
+                .build();
+    }
 }

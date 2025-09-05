@@ -3,11 +3,9 @@ package dev.araopj.hrplatformapi.utils.mappers;
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
 import dev.araopj.hrplatformapi.employee.model.Employee;
-import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -16,7 +14,31 @@ public class EmployeeMapper {
 
     private final IdDocumentMapper idDocumentMapper;
 
-    public Employee toEntity(EmployeeRequest employeeRequest, final Set<IdDocument> idDocuments) {
+    public Employee toEntity(EmployeeResponse employeeResponse) {
+        if (employeeResponse == null) {
+            throw new IllegalArgumentException("employeeResponse cannot be null");
+        }
+
+        return Employee.builder()
+                .employeeNumber(employeeResponse.employeeNumber())
+                .itemNumber(employeeResponse.itemNumber())
+                .firstName(employeeResponse.firstName())
+                .middleName(employeeResponse.middleName())
+                .lastName(employeeResponse.lastName())
+                .photo(employeeResponse.photo())
+                .dateOfBirth(employeeResponse.dateOfBirth())
+                .email(employeeResponse.email())
+                .phoneNumber(employeeResponse.phoneNumber())
+                .gender(employeeResponse.gender())
+                .taxPayerIdentificationNumber(employeeResponse.taxPayerIdentificationNumber())
+                .civilStatus(employeeResponse.civilStatus())
+                .bankAccountNumber(employeeResponse.bankAccountNumber())
+                .archived(employeeResponse.archived())
+                .userId(employeeResponse.userId())
+                .build();
+    }
+
+    public Employee toEntity(EmployeeRequest employeeRequest) {
         if (employeeRequest == null) {
             throw new IllegalArgumentException("employeeRequest cannot be null");
         }
@@ -67,7 +89,8 @@ public class EmployeeMapper {
                 .archived(employee.isArchived())
                 .userId(employee.getUserId())
                 .identifiers(employee.getIdDocuments()
-                        .stream().map(idDocumentMapper::toDto)
+                        .stream()
+                        .map(e -> idDocumentMapper.toDto(e, false))
                         .collect(Collectors.toSet())
                 )
                 .build();
