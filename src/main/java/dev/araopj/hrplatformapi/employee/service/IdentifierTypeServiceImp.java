@@ -1,13 +1,12 @@
 package dev.araopj.hrplatformapi.employee.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierTypeResponse;
-import dev.araopj.hrplatformapi.employee.model.IdentifierType;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierRepository;
 import dev.araopj.hrplatformapi.employee.repository.IdentifierTypeRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,15 +30,15 @@ public class IdentifierTypeServiceImp implements IIdentifierTypeService {
 
     private final IdentifierTypeRepository identifierTypeRepository;
     private final IdentifierRepository identifierRepository;
-    private final ObjectMapper objectMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "identifier");
     private final String ENTITY_NAME = "IdentifierTypeResponse";
 
     @Override
     public List<IdentifierTypeResponse> findAll() {
-        var data = identifierTypeRepository.findAll().stream()
-                .map(entity -> objectMapper.convertValue(entity, IdentifierTypeResponse.class))
+        var data = identifierTypeRepository.findAll()
+                .stream()
+                .map(Mapper::toDto)
                 .toList();
         auditUtil.audit(
                 VIEW,
@@ -62,7 +61,7 @@ public class IdentifierTypeServiceImp implements IIdentifierTypeService {
                 ENTITY_NAME
         );
         return Optional.ofNullable(identifierTypeRepository.findById(id)
-                .map(e -> objectMapper.convertValue(e, IdentifierTypeResponse.class))
+                .map(Mapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, IDENTIFIER_TYPE)));
     }
 
@@ -80,18 +79,18 @@ public class IdentifierTypeServiceImp implements IIdentifierTypeService {
             }
         }
 
-        final var data = objectMapper.convertValue(identifierTypeRepository.saveAndFlush(
-                objectMapper.convertValue(identifierTypeRequest, IdentifierType.class)
-        ), IdentifierTypeResponse.class);
+        final var SAVED_DATA = identifierTypeRepository.save(
+                Mapper.toEntity(identifierTypeRequest)
+        );
 
         auditUtil.audit(
                 CREATE,
                 String.valueOf(identifierTypeRequest.code()),
                 Optional.empty(),
-                redact(data, REDACTED),
+                redact(SAVED_DATA, REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
-        return data;
+        return Mapper.toDto(SAVED_DATA);
     }
 }

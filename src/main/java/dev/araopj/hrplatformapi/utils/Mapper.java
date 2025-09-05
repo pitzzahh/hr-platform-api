@@ -175,7 +175,7 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .build();
     }
 
-    private static IdentifierType toEntity(@NotNull(message = "identifierTypeRequest cannot be null") @NotBlank(message = "identifierTypeRequest cannot be blank") IdentifierTypeRequest identifierTypeRequest) {
+    public static IdentifierType toEntity(@NotNull(message = "identifierTypeRequest cannot be null") @NotBlank(message = "identifierTypeRequest cannot be blank") IdentifierTypeRequest identifierTypeRequest) {
         if (identifierTypeRequest == null) return null;
 
         return IdentifierType.builder()
