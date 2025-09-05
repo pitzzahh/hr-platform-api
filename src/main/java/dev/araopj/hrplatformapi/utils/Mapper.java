@@ -4,6 +4,7 @@ import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
+import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
@@ -37,12 +38,11 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .build();
     }
 
-    public static EmploymentInformationSalaryOverride toEntity(EmploymentInformationSalaryOverrideResponse dto) {
-        log.info("Mapping EmploymentInformationSalaryOverrideResponse to entity: {}", dto);
+    public static EmploymentInformationSalaryOverride toEntity(EmploymentInformationSalaryOverrideRequest.WithoutEmploymentInformationId employmentInformationSalaryOverrideRequest) {
+        log.info("Mapping EmploymentInformationSalaryOverrideRequest to entity: {}", employmentInformationSalaryOverrideRequest);
         return EmploymentInformationSalaryOverride.builder()
-                .id(dto.id())
-                .salary(dto.salary())
-                .effectiveDate(dto.effectiveDate())
+                .salary(employmentInformationSalaryOverrideRequest.salary())
+                .effectiveDate(employmentInformationSalaryOverrideRequest.effectiveDate())
                 .build();
     }
 
