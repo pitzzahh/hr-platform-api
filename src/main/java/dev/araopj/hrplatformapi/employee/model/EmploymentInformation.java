@@ -53,10 +53,10 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     int anticipatedStep;
 
     @OneToOne
-    @JoinColumn(name = "position_id", nullable = false, unique = true)
+    @JoinColumn(name = "position_id", nullable = false)
     Position position;
 
     @OneToOne
-    @JoinColumn(name = "division_station_place_of_assignment_id", nullable = false, unique = true)
-    DivisionStationPlaceOfAssignment divisionStationPlaceOfAssignment;
+    @JoinColumn(name = "workplace_id", nullable = false)
+    Workplace workplace;
 }
