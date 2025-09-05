@@ -59,6 +59,7 @@ public class Employee extends EntityTimestamp implements Serializable {
     )
     String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     Gender gender;
 
