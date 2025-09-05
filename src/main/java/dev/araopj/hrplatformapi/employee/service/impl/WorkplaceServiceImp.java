@@ -1,9 +1,10 @@
-package dev.araopj.hrplatformapi.employee.service;
+package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
+import dev.araopj.hrplatformapi.employee.service.IWorkplaceService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.*;
 import lombok.RequiredArgsConstructor;

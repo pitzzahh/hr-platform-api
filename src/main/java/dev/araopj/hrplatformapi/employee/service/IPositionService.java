@@ -13,7 +13,7 @@ import java.util.Optional;
  * Service interface for managing position-related operations.
  * Provides methods for retrieving, creating, updating, and deleting position records.
  */
-public sealed interface IPositionService permits PositionServiceImp {
+public interface IPositionService {
 
     /**
      * Retrieves a paginated list of all positions.
