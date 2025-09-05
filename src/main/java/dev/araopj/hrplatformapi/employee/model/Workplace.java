@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Data
-public class DivisionStationPlaceOfAssignment extends EntityTimestamp implements Serializable {
+public class Workplace extends EntityTimestamp implements Serializable {
     @Id
     @Uuid
     private String id;
@@ -27,6 +27,6 @@ public class DivisionStationPlaceOfAssignment extends EntityTimestamp implements
     @Column
     private String shortName;
 
-    @OneToOne(mappedBy = "divisionStationPlaceOfAssignment", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "workplace", cascade = CascadeType.ALL)
     private EmploymentInformation employmentInformation;
 }

@@ -14,7 +14,6 @@ import lombok.Getter;
  * The exception message will indicate which entity type and IDs were not found.
  * The EntityType enum includes a description for each entity type to enhance the clarity of the exception message.
  *
- * @see EnumUtil.HasCode
  * @see EntityType
  * @see RuntimeException
  * @since 0.0.1
@@ -33,7 +32,7 @@ public class NotFoundException extends RuntimeException {
     public enum EntityType {
         EMPLOYEE("EMPLOYEE", "Employee"),
         GSIS("GSIS", "Government Service Insurance System"),
-        DIVISION_STATION_PLACE_OF_ASSIGNMENT("DIVISION_STATION_PLACE_OF_ASSIGNMENT", "Division Station Place Of Assignment"),
+        WORKPLACE("WORKPLACE", "Workplace"),
         EMPLOYMENT_INFORMATION("EMPLOYMENT_INFORMATION", "Employment Information"),
         EMPLOYMENT_INFORMATION_SALARY_OVERRIDE("EMPLOYMENT_INFORMATION_SALARY_OVERRIDE", "Employment Information Salary Override"),
         POSITION("POSITION", "Position"),

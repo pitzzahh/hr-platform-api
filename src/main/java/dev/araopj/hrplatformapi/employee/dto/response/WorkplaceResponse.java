@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.time.Instant;
 
 @Builder
-public record DivisionStationPlaceOfAssignmentResponse(
+public record WorkplaceResponse(
         String id,
         String code,
         String name,

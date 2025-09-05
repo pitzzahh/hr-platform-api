@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record DivisionStationPlaceOfAssignmentRequest(
+public record WorkplaceRequest(
         @NotBlank(message = "code cannot be blank")
         @NotNull(message = "code cannot be null")
         String code,

@@ -3,18 +3,18 @@ package dev.araopj.hrplatformapi.utils;
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
-import dev.araopj.hrplatformapi.employee.dto.request.DivisionStationPlaceOfAssignmentRequest;
- import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
+import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
+import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierTypeRequest;
-import dev.araopj.hrplatformapi.employee.dto.response.DivisionStationPlaceOfAssignmentResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierTypeResponse;
-import dev.araopj.hrplatformapi.employee.model.DivisionStationPlaceOfAssignment;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
 import dev.araopj.hrplatformapi.employee.model.Identifier;
 import dev.araopj.hrplatformapi.employee.model.IdentifierType;
+import dev.araopj.hrplatformapi.employee.model.Workplace;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
@@ -25,6 +25,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
+// TODO: split into multiple entity specific mapper class, technical debt for now
 @Slf4j
 public class Mapper { // TODO: convert to a component with DI, and split into multiple mappers if needed
     public static EmploymentInformationSalaryOverrideResponse toDto(EmploymentInformationSalaryOverride override) {
@@ -55,13 +56,13 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .build();
     }
 
-    public static DivisionStationPlaceOfAssignment toEntity(DivisionStationPlaceOfAssignmentRequest divisionStationPlaceOfAssignmentRequest) {
-        if (divisionStationPlaceOfAssignmentRequest == null) return null;
+    public static Workplace toEntity(WorkplaceRequest workplaceRequest) {
+        if (workplaceRequest == null) return null;
 
-        return DivisionStationPlaceOfAssignment.builder()
-                .code(divisionStationPlaceOfAssignmentRequest.code())
-                .name(divisionStationPlaceOfAssignmentRequest.name())
-                .shortName(divisionStationPlaceOfAssignmentRequest.shortName())
+        return Workplace.builder()
+                .code(workplaceRequest.code())
+                .name(workplaceRequest.name())
+                .shortName(workplaceRequest.shortName())
                 .build();
     }
 
@@ -122,10 +123,10 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .updatedAt(salaryGrade.getUpdatedAt()).build();
     }
 
-    public static DivisionStationPlaceOfAssignmentResponse toDto(DivisionStationPlaceOfAssignment entity, boolean includeEmployee) {
+    public static WorkplaceResponse toDto(Workplace entity, boolean includeEmployee) {
         if (entity == null) return null;
 
-        return DivisionStationPlaceOfAssignmentResponse.builder()
+        return WorkplaceResponse.builder()
                 .id(entity.getId())
                 .code(entity.getCode())
                 .name(entity.getName())
@@ -229,7 +230,7 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
         return toDto(entity, true);
     }
 
-    public static DivisionStationPlaceOfAssignmentResponse toDto(DivisionStationPlaceOfAssignment entity) {
+    public static WorkplaceResponse toDto(Workplace entity) {
         return toDto(entity, true);
     }
 
