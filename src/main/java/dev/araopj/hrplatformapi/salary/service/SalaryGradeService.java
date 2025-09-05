@@ -12,7 +12,6 @@ import java.util.Optional;
 
 /**
  * Service interface for managing salary grade operations in the HR platform.
- * <p>
  * This interface defines the contract for performing CRUD operations on salary grades,
  * including retrieval, creation, batch creation, updating, and Deletion of salary grade records.
  * Implementations of this interface handle business logic and interact with the data layer
@@ -27,7 +26,6 @@ public interface SalaryGradeService {
 
     /**
      * Retrieves a page of salary grade records, optionally including associated salary data.
-     * <p>
      * This method fetches all salary grades from the data layer. If {@code includeSalaryData}
      * is true, associated salary data is included in the response.
      *
@@ -39,7 +37,6 @@ public interface SalaryGradeService {
 
     /**
      * Retrieves a salary grade record by its unique ID, optionally including associated salary data.
-     * <p>
      * If no record is found with the specified ID, an empty {@link Optional} is returned.
      * The {@code includeSalaryData} flag determines whether associated salary data is included.
      *
@@ -52,7 +49,6 @@ public interface SalaryGradeService {
 
     /**
      * Creates a new salary grade record based on the provided request data.
-     * <p>
      * The method validates the input to ensure no duplicate salary grades exist (based on salary grade
      * and effective date). If {@code includeSalaryData} is true, associated salary data must be provided
      * in the request.
@@ -67,7 +63,6 @@ public interface SalaryGradeService {
 
     /**
      * Creates a batch of new salary grade records based on the provided list of request data.
-     * <p>
      * The method validates each request to ensure no duplicate salary grades exist (based on salary grade
      * and effective date). If {@code includeSalaryData} is true, associated salary data must be provided
      * for each request. All records are saved in a single batch operation.
@@ -82,7 +77,6 @@ public interface SalaryGradeService {
 
     /**
      * Updates an existing salary grade record with the provided request data.
-     * <p>
      * The method ensures the record exists and validates the updated data. The updated salary grade
      * is persisted, and an audit record is created to log the changes.
      *
@@ -97,7 +91,6 @@ public interface SalaryGradeService {
 
     /**
      * Deletes a salary grade record by its unique ID.
-     * <p>
      * The method verifies that the record exists before deletion. If the record is found, it is deleted,
      * and an audit record is created to log the action.
      *

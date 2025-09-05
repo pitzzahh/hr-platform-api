@@ -42,7 +42,6 @@ public record AuditRequest(
 
     /**
      * Variant of {@link AuditRequest} that includes changes.
-     * <p>
      * Used for audit actions (e.g., UPDATE) where changes between old and new data are tracked.
      */
     @Builder
@@ -68,7 +67,6 @@ public record AuditRequest(
 
     /**
      * Variant of {@link AuditRequest} without changes.
-     * <p>
      * Used for audit actions (e.g., CREATE, VIEW) where changes are not applicable.
      */
     @Builder

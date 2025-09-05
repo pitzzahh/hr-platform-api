@@ -24,7 +24,6 @@ public interface SalaryDataService {
 
     /**
      * Retrieves a paginated list of all salary data records.
-     * <p>
      * This method fetches salary data records from the data layer, supporting pagination
      * through the provided {@link Pageable} object.
      *
@@ -35,7 +34,6 @@ public interface SalaryDataService {
 
     /**
      * Retrieves a salary data record by its unique ID.
-     * <p>
      * If no record is found with the specified ID, an empty {@link Optional} is returned.
      *
      * @param id the unique ID of the salary data record
@@ -46,7 +44,6 @@ public interface SalaryDataService {
 
     /**
      * Retrieves a salary data record by its ID and associated salary grade ID.
-     * <p>
      * This method ensures the record is associated with the specified salary grade.
      * If no matching record is found, an empty {@link Optional} is returned.
      *
@@ -59,7 +56,6 @@ public interface SalaryDataService {
 
     /**
      * Creates a new salary data record with the provided request data.
-     * <p>
      * The method validates the request data, including checking for the existence
      * of the associated salary grade and ensuring no conflicts with existing records.
      *
@@ -72,7 +68,6 @@ public interface SalaryDataService {
 
     /**
      * Updates an existing salary data record with the provided request data.
-     * <p>
      * The method ensures the record exists and validates the updated data, including
      * checking for conflicts with existing records (e.g., duplicate step and amount for a salary grade).
      *
@@ -87,7 +82,6 @@ public interface SalaryDataService {
 
     /**
      * Deletes a salary data record by its ID and associated salary grade ID.
-     * <p>
      * The method verifies that the record exists and is associated with the specified
      * salary grade before deletion. If the record is not found, the method returns {@code false}.
      *

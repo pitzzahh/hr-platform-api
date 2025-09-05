@@ -24,7 +24,6 @@ public interface AuditService {
 
     /**
      * Retrieves a paginated list of all audit records.
-     * <p>
      * This method fetches audit records from the data layer, supporting pagination
      * through the provided {@link Pageable} object.
      *
@@ -35,7 +34,6 @@ public interface AuditService {
 
     /**
      * Retrieves an audit record by its unique ID.
-     * <p>
      * If no record is found with the specified ID, an empty {@link Optional} is returned.
      *
      * @param id the unique ID of the audit record
@@ -45,7 +43,6 @@ public interface AuditService {
 
     /**
      * Creates a new audit record based on the provided request data.
-     * <p>
      * The method validates the input and persists the audit record, logging a warning
      * if the audit record indicates no changes (e.g., no old or new data).
      *
