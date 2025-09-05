@@ -24,9 +24,9 @@ public interface PositionService {
     Page<PositionResponse> findAll(Pageable pageable);
 
     /**
-     * Retrieves a position by its unique identifier.
+     * Retrieves a position by its unique id.
      *
-     * @param id the unique identifier of the position
+     * @param id the unique id of the position
      * @return an {@link Optional} containing the {@link Position} if found, or empty if not found
      */
     Optional<PositionResponse> findById(String id);
@@ -42,16 +42,16 @@ public interface PositionService {
     /**
      * Updates an existing position with the provided request data.
      *
-     * @param id              the unique identifier of the position to update
+     * @param id              the unique id of the position to update
      * @param positionRequest the request object containing updated position details
      * @return the updated {@link PositionResponse} object
      */
     PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws BadRequestException;
 
     /**
-     * Deletes a position by its unique identifier.
+     * Deletes a position by its unique id.
      *
-     * @param id the unique identifier of the position to delete
+     * @param id the unique id of the position to delete
      * @return {@code true} if the position was successfully deleted, {@code false} otherwise
      */
     boolean delete(String id);

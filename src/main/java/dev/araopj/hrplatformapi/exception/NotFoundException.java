@@ -5,7 +5,7 @@ import lombok.Getter;
 
 /**
  * Custom exception thrown when a requested entity is not found in the system.
- * Provides detailed messages based on the entity type and identifiers involved.
+ * Provides detailed messages based on the entity type and id involved.
  * Example usage:
  * <pre>
  * throw new NotFoundException("123", NotFoundException.EntityType.EMPLOYEE);
@@ -40,8 +40,8 @@ public class NotFoundException extends RuntimeException {
         USER("USER", "User"),
         SALARY_DATA("SALARY_DATA", "Salary Data"),
         SALARY_GRADE("SALARY_GRADE", "Salary Grade"),
-        IDENTIFIER_TYPE("IDENTIFIER_TYPE", "Identifier Type"),
-        IDENTIFIER("IDENTIFIER", "Identifier");
+        IDDOCUMENT_TYPE("IDDOCUMENT_TYPE", "IDDocument Type"),
+        IDDOCUMENT("IDDOCUMENT", "IDDocument");
 
         private final String code;
         private final String description;
