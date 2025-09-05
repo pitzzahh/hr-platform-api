@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static dev.araopj.hrplatformapi.audit.model.AuditAction.VIEW;
+
 /**
  * Utility class for auditing actions within the application.
  * This class provides methods to log audit events with relevant details.
@@ -58,12 +60,13 @@ public class AuditUtil {
      */
     public void audit(String id, String entityName) {
         audit(
-                AuditAction.VIEW,
+                VIEW,
                 id,
-                Optional.empty(),
-                Map.of("timestamp", Instant.now().toString(),
+                Optional.of(Map.of("timestamp", Instant.now().toString(),
                         "entity", entityName,
-                        "request_id", id),
+                        "request_id", id)
+                ),
+                Optional.empty(),
                 Optional.empty(),
                 entityName
         );
