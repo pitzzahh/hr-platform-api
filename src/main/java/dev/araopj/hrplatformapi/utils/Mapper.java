@@ -139,7 +139,7 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .updatedAt(salaryGrade.getUpdatedAt()).build();
     }
 
-    public static WorkplaceResponse toDto(Workplace entity, boolean includeEmployee) {
+    public static WorkplaceResponse toDto(Workplace entity, boolean includeEmploymentInformation) {
         if (entity == null) return null;
 
         return WorkplaceResponse.builder()
@@ -147,7 +147,7 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .code(entity.getCode())
                 .name(entity.getName())
                 .shortName(entity.getShortName())
-                .employmentInformation(includeEmployee ? entity.getEmploymentInformation() : null)
+                .employmentInformation(includeEmploymentInformation ? entity.getEmploymentInformation() : null)
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
