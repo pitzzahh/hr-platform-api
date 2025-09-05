@@ -4,9 +4,12 @@ import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverri
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
 public interface EmploymentInformationSalaryOverrideRepository extends JpaRepository<EmploymentInformationSalaryOverride, String> {
-    Optional<EmploymentInformationSalaryOverride> findByIdAndEmploymentInformation_Id(String id, String employmentInformationId);
+    Optional<EmploymentInformationSalaryOverride> findByIdAndEmploymentInformationId(String id, String employmentInformationId);
+
+    Optional<EmploymentInformationSalaryOverride> findBySalaryAndEffectiveDateAndEmploymentInformationId(double salary, LocalDate effectiveDate, String employmentInformationId);
 }
