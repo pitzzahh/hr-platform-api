@@ -5,6 +5,7 @@ import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.service.SalaryGradeServiceImp;
 import dev.araopj.hrplatformapi.utils.ApiError;
+import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,8 +45,10 @@ public class SalaryGradeController {
     private final SalaryGradeServiceImp salaryGradeService;
 
     /**
-     * Retrieves a list of all salary grade entries.
+     * Retrieves a list of all salary grade entries with pagination support.
      *
+     * @param page              The page number for pagination (1-based).
+     * @param size              The number of records per page for pagination.
      * @param includeSalaryData If true, includes associated salary data in the response.
      * @return A ResponseEntity containing a StandardApiResponse with a list of SalaryGradeResponse objects.
      */
@@ -75,13 +79,29 @@ public class SalaryGradeController {
     )
     @GetMapping
     public ResponseEntity<StandardApiResponse<List<SalaryGradeResponse>>> all(
+            @Parameter(description = "Page number (1-based)", example = "1")
+            @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "Number of records per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
             @Valid
             @RequestParam(defaultValue = "false", required = false)
             @Parameter(description = "Include associated salary data in the response", example = "false")
             boolean includeSalaryData
     ) {
         log.debug("Fetching all salary grades with includeSalaryData: {}", includeSalaryData);
-        return ResponseEntity.ok(StandardApiResponse.success(salaryGradeService.findAll(includeSalaryData)));
+        final var SALARY_GRADES_PAGE = salaryGradeService.findAll(PageRequest.of(page - 1, size), includeSalaryData);
+
+        return ResponseEntity.ok(
+                StandardApiResponse.success(
+                        SALARY_GRADES_PAGE.getContent(),
+                        PaginationMeta.builder()
+                                .page(SALARY_GRADES_PAGE.getNumber() + 1)
+                                .size(SALARY_GRADES_PAGE.getSize())
+                                .totalElements(SALARY_GRADES_PAGE.getTotalElements())
+                                .totalPages(SALARY_GRADES_PAGE.getTotalPages())
+                                .build()
+                )
+        );
     }
 
     /**
