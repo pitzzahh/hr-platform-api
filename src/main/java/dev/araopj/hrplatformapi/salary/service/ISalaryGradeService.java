@@ -4,6 +4,8 @@ import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +26,16 @@ import java.util.Optional;
 public interface ISalaryGradeService {
 
     /**
-     * Retrieves a list of salary grade records, optionally including associated salary data.
+     * Retrieves a page of salary grade records, optionally including associated salary data.
      * <p>
      * This method fetches all salary grades from the data layer. If {@code includeSalaryData}
      * is true, associated salary data is included in the response.
      *
+     * @param pageable          the pagination information (e.g., page number, size)
      * @param includeSalaryData whether to include associated salary data in the response
-     * @return a {@link List} of {@link SalaryGradeResponse} objects containing the salary grades
+     * @return a {@link Page} of {@link SalaryGradeResponse} objects containing the salary grades
      */
-    List<SalaryGradeResponse> findAll(boolean includeSalaryData);
+    Page<SalaryGradeResponse> findAll(Pageable pageable, boolean includeSalaryData);
 
     /**
      * Retrieves a salary grade record by its unique ID, optionally including associated salary data.
@@ -55,7 +58,7 @@ public interface ISalaryGradeService {
      * in the request.
      *
      * @param salaryGradeRequest the {@link SalaryGradeRequest} containing salary grade details
-     * @param includeSalaryData whether to include associated salary data in creation
+     * @param includeSalaryData  whether to include associated salary data in creation
      * @return the created {@link SalaryGradeResponse} object
      * @throws BadRequestException if the request is invalid (e.g., duplicate salary grade or missing salary data)
      */
@@ -83,11 +86,11 @@ public interface ISalaryGradeService {
      * The method ensures the record exists and validates the updated data. The updated salary grade
      * is persisted, and an audit record is created to log the changes.
      *
-     * @param id                the unique ID of the salary grade record to update
+     * @param id                 the unique ID of the salary grade record to update
      * @param salaryGradeRequest the {@link SalaryGradeRequest} containing updated salary grade details
      * @return the updated {@link SalaryGradeResponse} object
      * @throws BadRequestException if the request is invalid (e.g., missing or empty ID)
-     * @throws NotFoundException if the salary grade record does not exist
+     * @throws NotFoundException   if the salary grade record does not exist
      */
     SalaryGradeResponse update(String id, SalaryGradeRequest salaryGradeRequest)
             throws BadRequestException;

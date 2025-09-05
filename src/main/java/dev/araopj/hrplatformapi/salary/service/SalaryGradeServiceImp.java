@@ -12,6 +12,8 @@ import dev.araopj.hrplatformapi.utils.MergeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -34,24 +36,23 @@ public class SalaryGradeServiceImp implements ISalaryGradeService {
     private final String ENTITY_NAME = "SalaryGradeResponse";
 
     @Override
-    public List<SalaryGradeResponse> findAll(boolean includeSalaryData) {
+    public Page<SalaryGradeResponse> findAll(Pageable pageable, boolean includeSalaryData) {
         final var SALARY_GRADES = includeSalaryData ?
-                salaryGradeRepository.findAllWithSalaryData() : salaryGradeRepository.findAll();
+                salaryGradeRepository.findAllWithSalaryData(pageable) : salaryGradeRepository.findAll(pageable);
         auditUtil.audit(
                 VIEW,
                 "[]",
                 Optional.of(Map.of(
                         "timestamp", Instant.now().toString(),
                         "entity", ENTITY_NAME,
-                        "count", SALARY_GRADES.size()
+                        "count", SALARY_GRADES
                 )),
                 Optional.empty(),
                 Optional.empty(),
                 "List<%s>".formatted(ENTITY_NAME)
         );
-        return SALARY_GRADES.stream()
-                .map(entity -> Mapper.toDto(entity, includeSalaryData))
-                .collect(Collectors.toList());
+        return SALARY_GRADES
+                .map(entity -> Mapper.toDto(entity, includeSalaryData));
     }
 
     @Override
