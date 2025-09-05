@@ -3,18 +3,15 @@ package dev.araopj.hrplatformapi.utils;
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
-import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierRequest;
 import dev.araopj.hrplatformapi.employee.dto.request.IdentifierTypeRequest;
-import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
+import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdentifierTypeResponse;
-import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
-import dev.araopj.hrplatformapi.employee.model.Identifier;
-import dev.araopj.hrplatformapi.employee.model.IdentifierType;
-import dev.araopj.hrplatformapi.employee.model.Workplace;
+import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
+import dev.araopj.hrplatformapi.employee.model.*;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
@@ -47,16 +44,18 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .build();
     }
 
-    public static SalaryData toEntity(SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest) {
-        if (salaryDataRequest == null) return null;
+    public static Workplace toEntity(WorkplaceRequest workplaceRequest, EmploymentInformation employmentInformation) {
+        if (workplaceRequest == null) return null;
 
-        return SalaryData.builder()
-                .step(salaryDataRequest.step())
-                .amount(salaryDataRequest.amount())
+        return Workplace.builder()
+                .code(workplaceRequest.code())
+                .name(workplaceRequest.name())
+                .shortName(workplaceRequest.shortName())
+                .employmentInformation(employmentInformation)
                 .build();
     }
 
-    public static Workplace toEntity(WorkplaceRequest workplaceRequest) {
+    public static Workplace toEntity(WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest) {
         if (workplaceRequest == null) return null;
 
         return Workplace.builder()
@@ -74,6 +73,23 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .effectiveDate(salaryGradeRequest.effectiveDate())
                 .tranche(salaryGradeRequest.tranche())
                 .salaryGrade(salaryGradeRequest.salaryGrade())
+                .build();
+    }
+
+    public static SalaryData toEntity(SalaryDataRequest salaryDataRequest, SalaryGrade salaryGrade) {
+        if (salaryDataRequest == null) return null;
+        return SalaryData.builder()
+                .step(salaryDataRequest.step())
+                .amount(salaryDataRequest.amount())
+                .salaryGrade(salaryGrade)
+                .build();
+    }
+
+    public static SalaryData toEntity(SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest) {
+        if (salaryDataRequest == null) return null;
+        return SalaryData.builder()
+                .step(salaryDataRequest.step())
+                .amount(salaryDataRequest.amount())
                 .build();
     }
 
