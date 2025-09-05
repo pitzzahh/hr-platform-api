@@ -40,8 +40,8 @@ public class NotFoundException extends RuntimeException {
         USER("USER", "User"),
         SALARY_DATA("SALARY_DATA", "Salary Data"),
         SALARY_GRADE("SALARY_GRADE", "Salary Grade"),
-        IDDOCUMENT_TYPE("IDDOCUMENT_TYPE", "IDDocument Type"),
-        IDDOCUMENT("IDDOCUMENT", "IDDocument");
+        ID_DOCUMENT_TYPE("ID_DOCUMENT_TYPE", "IdDocument Type"),
+        ID_DOCUMENT("ID_DOCUMENT", "IdDocument");
 
         private final String code;
         private final String description;
