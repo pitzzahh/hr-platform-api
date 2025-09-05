@@ -3,7 +3,6 @@ package dev.araopj.hrplatformapi.salary.service;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.*;
@@ -109,13 +108,10 @@ public class SalaryDataServiceImp implements ISalaryDataService {
                     );
                 });
 
-        final var SALARY_DATA_TO_SAVE = SalaryData.builder()
-                .step(salaryDataRequest.step())
-                .amount(salaryDataRequest.amount())
-                .salaryGrade(salaryGradeRepository
-                        .findById(SALARY_GRADE_ID)
+        final var SALARY_DATA_TO_SAVE = Mapper.toEntity(salaryDataRequest,
+                salaryGradeRepository.findById(SALARY_GRADE_ID)
                         .orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID, SALARY_GRADE))
-                ).build();
+        );
 
         auditUtil.audit(
                 CREATE,
