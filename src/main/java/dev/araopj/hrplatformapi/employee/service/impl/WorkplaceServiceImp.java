@@ -131,24 +131,13 @@ public class WorkplaceServiceImp implements WorkplaceService {
     }
 
     @Override
-    public boolean delete(String id) {
-        var data = findById(id);
-        if (data.isEmpty()) {
-            log.warn("Workplace with id [{}] not found for deletion", id);
-            return false;
-        }
-
-        if (!workplaceRepository.existsById(id)) {
-            log.warn("Workplace with id [{}] not found for deletion", id);
-            return false;
-        }
-
+    public boolean delete(String id) throws NotFoundException {
+        findById(id).orElseThrow();
         workplaceRepository.deleteById(id);
-
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(redact(data, REDACTED)),
+                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
