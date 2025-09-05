@@ -23,4 +23,11 @@ public class EmploymentInformationSalaryOverrideMapper {
                 .effectiveDate(employmentInformationSalaryOverrideRequest.effectiveDate())
                 .build();
     }
+
+    public EmploymentInformationSalaryOverride toEntity(EmploymentInformationSalaryOverrideResponse informationSalaryOverrideResponse) {
+        return EmploymentInformationSalaryOverride.builder()
+                .salary(informationSalaryOverrideResponse.salary())
+                .effectiveDate(informationSalaryOverrideResponse.effectiveDate())
+                .build();
+    }
 }
