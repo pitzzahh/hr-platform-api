@@ -32,8 +32,8 @@ public class IdentifierServiceImp implements IIdentifierService {
 
     private final IdentifierRepository identifierRepository;
     private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("id", "", "employee");
-    private final String ENTITY_NAME = "IdentifierResponse";
+    private final Set<String> REDACTED = Set.of("id", "identifierNumber", "employee");
+    private final String ENTITY_NAME = IdentifierResponse.class.getName();
 
     @Override
     public List<IdentifierResponse> findAll() {
