@@ -1,22 +1,20 @@
 package dev.araopj.hrplatformapi.employee.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import dev.araopj.hrplatformapi.employee.model.Employee;
+import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import lombok.Builder;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Builder
-public record IdentifierResponse(
+public record IdDocumentTypeResponse(
         String id,
-        String identifierNumber,
-        IdentifierTypeResponse type,
-        LocalDate issuedDate,
-        String issuedPlace,
+        String code,
+        String name,
+        String description,
         Instant createdAt,
         Instant updatedAt,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        Employee employee
+        IdDocument idDocument
 ) {
 }

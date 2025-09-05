@@ -49,7 +49,7 @@ public record EmployeeRequest(
         String bankAccountNumber,
         boolean archived,
         String userId,
-        Set<IdentifierRequest> identifierRequests,
+        Set<IdDocumentRequest> idDocumentRequests,
         Set<EmploymentInformationRequest> employmentInformationRequests
 ) {
     public record WithoutArchivedAndUserIdAndIdentifierRequestsAndEmploymentInformationRequests(

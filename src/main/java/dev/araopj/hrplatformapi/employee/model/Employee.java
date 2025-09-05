@@ -69,7 +69,7 @@ public class Employee extends EntityTimestamp implements Serializable {
     String userId;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Identifier> identifiers = new HashSet<>();
+    private Set<IdDocument> idDocuments = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     Set<EmploymentInformation> employmentInformation;

@@ -7,15 +7,15 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record IdentifierRequest(
+public record IdDocumentRequest(
 
         @NotNull(message = "identifierNumber cannot be null")
         @NotBlank(message = "identifierNumber cannot be blank")
         String identifierNumber,
 
-        @NotNull(message = "identifierTypeRequest cannot be null")
-        @NotBlank(message = "identifierTypeRequest cannot be blank")
-        IdentifierTypeRequest identifierTypeRequest,
+        @NotNull(message = "idDocumentTypeRequest cannot be null")
+        @NotBlank(message = "idDocumentTypeRequest cannot be blank")
+        IdDocumentTypeRequest idDocumentTypeRequest,
 
         LocalDate issuedDate,
         String issuedPlace,

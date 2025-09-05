@@ -15,7 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Data
-public class IdentifierType extends EntityTimestamp implements Serializable {
+public class IdDocumentType extends EntityTimestamp implements Serializable {
     @Id
     @Uuid
     private String id;
@@ -28,4 +28,7 @@ public class IdentifierType extends EntityTimestamp implements Serializable {
 
     @Column
     private String description;
+
+    @Column(nullable = false)
+    private String category; // e.g., "Government", "Private", "Professional"
 }

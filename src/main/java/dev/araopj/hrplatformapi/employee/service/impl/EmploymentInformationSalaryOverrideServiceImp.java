@@ -7,7 +7,11 @@ import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationReposit
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationSalaryOverrideService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.*;
+import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.CommonValidation;
+import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -42,6 +46,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
     private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
     private final EmploymentInformationRepository employmentInformationRepository;
+    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformation");
     private final String ENTITY_NAME = EmploymentInformationSalaryOverrideResponse.class.getName();
@@ -64,7 +69,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
         return EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA
                 .stream()
-                .map(Mapper::toDto)
+                .map(employmentInformationSalaryOverrideMapper::toDto)
                 .toList();
     }
 
@@ -75,7 +80,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
                 ENTITY_NAME
         );
         return Optional.of(employmentInformationSalaryOverrideRepository.findById(id)
-                .map(Mapper::toDto)
+                .map(employmentInformationSalaryOverrideMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE)));
     }
 
@@ -118,7 +123,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
                 ENTITY_NAME
         );
 
-        return Mapper.toDto(employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE));
+        return employmentInformationSalaryOverrideMapper.toDto(employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE));
     }
 
     @Override
@@ -137,7 +142,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
         var EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA = MergeUtil.merge(
                 ORIGINAL_EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA,
-                Mapper.toEntity(employmentInformationSalaryOverrideRequest)
+                employmentInformationSalaryOverrideMapper.toEntity(employmentInformationSalaryOverrideRequest)
         );
 
         auditUtil.audit(
@@ -149,7 +154,9 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
                 ENTITY_NAME
         );
 
-        return Mapper.toDto(employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA));
+        return employmentInformationSalaryOverrideMapper.toDto(
+                employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA)
+        );
     }
 
     @Override

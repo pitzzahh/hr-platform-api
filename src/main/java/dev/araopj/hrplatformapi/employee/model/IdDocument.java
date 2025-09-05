@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Data
-public class Identifier extends EntityTimestamp implements Serializable {
+public class IdDocument extends EntityTimestamp implements Serializable {
     @Id
     @Uuid
     private String id;
@@ -23,8 +23,8 @@ public class Identifier extends EntityTimestamp implements Serializable {
     private String identifierNumber;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "identifier_type_id")
-    private IdentifierType type;
+    @JoinColumn(name = "id_document_type_id")
+    private IdDocumentType idDocumentType;
 
     @Column
     private LocalDate issuedDate;

@@ -1,9 +1,9 @@
 package dev.araopj.hrplatformapi.employee.service.impl;
 
-import dev.araopj.hrplatformapi.employee.dto.request.IdentifierRequest;
-import dev.araopj.hrplatformapi.employee.dto.response.IdentifierResponse;
-import dev.araopj.hrplatformapi.employee.repository.IdentifierRepository;
-import dev.araopj.hrplatformapi.employee.service.IdentifierService;
+import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentRequest;
+import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
+import dev.araopj.hrplatformapi.employee.repository.IdDocumentRepository;
+import dev.araopj.hrplatformapi.employee.service.IdDocumentService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.JsonRedactor;
@@ -21,23 +21,23 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
-import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.IDENTIFIER;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.ID_DOCUMENT;
 import static dev.araopj.hrplatformapi.utils.DiffUtil.diff;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IdentifierServiceImp implements IdentifierService {
+public class IdDocumentServiceImp implements IdDocumentService {
 
-    private final IdentifierRepository identifierRepository;
+    private final IdDocumentRepository idDocumentRepository;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "identifierNumber", "employee");
-    private final String ENTITY_NAME = IdentifierResponse.class.getName();
+    private final String ENTITY_NAME = IdDocumentResponse.class.getName();
 
     @Override
-    public List<IdentifierResponse> findAll() {
-        var IDENTIFIERS = identifierRepository.findAll();
+    public List<IdDocumentResponse> findAll() {
+        var IDENTIFIERS = idDocumentRepository.findAll();
         auditUtil.audit(
                 VIEW,
                 "[]",
@@ -54,9 +54,9 @@ public class IdentifierServiceImp implements IdentifierService {
     }
 
     @Override
-    public Optional<IdentifierResponse> findById(String id) throws BadRequestException {
+    public Optional<IdDocumentResponse> findById(String id) throws BadRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Identifier ID must be provided as path");
+            throw new BadRequestException("IdDocument ID must be provided as path");
         }
 
         auditUtil.audit(
@@ -64,37 +64,37 @@ public class IdentifierServiceImp implements IdentifierService {
                 ENTITY_NAME
         );
 
-        return identifierRepository
+        return idDocumentRepository
                 .findById(id)
                 .map(Mapper::toDto)
                 .map(Optional::of)
-                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.IDENTIFIER));
+                .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
     }
 
     @Override
-    public IdentifierResponse create(IdentifierRequest request) {
-        identifierRepository.findByIdentifierNumber(request.identifierNumber())
+    public IdDocumentResponse create(IdDocumentRequest request) {
+        idDocumentRepository.findByIdentifierNumber(request.identifierNumber())
                 .ifPresent(existing -> {
-                    throw new IllegalArgumentException("Identifier with number %s already exists".formatted(request.identifierNumber()));
+                    throw new IllegalArgumentException("IdDocument with number %s already exists".formatted(request.identifierNumber()));
                 });
-        return Mapper.toDto(identifierRepository.save(Mapper.toEntity(request)));
+        return Mapper.toDto(idDocumentRepository.save(Mapper.toEntity(request)));
 
     }
 
     @Override
-    public IdentifierResponse update(String id, IdentifierRequest request) throws BadRequestException {
+    public IdDocumentResponse update(String id, IdDocumentRequest request) throws BadRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Identifier ID must be provided as path");
+            throw new BadRequestException("IdDocument ID must be provided as path");
         }
 
-        final var EXISTING_IDENTIFIER = identifierRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.IDENTIFIER));
+        final var EXISTING_IDENTIFIER = idDocumentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
 
         final var OLD_DTO = Mapper.toDto(EXISTING_IDENTIFIER);
         final var IDENTIFIER = MergeUtil.merge(EXISTING_IDENTIFIER, Mapper.toEntity(request));
 
         final var OLD_REDACTED = JsonRedactor.redact(EXISTING_IDENTIFIER, REDACTED);
-        final var UPDATED_IDENTIFIER = identifierRepository.save(IDENTIFIER);
+        final var UPDATED_IDENTIFIER = idDocumentRepository.save(IDENTIFIER);
         final var NEW_DTO = Mapper.toDto(UPDATED_IDENTIFIER, false);
 
         auditUtil.audit(
@@ -111,8 +111,8 @@ public class IdentifierServiceImp implements IdentifierService {
 
     @Override
     public boolean deleteById(String id) {
-        final var IDENTIFIER_TO_BE_REMOVED = identifierRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(id, IDENTIFIER));
+        final var IDENTIFIER_TO_BE_REMOVED = idDocumentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
 
         auditUtil.audit(
                 DELETE,
@@ -123,7 +123,7 @@ public class IdentifierServiceImp implements IdentifierService {
                 ENTITY_NAME
         );
 
-        identifierRepository.deleteById(id);
+        idDocumentRepository.deleteById(id);
         return true;
     }
 }

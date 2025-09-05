@@ -18,11 +18,11 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
 
     @Id
     @Uuid
-    String id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
-    Employee employee;
+    private Employee employee;
 
     @Column(nullable = false)
     private LocalDate startDate;
@@ -32,29 +32,29 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    EmploymentStatus employmentStatus;
+    private EmploymentStatus employmentStatus;
 
     @Column(nullable = false)
-    String sourceOfFund;
+    private String sourceOfFund;
 
     @Column
-    String remarks;
+    private String remarks;
 
     @OneToOne
     @JoinColumn(name = "employment_information_salary_override_id")
-    EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
+    private EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
     @Column(nullable = false)
-    int step;
+    private int step;
 
     @Column
-    int anticipatedStep;
+    private int anticipatedStep;
 
     @OneToOne
     @JoinColumn(name = "position_id", nullable = false)
-    Position position;
+    private Position position;
 
     @OneToOne
     @JoinColumn(name = "workplace_id", nullable = false)
-    Workplace workplace;
+    private Workplace workplace;
 }
