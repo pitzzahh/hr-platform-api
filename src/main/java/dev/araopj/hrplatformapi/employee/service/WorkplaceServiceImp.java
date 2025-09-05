@@ -63,7 +63,7 @@ public class WorkplaceServiceImp implements IWorkplaceService {
                 id,
                 ENTITY_NAME
         );
-        return Optional.of(workplaceRepository.findById(id)
+        return Optional.ofNullable(workplaceRepository.findById(id)
                 .map(Mapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, WORKPLACE)));
     }
