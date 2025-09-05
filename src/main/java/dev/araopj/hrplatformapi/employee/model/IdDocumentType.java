@@ -2,9 +2,7 @@ package dev.araopj.hrplatformapi.employee.model;
 
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -31,4 +29,7 @@ public class IdDocumentType extends EntityTimestamp implements Serializable {
 
     @Column(nullable = false)
     private String category; // e.g., "Government", "Private", "Professional"
+
+    @OneToOne(mappedBy = "idDocumentType", cascade = CascadeType.ALL, optional = false)
+    IdDocument idDocument;
 }

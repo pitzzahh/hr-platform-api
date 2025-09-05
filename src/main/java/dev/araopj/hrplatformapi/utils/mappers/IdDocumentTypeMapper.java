@@ -2,14 +2,13 @@ package dev.araopj.hrplatformapi.utils.mappers;
 
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentTypeResponse;
-import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
 import org.springframework.stereotype.Component;
 
 @Component
 public class IdDocumentTypeMapper {
 
-    public IdDocumentTypeResponse toDto(IdDocumentType idDocumentType) {
+    public IdDocumentTypeResponse toDto(IdDocumentType idDocumentType, boolean includeIdDocument) {
         if (idDocumentType == null) {
             throw new IllegalArgumentException("idDocumentType cannot be null");
         }
@@ -21,6 +20,7 @@ public class IdDocumentTypeMapper {
                 .description(idDocumentType.getDescription())
                 .createdAt(idDocumentType.getCreatedAt())
                 .updatedAt(idDocumentType.getUpdatedAt())
+                .idDocument(includeIdDocument ? idDocumentType.getIdDocument() : null)
                 .build();
     }
 
@@ -35,13 +35,6 @@ public class IdDocumentTypeMapper {
                 .name(idDocumentTypeRequest.name())
                 .description(idDocumentTypeRequest.description())
                 .build();
-    }
-
-    public IdDocumentTypeResponse toDto(IdDocument idDocument) {
-        if (idDocument == null || idDocument.getIdDocumentType() == null) {
-            throw new IllegalArgumentException("idDocumentType cannot be null");
-        }
-        return toDto(idDocument.getIdDocumentType());
     }
 
 }

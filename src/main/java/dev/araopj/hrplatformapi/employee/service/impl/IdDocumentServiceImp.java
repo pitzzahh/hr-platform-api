@@ -7,8 +7,8 @@ import dev.araopj.hrplatformapi.employee.service.IdDocumentService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.JsonRedactor;
-import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -31,6 +31,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 public class IdDocumentServiceImp implements IdDocumentService {
 
     private final IdDocumentRepository idDocumentRepository;
+    private final IdDocumentMapper idDocumentMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "identifierNumber", "employee");
     private final String ENTITY_NAME = IdDocumentResponse.class.getName();
@@ -56,7 +57,7 @@ public class IdDocumentServiceImp implements IdDocumentService {
     @Override
     public Optional<IdDocumentResponse> findById(String id) throws BadRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("IdDocument ID must be provided as path");
+            throw new BadRequestException("id must be provided as path");
         }
 
         auditUtil.audit(
@@ -66,7 +67,7 @@ public class IdDocumentServiceImp implements IdDocumentService {
 
         return idDocumentRepository
                 .findById(id)
-                .map(Mapper::toDto)
+                .map(e -> idDocumentMapper.toDto(e, true))
                 .map(Optional::of)
                 .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
     }
@@ -75,27 +76,27 @@ public class IdDocumentServiceImp implements IdDocumentService {
     public IdDocumentResponse create(IdDocumentRequest request) {
         idDocumentRepository.findByIdentifierNumber(request.identifierNumber())
                 .ifPresent(existing -> {
-                    throw new IllegalArgumentException("IdDocument with number %s already exists".formatted(request.identifierNumber()));
+                    throw new IllegalArgumentException("IdDocument with identifierNumber [%s] already exists".formatted(request.identifierNumber()));
                 });
-        return Mapper.toDto(idDocumentRepository.save(Mapper.toEntity(request)));
+        return idDocumentMapper.toDto(idDocumentRepository.save(idDocumentMapper.toEntity(request)), false);
 
     }
 
     @Override
     public IdDocumentResponse update(String id, IdDocumentRequest request) throws BadRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("IdDocument ID must be provided as path");
+            throw new BadRequestException("id must be provided as path");
         }
 
         final var EXISTING_IDENTIFIER = idDocumentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
 
-        final var OLD_DTO = Mapper.toDto(EXISTING_IDENTIFIER);
-        final var IDENTIFIER = MergeUtil.merge(EXISTING_IDENTIFIER, Mapper.toEntity(request));
+        final var OLD_DTO = idDocumentMapper.toDto(EXISTING_IDENTIFIER, false);
+        final var IDENTIFIER = MergeUtil.merge(EXISTING_IDENTIFIER, idDocumentMapper.toEntity(request));
 
         final var OLD_REDACTED = JsonRedactor.redact(EXISTING_IDENTIFIER, REDACTED);
         final var UPDATED_IDENTIFIER = idDocumentRepository.save(IDENTIFIER);
-        final var NEW_DTO = Mapper.toDto(UPDATED_IDENTIFIER, false);
+        final var NEW_DTO = idDocumentMapper.toDto(UPDATED_IDENTIFIER, false);
 
         auditUtil.audit(
                 UPDATE,
@@ -110,19 +111,16 @@ public class IdDocumentServiceImp implements IdDocumentService {
     }
 
     @Override
-    public boolean deleteById(String id) {
-        final var IDENTIFIER_TO_BE_REMOVED = idDocumentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
-
+    public boolean deleteById(String id) throws BadRequestException {
+        findById(id).orElseThrow();
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(redact(Mapper.toDto(IDENTIFIER_TO_BE_REMOVED, false), REDACTED)),
+                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
-
         idDocumentRepository.deleteById(id);
         return true;
     }
