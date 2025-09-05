@@ -32,7 +32,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public final class PositionServiceImp implements IPositionService {
+public class PositionServiceImp implements IPositionService {
 
     private final EmploymentInformationRepository employmentInformationRepository;
     private final PositionRepository positionRepository;
