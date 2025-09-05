@@ -79,7 +79,6 @@ public final class PositionServiceImp implements IPositionService {
 
         positionRepository.findByCodeAndEmploymentInformationId(
                 positionRequest.code(),
-                positionRequest.description(),
                 EMPLOYMENT_INFORMATION_ID
         ).ifPresent(position -> {
             throw new IllegalArgumentException("Position with code [%s] already exists for EmploymentInformation with id [%s]".formatted(
