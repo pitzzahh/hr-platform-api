@@ -25,6 +25,6 @@ public class Position extends EntityTimestamp implements Serializable {
     @Column(nullable = false, unique = true)
     String description;
 
-    @OneToOne(mappedBy = "position", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "position", cascade = CascadeType.ALL, optional = false)
     EmploymentInformation employmentInformation;
 }

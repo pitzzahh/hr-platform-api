@@ -3,7 +3,6 @@ package dev.araopj.hrplatformapi.employee.model;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
@@ -32,6 +31,7 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     private LocalDate endDate;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     EmploymentStatus employmentStatus;
 
     @Column(nullable = false)
@@ -41,15 +41,13 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     String remarks;
 
     @OneToOne
-    @JoinColumn(name = "employment_information_salary_override_id", unique = true)
+    @JoinColumn(name = "employment_information_salary_override_id")
     EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
     @Column(nullable = false)
-    @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
     int step;
 
     @Column
-    @Size(min = 1, max = 8, message = "Anticipated step must be between 1 and 8")
     int anticipatedStep;
 
     @OneToOne
