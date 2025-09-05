@@ -119,7 +119,7 @@ public class SalaryDataServiceImp implements ISalaryDataService {
 
         auditUtil.audit(
                 CREATE,
-                String.valueOf(SALARY_DATA_TO_SAVE.getId()),
+                SALARY_DATA_TO_SAVE.getId(),
                 Optional.empty(),
                 redact(SALARY_DATA_TO_SAVE, REDACTED),
                 Optional.empty(),
@@ -154,7 +154,7 @@ public class SalaryDataServiceImp implements ISalaryDataService {
                 ENTITY_NAME
         );
 
-        return Mapper.toDto(salaryDataRepository.saveAndFlush(SALARY_DATA));
+        return Mapper.toDto(salaryDataRepository.save(SALARY_DATA));
     }
 
     @Override
