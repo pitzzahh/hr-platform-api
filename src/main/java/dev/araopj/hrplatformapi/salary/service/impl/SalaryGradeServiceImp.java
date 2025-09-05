@@ -8,8 +8,8 @@ import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.Mapper;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.utils.mappers.SalaryGradeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -32,6 +32,7 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 public class SalaryGradeServiceImp implements SalaryGradeService {
 
     private final SalaryGradeRepository salaryGradeRepository;
+    private final SalaryGradeMapper salaryGradeMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "salaryData");
     private final String ENTITY_NAME = SalaryGradeResponse.class.getName();
@@ -53,7 +54,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
                 "List<%s>".formatted(ENTITY_NAME)
         );
         return SALARY_GRADES
-                .map(entity -> Mapper.toDto(entity, includeSalaryData));
+                .map(entity -> salaryGradeMapper.toDto(entity, includeSalaryData));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         final var OPTIONAL_SALARY_GRADE = includeSalaryData ?
                 salaryGradeRepository.findSalaryGradeWithSalaryDataById(id) : salaryGradeRepository.findById(id);
 
-        return OPTIONAL_SALARY_GRADE.map(entity -> Mapper.toDto(entity, includeSalaryData));
+        return OPTIONAL_SALARY_GRADE.map(entity -> salaryGradeMapper.toDto(entity, includeSalaryData));
     }
 
     @Override
@@ -114,7 +115,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
                 ENTITY_NAME
         );
 
-        return Mapper.toDto(savedSalaryGrade, includeSalaryData);
+        return salaryGradeMapper.toDto(savedSalaryGrade, includeSalaryData);
     }
 
     @Override
@@ -168,7 +169,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
                     Optional.empty(),
                     ENTITY_NAME
             );
-            responses.add(Mapper.toDto(savedSalaryGrade, includeSalaryData));
+            responses.add(salaryGradeMapper.toDto(savedSalaryGrade, includeSalaryData));
         }
 
         return responses;
@@ -186,13 +187,13 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
 
         final var EXISTING_SALARY_GRADE = salaryGradeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, NotFoundException.EntityType.SALARY_GRADE));
-        final var OLD_DTO = Mapper.toDto(EXISTING_SALARY_GRADE, false);
-        final var SALARY_GRADE = MergeUtil.merge(EXISTING_SALARY_GRADE, Mapper.toEntity(salaryGradeRequest));
+        final var OLD_DTO = salaryGradeMapper.toDto(EXISTING_SALARY_GRADE, false);
+        final var SALARY_GRADE = MergeUtil.merge(EXISTING_SALARY_GRADE, salaryGradeMapper.toEntity(salaryGradeRequest));
 
         final var OLD_REDACTED = redact(EXISTING_SALARY_GRADE, REDACTED);
 
         final var SAVED_SALARY_GRADE = salaryGradeRepository.saveAndFlush(SALARY_GRADE);
-        final var NEW_DTO = Mapper.toDto(SAVED_SALARY_GRADE, false);
+        final var NEW_DTO = salaryGradeMapper.toDto(SAVED_SALARY_GRADE, false);
 
         auditUtil.audit(
                 UPDATE,
@@ -214,7 +215,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(redact(Mapper.toDto(SALARY_GRADE_TO_BE_REMOVED, false), REDACTED)), // Redact DTO instead of entity
+                Optional.of(redact(salaryGradeMapper.toDto(SALARY_GRADE_TO_BE_REMOVED, false), REDACTED)), // Redact DTO instead of entity
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME

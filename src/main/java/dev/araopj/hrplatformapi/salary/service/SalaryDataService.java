@@ -64,7 +64,7 @@ public interface SalaryDataService {
      * @throws IllegalArgumentException if the request is invalid (e.g., missing salary grade or duplicate step and amount)
      * @throws NotFoundException        if the associated salary grade does not exist
      */
-    SalaryDataResponse create(SalaryDataRequest salaryDataRequest);
+    SalaryDataResponse create(SalaryDataRequest salaryDataRequest) throws BadRequestException;
 
     /**
      * Updates an existing salary data record with the provided request data.
