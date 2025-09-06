@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentTypeRequest;
-import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentTypeResponse;
 import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
 import dev.araopj.hrplatformapi.employee.repository.IdDocumentRepository;
@@ -9,9 +8,12 @@ import dev.araopj.hrplatformapi.employee.repository.IdDocumentTypeRepository;
 import dev.araopj.hrplatformapi.employee.service.IdDocumentTypeService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.IdDocumentTypeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,21 +22,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.CREATE;
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.VIEW;
+import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.ID_DOCUMENT;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.ID_DOCUMENT_TYPE;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
  * Service class for managing {@link IdDocumentType} entities.
- * <p>
- * This service provides methods to create, read, and list IdDocumentType records.
- * It also integrates with the AuditUtil to log actions performed on these records.
- *
- * @see IdDocumentTypeRepository
- * @see IdDocumentTypeMapper
- * @see AuditUtil
+ * Provides methods to create, read, update, and delete IdDocumentType records.
+ * Integrates with AuditUtil to log actions performed on these records.
  */
 @Slf4j
 @Service
@@ -46,7 +42,7 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
     private final IdDocumentTypeMapper idDocumentTypeMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "idDocument");
-    private final String ENTITY_NAME = IdDocumentResponse.class.getName();
+    private final String ENTITY_NAME = IdDocumentTypeResponse.class.getName();
 
     @Override
     public List<IdDocumentTypeResponse> findAll() {
@@ -68,6 +64,7 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
                 .toList();
     }
 
+    @Override
     public Optional<IdDocumentTypeResponse> findById(String id) {
         auditUtil.audit(
                 id,
@@ -80,17 +77,11 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
 
     @Override
     public IdDocumentTypeResponse create(IdDocumentTypeRequest idDocumentTypeRequest) {
-        final var identifier_id = idDocumentTypeRequest.identifierId();
+        final var identifierId = idDocumentTypeRequest.identifierId();
 
-        var optionalIdentifier = idDocumentRepository.findById(identifier_id);
-
-        if (optionalIdentifier.isEmpty()) {
-            log.warn("Checking idDocument with path variable identifierId: {}", identifier_id);
-            optionalIdentifier = idDocumentRepository.findById(identifier_id);
-            if (optionalIdentifier.isEmpty()) {
-                throw new NotFoundException(identifier_id, ID_DOCUMENT);
-            }
-        }
+        idDocumentRepository
+                .findById(identifierId)
+                .orElseThrow(() -> new NotFoundException(identifierId, ID_DOCUMENT));
 
         final var SAVED_DATA = idDocumentTypeRepository.save(
                 idDocumentTypeMapper.toEntity(idDocumentTypeRequest)
@@ -105,5 +96,50 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
                 ENTITY_NAME
         );
         return idDocumentTypeMapper.toDto(SAVED_DATA, false);
+    }
+
+    @Override
+    public IdDocumentTypeResponse update(String id, IdDocumentTypeRequest idDocumentTypeRequest) throws BadRequestException {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("IdDocumentType ID must be provided as path");
+        }
+
+        final var ORIGINAL_ID_DOCUMENT_TYPE = findById(id).orElseThrow();
+
+        var ID_DOCUMENT_TYPE_DATA = MergeUtil.merge(ORIGINAL_ID_DOCUMENT_TYPE,
+                idDocumentTypeMapper.toEntity(idDocumentTypeRequest)
+        );
+
+        auditUtil.audit(
+                UPDATE,
+                id,
+                Optional.of(redact(ORIGINAL_ID_DOCUMENT_TYPE, REDACTED)),
+                redact(ID_DOCUMENT_TYPE_DATA, REDACTED),
+                Optional.of(redact(DiffUtil.diff(ORIGINAL_ID_DOCUMENT_TYPE, ID_DOCUMENT_TYPE_DATA), REDACTED)),
+                ENTITY_NAME
+        );
+
+        return idDocumentTypeMapper.toDto(idDocumentTypeRepository.save(
+                idDocumentTypeMapper.toEntity(idDocumentTypeRequest)
+        ), false);
+    }
+
+    @Override
+    public boolean delete(String id) {
+        findById(id).orElseThrow();
+        idDocumentTypeRepository.deleteById(id);
+        auditUtil.audit(
+                DELETE,
+                id,
+                Optional.of(Map.of(
+                        "timestamp", Instant.now().toString(),
+                        "entity", ENTITY_NAME,
+                        "id", id
+                )),
+                Optional.empty(),
+                Optional.empty(),
+                ENTITY_NAME
+        );
+        return true;
     }
 }
