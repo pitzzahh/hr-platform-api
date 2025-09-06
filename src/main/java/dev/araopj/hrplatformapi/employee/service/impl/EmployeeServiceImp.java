@@ -67,8 +67,8 @@ public class EmployeeServiceImp implements EmployeeService {
         return PAGINATED_DATA
                 .map(e -> employeeMapper.toDto(
                         e,
-                        getIdDocuments(e),
-                        getEmploymentInformationResponses(e)
+                        getSavedIdDocuments(e),
+                        getSavedEmploymentInformation(e)
                 ));
     }
 
@@ -81,8 +81,8 @@ public class EmployeeServiceImp implements EmployeeService {
         return Optional.ofNullable(employeeRepository.findById(id)
                 .map(e -> employeeMapper.toDto(
                         e,
-                        getIdDocuments(e),
-                        getEmploymentInformationResponses(e)
+                        getSavedIdDocuments(e),
+                        getSavedEmploymentInformation(e)
                 ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE)));
     }
@@ -96,8 +96,8 @@ public class EmployeeServiceImp implements EmployeeService {
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
                 .map(employee -> employeeMapper.toDto(
                         employee,
-                        getIdDocuments(employee),
-                        getEmploymentInformationResponses(employee))
+                        getSavedIdDocuments(employee),
+                        getSavedEmploymentInformation(employee))
                 ).orElseThrow(() -> new NotFoundException(userId, EMPLOYEE)));
     }
 
@@ -223,16 +223,17 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
 
-    private Set<EmploymentInformationResponse> getSavedEmploymentInformation(Employee SAVED_EMPLOYEE) {
-        return SAVED_EMPLOYEE.getEmploymentInformation() != null ? getEmploymentInformationResponses(SAVED_EMPLOYEE) : null;
+    private Set<EmploymentInformationResponse> getSavedEmploymentInformation(Employee employee) {
+        return employee.getEmploymentInformation() != null ? getEmploymentInformationResponses(employee) : null;
     }
 
-    private Set<IdDocumentResponse> getSavedIdDocuments(Employee SAVED_EMPLOYEE) {
-        return SAVED_EMPLOYEE.getIdDocuments() != null ? getIdDocuments(SAVED_EMPLOYEE) : null;
+    private Set<IdDocumentResponse> getSavedIdDocuments(Employee employee) {
+        return employee.getIdDocuments() != null ? getIdDocuments(employee) : null;
     }
 
     private Set<EmploymentInformationResponse> getEmploymentInformationResponses(Employee employee) {
-        return employee.getEmploymentInformation().stream()
+        return employee.getEmploymentInformation()
+                .stream()
                 .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
                 .collect(Collectors.toSet());
     }
