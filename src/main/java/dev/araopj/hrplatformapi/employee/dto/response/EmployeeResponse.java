@@ -28,6 +28,7 @@ public record EmployeeResponse(
         CivilStatus civilStatus,
         String bankAccountNumber,
         boolean archived,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         String userId,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         Set<IdDocumentResponse> idDocumentResponses,
