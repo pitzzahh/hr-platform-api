@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,15 +100,19 @@ public class EmployeeController {
     }
 
     /**
-     * Retrieves a specific employee by its ID.
+     * Retrieves a specific employee by its ID or user ID.
      *
-     * @param id The ID of the employee to retrieve.
+     * @param id     The ID of the employee to retrieve.
+     * @param userId (Optional) The user ID associated with the employee.
      * @return A ResponseEntity containing a StandardApiResponse with the EmployeeResponse.
      * @throws NotFoundException If the employee is not found.
      */
     @Operation(
-            summary = "Get employee by ID",
-            description = "Retrieve a specific employee by its ID.",
+            summary = "Get employee by ID or its user ID",
+            description = """
+                    Retrieve a specific employee by its ID or user ID.
+                    If both 'id' and 'userId' are provided, 'id' takes precedence.
+                    """,
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -140,60 +143,14 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<StandardApiResponse<EmployeeResponse>> get(
             @Parameter(description = "ID of the employee to retrieve", required = true)
-            @PathVariable String id
+            @PathVariable String id,
+            @Parameter(description = "User ID of the employee to retrieve")
+            @RequestParam(required = false) String userId
     ) {
-        log.debug("Fetching employee with id: {}", id);
-        var response = employeeService.findById(id);
-        return response
-                .map(StandardApiResponse::success)
-                .map(ResponseEntity::ok)
-                .orElseThrow();
-    }
-
-    /**
-     * Retrieves a specific employee by its user ID.
-     *
-     * @param userId The user ID of the employee to retrieve.
-     * @return A ResponseEntity containing a StandardApiResponse with the EmployeeResponse.
-     * @throws NotFoundException If the employee is not found.
-     */
-    @Operation(
-            summary = "Get employee by user ID",
-            description = "Retrieve a specific employee by its user ID.",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successfully retrieved the employee",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = StandardApiResponse.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Employee not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ApiError.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ApiError.class)
-                            )
-                    )
-            }
-    )
-    @GetMapping
-    public ResponseEntity<StandardApiResponse<EmployeeResponse>> getByUserId(
-            @Parameter(description = "User ID of the employee to retrieve", required = true)
-            @RequestParam @Valid @NotNull @NotBlank String userId
-    ) {
-        log.debug("Fetching employee with userId: {}", userId);
-        var response = employeeService.findByUserId(userId);
+        log.debug("Fetching employee with id [{}] or user id [{}]", id, userId);
+        var response = (id != null && !id.isEmpty() && userId != null && !userId.isEmpty())
+                ? employeeService.findById(id)
+                : (id == null && userId != null && !userId.isEmpty() ? employeeService.findByUserId(userId) : employeeService.findById(id));
         return response
                 .map(StandardApiResponse::success)
                 .map(ResponseEntity::ok)
