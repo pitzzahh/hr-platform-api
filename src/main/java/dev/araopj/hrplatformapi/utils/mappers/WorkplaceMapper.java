@@ -21,6 +21,18 @@ public class WorkplaceMapper {
                 .build();
     }
 
+    public Workplace toEntity(WorkplaceRequest workplaceRequest) {
+        if (workplaceRequest == null) {
+            throw new IllegalArgumentException("workplaceRequest cannot be null");
+        }
+
+        return Workplace.builder()
+                .code(workplaceRequest.code())
+                .name(workplaceRequest.name())
+                .shortName(workplaceRequest.shortName())
+                .build();
+    }
+
     public Workplace toEntity(WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest) {
         if (workplaceRequest == null) {
             throw new IllegalArgumentException("workplaceRequest cannot be null");

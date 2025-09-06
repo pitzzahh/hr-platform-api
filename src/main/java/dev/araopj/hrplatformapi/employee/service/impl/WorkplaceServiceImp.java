@@ -121,8 +121,8 @@ public class WorkplaceServiceImp implements WorkplaceService {
             throw new BadRequestException("Workplace ID must be provided as path");
         }
 
-        final var ORIGINAL_WORKPLACE_DATA = workplaceRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(id, WORKPLACE));
+        final var ORIGINAL_WORKPLACE_DATA = findById(id).orElseThrow();
+
         var WORKPLACE_DATA = MergeUtil.merge(ORIGINAL_WORKPLACE_DATA,
                 workplaceMapper.toEntity(workplaceRequest)
         );
@@ -136,7 +136,9 @@ public class WorkplaceServiceImp implements WorkplaceService {
                 ENTITY_NAME
         );
 
-        return workplaceMapper.toDto(workplaceRepository.save(WORKPLACE_DATA), false);
+        return workplaceMapper.toDto(workplaceRepository.save(
+                workplaceMapper.toEntity(workplaceRequest)
+        ), false);
 
     }
 
