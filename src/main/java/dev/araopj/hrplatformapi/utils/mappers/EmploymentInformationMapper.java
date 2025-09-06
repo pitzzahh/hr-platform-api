@@ -7,15 +7,9 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 public class EmploymentInformationMapper {
-
-    private final EmployeeMapper employeeMapper;
-    private final IdDocumentMapper idDocumentMapper;
-    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
 
     public EmploymentInformation toEntity(
             EmploymentInformationResponse employmentInformationResponse
@@ -83,7 +77,10 @@ public class EmploymentInformationMapper {
 
     public EmploymentInformationResponse toDto(
             EmploymentInformation employmentInformation,
-            boolean includeEmployee
+            boolean includeEmployee,
+            EmployeeMapper employeeMapper,
+            IdDocumentMapper idDocumentMapper,
+            EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper
     ) {
         if (employmentInformation == null) {
             throw new IllegalArgumentException("employmentInformationResponses cannot be null");
@@ -95,14 +92,11 @@ public class EmploymentInformationMapper {
                 .id(employmentInformation.getId())
                 .employeeResponse(includeEmployee ? employeeMapper.toDto(
                         EMPLOYEE,
-                        EMPLOYEE.getIdDocuments()
-                                .stream()
-                                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                                .collect(Collectors.toSet()),
-                        EMPLOYEE.getEmploymentInformation()
-                                .stream()
-                                .map(e -> toDto(e, false))
-                                .collect(Collectors.toSet())
+                        true,
+                        false,
+                        idDocumentMapper,
+                        this,
+                        employmentInformationSalaryOverrideMapper
                 ) : null)
                 .startDate(employmentInformation.getStartDate())
                 .endDate(employmentInformation.getEndDate())

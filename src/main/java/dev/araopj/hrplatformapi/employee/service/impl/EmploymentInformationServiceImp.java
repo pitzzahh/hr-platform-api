@@ -13,8 +13,10 @@ import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.formatter.DateFormatter;
+import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
+import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -48,6 +50,8 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     private final PositionRepository positionRepository;
     private final WorkplaceRepository workplaceRepository;
 
+    private final EmployeeMapper employeeMapper;
+    private final IdDocumentMapper idDocumentMapper;
     private final EmploymentInformationMapper employmentInformationMapper;
     private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
 
@@ -74,7 +78,14 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         );
 
         return PAGINATED_DATA
-                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false));
+                .map(employmentInformation -> employmentInformationMapper.toDto(
+                                employmentInformation,
+                                false,
+                                employeeMapper,
+                                idDocumentMapper,
+                                employmentInformationSalaryOverrideMapper
+                        )
+                );
     }
 
     @Override
@@ -98,7 +109,14 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         );
 
         return PAGINATED_DATA
-                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false));
+                .map(employmentInformation -> employmentInformationMapper.toDto(
+                                employmentInformation,
+                                false,
+                                employeeMapper,
+                                idDocumentMapper,
+                                employmentInformationSalaryOverrideMapper
+                        )
+                );
     }
 
     @Override
@@ -108,7 +126,14 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 ENTITY_NAME
         );
         return Optional.ofNullable(employmentInformationRepository.findById(id)
-                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
+                .map(employmentInformation -> employmentInformationMapper.toDto(
+                                employmentInformation,
+                                false,
+                                employeeMapper,
+                                idDocumentMapper,
+                                employmentInformationSalaryOverrideMapper
+                        )
+                )
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION)));
     }
 
@@ -159,7 +184,13 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 ENTITY_NAME
         );
 
-        return employmentInformationMapper.toDto(employmentInformationRepository.save(WORKPLACE_TO_SAVE), false);
+        return employmentInformationMapper.toDto(
+                employmentInformationRepository.save(WORKPLACE_TO_SAVE),
+                false,
+                employeeMapper,
+                idDocumentMapper,
+                employmentInformationSalaryOverrideMapper
+        );
     }
 
     @Override
@@ -186,7 +217,13 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 ENTITY_NAME
         );
 
-        return employmentInformationMapper.toDto(employmentInformationRepository.save(WORKPLACE_DATA), false);
+        return employmentInformationMapper.toDto(
+                employmentInformationRepository.save(WORKPLACE_DATA),
+                false,
+                employeeMapper,
+                idDocumentMapper,
+                employmentInformationSalaryOverrideMapper
+        );
 
     }
 
