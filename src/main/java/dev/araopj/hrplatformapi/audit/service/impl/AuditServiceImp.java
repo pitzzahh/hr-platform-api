@@ -5,7 +5,7 @@ import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
 import dev.araopj.hrplatformapi.audit.repository.AuditRepository;
 import dev.araopj.hrplatformapi.audit.service.AuditService;
-import dev.araopj.hrplatformapi.utils.Mapper;
+import dev.araopj.hrplatformapi.utils.mappers.AuditMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,24 +34,25 @@ import java.util.Optional;
 public class AuditServiceImp implements AuditService {
 
     private final AuditRepository auditRepository;
+    private final AuditMapper auditMapper;
 
     @Override
     public Page<AuditResponse> findAll(Pageable pageable) {
         log.debug("Retrieving audit records with pagination: {}", pageable);
         return auditRepository.findAll(pageable)
-                .map(Mapper::toDto);
+                .map(auditMapper::toDto);
     }
 
     @Override
     public Optional<AuditResponse> findById(@NotNull String id) {
         log.debug("Retrieving audit record with ID: {}", id);
         return auditRepository.findById(id)
-                .map(Mapper::toDto);
+                .map(auditMapper::toDto);
     }
 
     @Override
     public AuditResponse create(@NotNull AuditRequest request) {
         log.debug("Creating audit record: {}", request);
-        return Mapper.toDto(auditRepository.save(Mapper.toEntity(request)));
+        return auditMapper.toDto(auditRepository.save(auditMapper.toEntity(request)));
     }
 }

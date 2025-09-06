@@ -1,12 +1,12 @@
-package dev.araopj.hrplatformapi.utils;
+package dev.araopj.hrplatformapi.utils.mappers;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
 import dev.araopj.hrplatformapi.audit.model.Audit;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-@Slf4j
-public class Mapper { // TODO: convert to a component with DI, and split into multiple mappers if needed
+@Component
+public class AuditMapper {
 
     /**
      * Converts an {@link AuditRequest} to an {@link Audit} entity.
@@ -14,7 +14,7 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
      * @param request the audit request DTO (e.g., {@link AuditRequest}, {@link AuditRequest.WithChanges}, {@link AuditRequest.WithoutChanges})
      * @return the corresponding audit entity
      */
-    public static Audit toEntity(AuditRequest request) {
+    public Audit toEntity(AuditRequest request) {
         return Audit.builder()
                 .entityType(request.entityType())
                 .action(request.action())
@@ -32,7 +32,7 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
      * @param audit the audit entity
      * @return the corresponding audit response DTO
      */
-    public static AuditResponse toDto(Audit audit) {
+    public AuditResponse toDto(Audit audit) {
         return AuditResponse.builder()
                 .id(audit.getId())
                 .entityType(audit.getEntityType())
@@ -46,5 +46,4 @@ public class Mapper { // TODO: convert to a component with DI, and split into mu
                 .updatedAt(audit.getUpdatedAt())
                 .build();
     }
-
 }
