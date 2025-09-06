@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     private String id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 

@@ -1,5 +1,7 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
@@ -7,7 +9,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,57 +21,62 @@ public class Employee extends EntityTimestamp implements Serializable {
 
     @Id
     @Uuid
-    String id;
+    private String id;
 
     @Column(unique = true, nullable = false)
-    Long employeeNumber;
+    private Long employeeNumber;
 
     @Column(nullable = false)
-    String itemNumber;
+    private String itemNumber;
 
     @Column(nullable = false)
-    String firstName;
+    private String firstName;
 
     @Column
-    String middleName;
+    private String middleName;
 
     @Column(nullable = false)
-    String lastName;
+    private String lastName;
 
     @Column
-    String photo;
+    private String photo;
 
     @Column(nullable = false)
-    LocalDate dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(nullable = false, unique = true)
-    String email;
+    private String email;
 
     @Column
-    String phoneNumber;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    Gender gender;
+    private Gender gender;
 
     @Column(nullable = false)
-    String taxPayerIdentificationNumber;
+    private String taxPayerIdentificationNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    CivilStatus civilStatus;
+    private CivilStatus civilStatus;
 
     @Column
-    String bankAccountNumber;
+    private String bankAccountNumber;
 
     @Column
     boolean archived;
 
     @Column
-    String userId;
+    private String userId;
 
+    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<IdDocument> idDocuments = new HashSet<>();
+    private Set<IdDocument> idDocuments;
 
+    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    Set<EmploymentInformation> employmentInformation;
+    private Set<EmploymentInformation> employmentInformation;
 }
