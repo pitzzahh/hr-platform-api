@@ -2,9 +2,6 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
-import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
-import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
-import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
@@ -73,13 +70,16 @@ public class EmployeeServiceImp implements EmployeeService {
         return PAGINATED_DATA
                 .map(e -> employeeMapper.toDto(
                         e,
-                        getSavedIdDocuments(e),
-                        getSavedEmploymentInformation(e)
+                        includeIdDocuments,
+                        includeEmploymentInformation,
+                        idDocumentMapper,
+                        employmentInformationMapper,
+                        employmentInformationSalaryOverrideMapper
                 ));
     }
 
     @Override
-    public Optional<EmployeeResponse> findById(String id) {
+    public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) {
         auditUtil.audit(
                 id,
                 ENTITY_NAME
@@ -87,23 +87,30 @@ public class EmployeeServiceImp implements EmployeeService {
         return Optional.ofNullable(employeeRepository.findById(id)
                 .map(e -> employeeMapper.toDto(
                         e,
-                        getSavedIdDocuments(e),
-                        getSavedEmploymentInformation(e)
+                        includeIdDocuments,
+                        includeEmploymentInformation,
+                        idDocumentMapper,
+                        employmentInformationMapper,
+                        employmentInformationSalaryOverrideMapper
                 ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE)));
     }
 
     @Override
-    public Optional<EmployeeResponse> findByUserId(String userId) {
+    public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) {
         auditUtil.audit(
                 userId,
                 ENTITY_NAME
         );
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
                 .map(employee -> employeeMapper.toDto(
-                        employee,
-                        getSavedIdDocuments(employee),
-                        getSavedEmploymentInformation(employee))
+                                employee,
+                                includeIdDocuments,
+                                includeEmploymentInformation,
+                                idDocumentMapper,
+                                employmentInformationMapper,
+                                employmentInformationSalaryOverrideMapper
+                        )
                 ).orElseThrow(() -> new NotFoundException(userId, EMPLOYEE)));
     }
 
@@ -153,8 +160,11 @@ public class EmployeeServiceImp implements EmployeeService {
 
         return employeeMapper.toDto(
                 SAVED_EMPLOYEE,
-                getSavedIdDocuments(SAVED_EMPLOYEE),
-                getSavedEmploymentInformation(SAVED_EMPLOYEE)
+                false,
+                false,
+                idDocumentMapper,
+                employmentInformationMapper,
+                employmentInformationSalaryOverrideMapper
         );
     }
 
@@ -188,14 +198,17 @@ public class EmployeeServiceImp implements EmployeeService {
 
         return employeeMapper.toDto(
                 UPDATED_EMPLOYEE,
-                getSavedIdDocuments(UPDATED_EMPLOYEE),
-                getSavedEmploymentInformation(UPDATED_EMPLOYEE)
+                false,
+                false,
+                idDocumentMapper,
+                employmentInformationMapper,
+                employmentInformationSalaryOverrideMapper
         );
     }
 
     @Override
     public boolean delete(String id) {
-        findById(id).orElseThrow();
+        findById(id, false, false).orElseThrow();
         auditUtil.audit(
                 DELETE,
                 id,
@@ -226,28 +239,5 @@ public class EmployeeServiceImp implements EmployeeService {
                                 )
                         )
                         .collect(Collectors.toSet()) : null;
-    }
-
-
-    private Set<EmploymentInformationResponse> getSavedEmploymentInformation(Employee employee) {
-        return employee.getEmploymentInformation() != null ? getEmploymentInformationResponses(employee) : null;
-    }
-
-    private Set<IdDocumentResponse> getSavedIdDocuments(Employee employee) {
-        return employee.getIdDocuments() != null ? getIdDocuments(employee) : null;
-    }
-
-    private Set<EmploymentInformationResponse> getEmploymentInformationResponses(Employee employee) {
-        return employee.getEmploymentInformation()
-                .stream()
-                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
-                .collect(Collectors.toSet());
-    }
-
-    private Set<IdDocumentResponse> getIdDocuments(Employee employee) {
-        return employee.getIdDocuments()
-                .stream()
-                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                .collect(Collectors.toSet());
     }
 }

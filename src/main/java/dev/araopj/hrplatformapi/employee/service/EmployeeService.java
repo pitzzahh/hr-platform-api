@@ -59,7 +59,7 @@ public interface EmployeeService {
      * @param id The employee ID.
      * @return An optional containing the employee response, or empty if not found.
      */
-    Optional<EmployeeResponse> findById(String id);
+    Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation);
 
     /**
      * Retrieves an employee by their user ID.
@@ -67,7 +67,7 @@ public interface EmployeeService {
      * @param userId The user ID associated with the employee.
      * @return An optional containing the employee response, or empty if not found.
      */
-    Optional<EmployeeResponse> findByUserId(String userId);
+    Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation);
 
     /**
      * Creates a new employee record.
