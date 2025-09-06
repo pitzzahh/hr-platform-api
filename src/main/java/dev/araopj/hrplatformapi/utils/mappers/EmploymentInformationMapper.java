@@ -7,11 +7,14 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 public class EmploymentInformationMapper {
 
     private final EmployeeMapper employeeMapper;
+    private final IdDocumentMapper idDocumentMapper;
     private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
 
     public EmploymentInformation toEntity(
@@ -79,15 +82,28 @@ public class EmploymentInformationMapper {
     }
 
     public EmploymentInformationResponse toDto(
-            EmploymentInformation employmentInformation
+            EmploymentInformation employmentInformation,
+            boolean includeEmployee
     ) {
         if (employmentInformation == null) {
-            throw new IllegalArgumentException("employmentInformation cannot be null");
+            throw new IllegalArgumentException("employmentInformationResponses cannot be null");
         }
+
+        final var EMPLOYEE = employmentInformation.getEmployee();
 
         return EmploymentInformationResponse.builder()
                 .id(employmentInformation.getId())
-                .employeeResponse(employeeMapper.toDto(employmentInformation.getEmployee()))
+                .employeeResponse(includeEmployee ? employeeMapper.toDto(
+                        EMPLOYEE,
+                        EMPLOYEE.getIdDocuments()
+                                .stream()
+                                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
+                                .collect(Collectors.toSet()),
+                        EMPLOYEE.getEmploymentInformation()
+                                .stream()
+                                .map(e -> toDto(e, false))
+                                .collect(Collectors.toSet())
+                ) : null)
                 .startDate(employmentInformation.getStartDate())
                 .endDate(employmentInformation.getEndDate())
                 .employmentStatus(employmentInformation.getEmploymentStatus())

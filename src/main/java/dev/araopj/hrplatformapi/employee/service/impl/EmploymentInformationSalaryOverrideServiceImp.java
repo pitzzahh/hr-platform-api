@@ -48,7 +48,7 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
     private final EmploymentInformationRepository employmentInformationRepository;
     private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
     private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformation");
+    private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformationResponses");
     private final String ENTITY_NAME = EmploymentInformationSalaryOverrideResponse.class.getName();
 
     @Override

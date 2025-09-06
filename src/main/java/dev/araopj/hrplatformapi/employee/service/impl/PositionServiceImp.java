@@ -38,7 +38,7 @@ public class PositionServiceImp implements PositionService {
     private final PositionRepository positionRepository;
     private final PositionMapper positionMapper;
     private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("id", "employmentInformation");
+    private final Set<String> REDACTED = Set.of("id", "employmentInformationResponses");
     private final String ENTITY_NAME = PositionResponse.class.getName();
 
     @Override

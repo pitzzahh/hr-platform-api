@@ -41,7 +41,7 @@ public class WorkplaceServiceImp implements WorkplaceService {
     private final WorkplaceMapper workplaceMapper;
 
     private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("id", "employmentInformation");
+    private final Set<String> REDACTED = Set.of("id", "employmentInformationResponses");
     private final String ENTITY_NAME = WorkplaceResponse.class.getName();
 
     @Override

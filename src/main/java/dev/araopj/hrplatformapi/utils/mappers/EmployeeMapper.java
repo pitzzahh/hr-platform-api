@@ -2,19 +2,19 @@ package dev.araopj.hrplatformapi.utils.mappers;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
 import dev.araopj.hrplatformapi.employee.model.Employee;
+import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
+import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class EmployeeMapper {
-
-    private final IdDocumentMapper idDocumentMapper;
-    private final EmploymentInformationMapper employmentInformationMapper;
-    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
 
     public Employee toEntity(EmployeeResponse employeeResponse) {
         if (employeeResponse == null) {
@@ -40,7 +40,10 @@ public class EmployeeMapper {
                 .build();
     }
 
-    public Employee toEntity(EmployeeRequest employeeRequest) {
+    public Employee toEntity(EmployeeRequest employeeRequest,
+                             Set<EmploymentInformation> employmentInformation,
+                             Set<IdDocument> idDocuments
+    ) {
         if (employeeRequest == null) {
             throw new IllegalArgumentException("employeeRequest cannot be null");
         }
@@ -61,25 +64,16 @@ public class EmployeeMapper {
                 .bankAccountNumber(employeeRequest.bankAccountNumber())
                 .archived(employeeRequest.archived())
                 .userId(employeeRequest.userId())
-                .idDocuments(employeeRequest.idDocumentRequests()
-                        .stream().
-                        map(idDocumentMapper::toEntity)
-                        .collect(Collectors.toSet())
-                )
-                .employmentInformation(
-                        employeeRequest.employmentInformationRequests()
-                                .stream()
-                                .map(e -> employmentInformationMapper.toEntity(
-                                                e,
-                                                employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
-                                        )
-                                )
-                                .collect(Collectors.toSet())
-                )
+                .idDocuments(idDocuments)
+                .employmentInformation(employmentInformation)
                 .build();
     }
 
-    public EmployeeResponse toDto(Employee employee) {
+    public EmployeeResponse toDto(
+            Employee employee,
+            Set<IdDocumentResponse> idDocumentResponses,
+            Set<EmploymentInformationResponse> employmentInformationResponses
+    ) {
         if (employee == null) {
             throw new IllegalArgumentException("employee cannot be null");
         }
@@ -101,11 +95,8 @@ public class EmployeeMapper {
                 .bankAccountNumber(employee.getBankAccountNumber())
                 .archived(employee.isArchived())
                 .userId(employee.getUserId())
-                .identifiers(employee.getIdDocuments()
-                        .stream()
-                        .map(e -> idDocumentMapper.toDto(e, false))
-                        .collect(Collectors.toSet())
-                )
+                .idDocumentResponses(idDocumentResponses)
+                .employmentInformationResponses(employmentInformationResponses)
                 .build();
     }
 }
