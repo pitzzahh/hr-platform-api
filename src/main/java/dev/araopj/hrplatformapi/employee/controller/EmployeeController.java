@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -186,10 +187,10 @@ public class EmployeeController {
                     )
             }
     )
-    @GetMapping("/user/{userId}")
+    @GetMapping
     public ResponseEntity<StandardApiResponse<EmployeeResponse>> getByUserId(
             @Parameter(description = "User ID of the employee to retrieve", required = true)
-            @PathVariable String userId
+            @RequestParam @Valid @NotNull @NotBlank String userId
     ) {
         log.debug("Fetching employee with userId: {}", userId);
         var response = employeeService.findByUserId(userId);
