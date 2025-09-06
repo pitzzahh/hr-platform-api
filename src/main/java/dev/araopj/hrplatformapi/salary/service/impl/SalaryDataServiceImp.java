@@ -4,14 +4,13 @@ import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
+import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
-import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
-import dev.araopj.hrplatformapi.utils.mappers.SalaryGradeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -32,10 +31,9 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @Slf4j
 public class SalaryDataServiceImp implements SalaryDataService {
 
-    private final SalaryGradeService salaryGradeService;
+    private final SalaryGradeRepository salaryGradeRepository;
     private final SalaryDataRepository salaryDataRepository;
     private final SalaryDataMapper salaryDataMapper;
-    private final SalaryGradeMapper salaryGradeMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "salaryGrade");
     private final String ENTITY_NAME = SalaryDataResponse.class.getName();
@@ -100,7 +98,7 @@ public class SalaryDataServiceImp implements SalaryDataService {
     @Override
     public SalaryDataResponse create(
             SalaryDataRequest salaryDataRequest
-    ) throws BadRequestException {
+    ) {
 
         final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
         salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID)
@@ -116,8 +114,8 @@ public class SalaryDataServiceImp implements SalaryDataService {
                 });
 
         final var SALARY_DATA_TO_SAVE = salaryDataMapper.toEntity(salaryDataRequest,
-                salaryGradeMapper.toEntity(salaryGradeService.findById(SALARY_GRADE_ID, false)
-                        .orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID, SALARY_GRADE)))
+                salaryGradeRepository.findById(SALARY_GRADE_ID)
+                        .orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID, SALARY_GRADE))
         );
 
         auditUtil.audit(
