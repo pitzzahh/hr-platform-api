@@ -2,6 +2,11 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
+import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
+import dev.araopj.hrplatformapi.employee.model.Employee;
+import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
+import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
 import dev.araopj.hrplatformapi.employee.service.EmployeeService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
@@ -62,12 +67,8 @@ public class EmployeeServiceImp implements EmployeeService {
         return PAGINATED_DATA
                 .map(e -> employeeMapper.toDto(
                         e,
-                        e.getIdDocuments().stream()
-                                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                                .collect(Collectors.toSet()),
-                        e.getEmploymentInformation().stream()
-                                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
-                                .collect(Collectors.toSet())
+                        getIdDocuments(e),
+                        getEmploymentInformationResponses(e)
                 ));
     }
 
@@ -80,12 +81,8 @@ public class EmployeeServiceImp implements EmployeeService {
         return Optional.ofNullable(employeeRepository.findById(id)
                 .map(e -> employeeMapper.toDto(
                         e,
-                        e.getIdDocuments().stream()
-                                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                                .collect(Collectors.toSet()),
-                        e.getEmploymentInformation().stream()
-                                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
-                                .collect(Collectors.toSet())
+                        getIdDocuments(e),
+                        getEmploymentInformationResponses(e)
                 ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE)));
     }
@@ -99,14 +96,8 @@ public class EmployeeServiceImp implements EmployeeService {
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
                 .map(employee -> employeeMapper.toDto(
                         employee,
-                        employee.getIdDocuments()
-                                .stream()
-                                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                                .collect(Collectors.toSet()),
-                        employee.getEmploymentInformation().stream()
-                                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
-                                .collect(Collectors.toSet()
-                                ))
+                        getIdDocuments(employee),
+                        getEmploymentInformationResponses(employee))
                 ).orElseThrow(() -> new NotFoundException(userId, EMPLOYEE)));
     }
 
@@ -137,43 +128,27 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var EMPLOYEE_TO_SAVE = employeeMapper.toEntity(
                 employeeRequest,
-                employeeRequest.employmentInformationRequests()
-                        .stream()
-                        .map(e -> employmentInformationMapper.toEntity(
-                                        e,
-                                        employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
-                                )
-                        )
-                        .collect(Collectors.toSet()),
-                employeeRequest.idDocumentRequests()
-                        .stream().
-                        map(idDocumentMapper::toEntity)
-                        .collect(Collectors.toSet())
+                getEmploymentInformationRequests(employeeRequest),
+                getIdDocumentRequests(employeeRequest)
         );
 
         log.debug("Employee to save [{}]", EMPLOYEE_TO_SAVE);
 
+        final var SAVED_EMPLOYEE = employeeRepository.save(EMPLOYEE_TO_SAVE);
+
         auditUtil.audit(
                 CREATE,
-                EMPLOYEE_TO_SAVE.getId(),
+                SAVED_EMPLOYEE.getId(),
                 Optional.empty(),
-                redact(EMPLOYEE_TO_SAVE, REDACTED),
+                redact(SAVED_EMPLOYEE, REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        final var SAVED_EMPLOYEE = employeeRepository.save(EMPLOYEE_TO_SAVE);
-
         return employeeMapper.toDto(
                 SAVED_EMPLOYEE,
-                SAVED_EMPLOYEE.getIdDocuments()
-                        .stream()
-                        .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                        .collect(Collectors.toSet()),
-                SAVED_EMPLOYEE.getEmploymentInformation()
-                        .stream()
-                        .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
-                        .collect(Collectors.toSet())
+                getSavedIdDocuments(SAVED_EMPLOYEE),
+                getSavedEmploymentInformation(SAVED_EMPLOYEE)
         );
     }
 
@@ -189,41 +164,26 @@ public class EmployeeServiceImp implements EmployeeService {
         var EMPLOYEE_DATA = MergeUtil.merge(ORIGINAL_EMPLOYEE,
                 employeeMapper.toEntity(
                         employeeRequest,
-                        employeeRequest.employmentInformationRequests()
-                                .stream()
-                                .map(e -> employmentInformationMapper.toEntity(
-                                                e,
-                                                employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
-                                        )
-                                )
-                                .collect(Collectors.toSet()),
-                        employeeRequest.idDocumentRequests()
-                                .stream()
-                                .map(idDocumentMapper::toEntity)
-                                .collect(Collectors.toSet())
+                        getEmploymentInformationRequests(employeeRequest),
+                        getIdDocumentRequests(employeeRequest)
                 )
         );
+
+        final var UPDATED_EMPLOYEE = employeeRepository.save(EMPLOYEE_DATA);
 
         auditUtil.audit(
                 UPDATE,
                 id,
-                Optional.of(redact(ORIGINAL_EMPLOYEE, REDACTED)),
+                Optional.of(redact(UPDATED_EMPLOYEE, REDACTED)),
                 redact(EMPLOYEE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_EMPLOYEE, EMPLOYEE_DATA), REDACTED)),
+                Optional.of(redact(DiffUtil.diff(UPDATED_EMPLOYEE, EMPLOYEE_DATA), REDACTED)),
                 ENTITY_NAME
         );
-        final var UPDATED_EMPLOYEE = employeeRepository.save(EMPLOYEE_DATA);
 
         return employeeMapper.toDto(
                 UPDATED_EMPLOYEE,
-                UPDATED_EMPLOYEE.getIdDocuments()
-                        .stream()
-                        .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
-                        .collect(Collectors.toSet()),
-                UPDATED_EMPLOYEE.getEmploymentInformation()
-                        .stream()
-                        .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
-                        .collect(Collectors.toSet())
+                getSavedIdDocuments(UPDATED_EMPLOYEE),
+                getSavedEmploymentInformation(UPDATED_EMPLOYEE)
         );
     }
 
@@ -240,5 +200,47 @@ public class EmployeeServiceImp implements EmployeeService {
         );
         employeeRepository.deleteById(id);
         return true;
+    }
+
+    private Set<IdDocument> getIdDocumentRequests(EmployeeRequest employeeRequest) {
+        return employeeRequest.idDocumentRequests() != null ?
+                employeeRequest.idDocumentRequests()
+                        .stream()
+                        .map(idDocumentMapper::toEntity)
+                        .collect(Collectors.toSet()) : null;
+    }
+
+    private Set<EmploymentInformation> getEmploymentInformationRequests(EmployeeRequest employeeRequest) {
+        return employeeRequest.employmentInformationRequests() != null ?
+                employeeRequest.employmentInformationRequests()
+                        .stream()
+                        .map(e -> employmentInformationMapper.toEntity(
+                                        e,
+                                        employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
+                                )
+                        )
+                        .collect(Collectors.toSet()) : null;
+    }
+
+
+    private Set<EmploymentInformationResponse> getSavedEmploymentInformation(Employee SAVED_EMPLOYEE) {
+        return SAVED_EMPLOYEE.getEmploymentInformation() != null ? getEmploymentInformationResponses(SAVED_EMPLOYEE) : null;
+    }
+
+    private Set<IdDocumentResponse> getSavedIdDocuments(Employee SAVED_EMPLOYEE) {
+        return SAVED_EMPLOYEE.getIdDocuments() != null ? getIdDocuments(SAVED_EMPLOYEE) : null;
+    }
+
+    private Set<EmploymentInformationResponse> getEmploymentInformationResponses(Employee employee) {
+        return employee.getEmploymentInformation().stream()
+                .map(employmentInformation -> employmentInformationMapper.toDto(employmentInformation, false))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<IdDocumentResponse> getIdDocuments(Employee employee) {
+        return employee.getIdDocuments()
+                .stream()
+                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
+                .collect(Collectors.toSet());
     }
 }
