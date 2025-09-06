@@ -2,10 +2,11 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
+import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
+import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
+import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationService;
-import dev.araopj.hrplatformapi.employee.service.PositionService;
-import dev.araopj.hrplatformapi.employee.service.WorkplaceService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
@@ -24,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
-import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.*;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
@@ -42,9 +43,9 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 public class EmploymentInformationServiceImp implements EmploymentInformationService {
 
     private final EmploymentInformationRepository employmentInformationRepository;
-    private final EmployeeServiceImp employeeService;
-    private final PositionService positionService;
-    private final WorkplaceService workplaceService;
+    private final EmployeeRepository employeeRepository;
+    private final PositionRepository positionRepository;
+    private final WorkplaceRepository workplaceRepository;
 
     private final EmploymentInformationMapper employmentInformationMapper;
     private final EmployeeMapper employeeMapper;
@@ -75,7 +76,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         );
 
         return PAGINATED_DATA
-                .map(employmentInformationMapper::toDto);
+                .map(e -> employmentInformationMapper.toDto(e, employmentInformationSalaryOverrideMapper));
     }
 
     @Override
@@ -96,7 +97,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         );
 
         return PAGINATED_DATA
-                .map(employmentInformationMapper::toDto);
+                .map(e -> employmentInformationMapper.toDto(e, employmentInformationSalaryOverrideMapper));
     }
 
     @Override
@@ -106,7 +107,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 ENTITY_NAME
         );
         return Optional.ofNullable(employmentInformationRepository.findById(id)
-                .map(employmentInformationMapper::toDto)
+                .map(e -> employmentInformationMapper.toDto(e, employmentInformationSalaryOverrideMapper))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION)));
     }
 
@@ -119,21 +120,19 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         final var NEW_SALARY_OVERRIDE = employmentInformationSalaryOverrideMapper.toEntity(
                 employmentInformationRequest.employmentInformationSalaryOverrideRequest()
         );
-        final var EXISTING_EMPLOYEE = employeeService.findById(EMPLOYEE_ID)
-                .map(employeeMapper::toEntity)
-                .orElseThrow();
-        final var EXISTING_POSITION = positionService.findById(POSITION_ID)
-                .map(positionMapper::toEntity)
-                .orElseThrow();
-        final var EXISTING_WORKPLACE = workplaceService.findById(WORKPLACE_ID)
-                .map(workplaceMapper::toEntity)
-                .orElseThrow();
+        final var EXISTING_EMPLOYEE = employeeRepository.findById(EMPLOYEE_ID)
+                .orElseThrow(() -> new NotFoundException(EMPLOYEE_ID, EMPLOYEE));
+        final var EXISTING_POSITION = positionRepository.findById(POSITION_ID)
+                .orElseThrow(() -> new NotFoundException(POSITION_ID, POSITION));
+        final var EXISTING_WORKPLACE = workplaceRepository.findById(WORKPLACE_ID)
+                .orElseThrow(() -> new NotFoundException(WORKPLACE_ID, WORKPLACE));
 
         employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                 employmentInformationRequest.startDate(),
                 employmentInformationRequest.endDate(),
                 employmentInformationRequest.remarks(),
                 EMPLOYEE_ID
+
         ).ifPresent(workplace -> {
             throw new IllegalArgumentException("Workplace with start date [%s], end date [%s], and remarks [%s] already exists for Employee with id [%s]".formatted(
                     dateFormatter.format(workplace.getStartDate(), "long"),
@@ -159,7 +158,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 ENTITY_NAME
         );
 
-        return employmentInformationMapper.toDto(employmentInformationRepository.save(WORKPLACE_TO_SAVE));
+        return employmentInformationMapper.toDto(employmentInformationRepository.save(WORKPLACE_TO_SAVE), employmentInformationSalaryOverrideMapper);
     }
 
     @Override
@@ -186,7 +185,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 ENTITY_NAME
         );
 
-        return employmentInformationMapper.toDto(employmentInformationRepository.save(WORKPLACE_DATA));
+        return employmentInformationMapper.toDto(employmentInformationRepository.save(WORKPLACE_DATA), employmentInformationSalaryOverrideMapper);
 
     }
 
