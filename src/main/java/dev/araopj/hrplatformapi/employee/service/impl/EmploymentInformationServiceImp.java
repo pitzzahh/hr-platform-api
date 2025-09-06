@@ -79,6 +79,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
     @Override
     public Page<EmploymentInformationResponse> findByEmployeeId(String employeeId, Pageable pageable) {
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new NotFoundException(employeeId, EMPLOYEE));
+
         final var PAGINATED_DATA = employmentInformationRepository.findByEmployeeId(employeeId, pageable);
         auditUtil.audit(
                 VIEW,
@@ -115,9 +118,6 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         final var POSITION_ID = employmentInformationRequest.positionId();
         final var WORKPLACE_ID = employmentInformationRequest.workplaceId();
 
-        final var NEW_SALARY_OVERRIDE = employmentInformationSalaryOverrideMapper.toEntity(
-                employmentInformationRequest.employmentInformationSalaryOverrideRequest()
-        );
         final var EXISTING_EMPLOYEE = employeeRepository.findById(EMPLOYEE_ID)
                 .orElseThrow(() -> new NotFoundException(EMPLOYEE_ID, EMPLOYEE));
         final var EXISTING_POSITION = positionRepository.findById(POSITION_ID)
@@ -142,7 +142,10 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
         final var WORKPLACE_TO_SAVE = employmentInformationMapper.toEntity(employmentInformationRequest,
                 EXISTING_EMPLOYEE,
-                NEW_SALARY_OVERRIDE,
+                employmentInformationRequest.employmentInformationSalaryOverrideRequest() != null ?
+                        employmentInformationSalaryOverrideMapper.toEntity(
+                                employmentInformationRequest.employmentInformationSalaryOverrideRequest()
+                        ) : null,
                 EXISTING_POSITION,
                 EXISTING_WORKPLACE
         );
