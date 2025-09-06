@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,10 +16,10 @@ import lombok.Getter;
  * The EntityType enum includes a description for each entity type to enhance the clarity of the exception message.
  *
  * @see EntityType
- * @see RuntimeException
+ * @see EntityNotFoundException
  * @since 0.0.1
  */
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends EntityNotFoundException {
     public NotFoundException(String id, EntityType entityType) {
         super("%s record with ID %s not found.".formatted(entityType.getDescription(), id));
     }
