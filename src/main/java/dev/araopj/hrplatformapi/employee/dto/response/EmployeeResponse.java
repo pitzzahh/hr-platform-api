@@ -29,7 +29,9 @@ public record EmployeeResponse(
         String bankAccountNumber,
         boolean archived,
         String userId,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         Set<IdDocumentResponse> idDocumentResponses,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         Set<EmploymentInformationResponse> employmentInformationResponses
 ) {
 }
