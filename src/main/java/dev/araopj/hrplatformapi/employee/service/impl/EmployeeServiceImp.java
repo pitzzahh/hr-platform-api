@@ -48,8 +48,14 @@ public class EmployeeServiceImp implements EmployeeService {
     private final String ENTITY_NAME = EmployeeResponse.class.getName();
 
     @Override
-    public Page<EmployeeResponse> findAll(Pageable pageable) {
-        final var PAGINATED_DATA = employeeRepository.findAll(pageable);
+    public Page<EmployeeResponse> findAll(Pageable pageable, boolean includeIdDocuments, boolean includeEmploymentInformation) {
+        final var PAGINATED_DATA = includeIdDocuments && includeEmploymentInformation ?
+                employeeRepository.findAllWithIdDocumentsAndEmploymentInformation(pageable) :
+                includeIdDocuments ?
+                        employeeRepository.findAllWithIdDocuments(pageable) :
+                        includeEmploymentInformation ?
+                                employeeRepository.findAllWithEmploymentInformation(pageable) :
+                                employeeRepository.findAll(pageable);
         auditUtil.audit(
                 VIEW,
                 "[]",

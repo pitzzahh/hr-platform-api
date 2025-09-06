@@ -44,12 +44,14 @@ import java.util.Optional;
 public interface EmployeeService {
 
     /**
-     * Retrieves all employees with pagination.
+     * Retrieves a paginated list of employees.
      *
-     * @param pageable Pagination information.
+     * @param pageable                     Pagination information.
+     * @param includeIdDocuments           Whether to include ID documents in the response.
+     * @param includeEmploymentInformation Whether to include employment information in the response.
      * @return A page of employee responses.
      */
-    Page<EmployeeResponse> findAll(Pageable pageable);
+    Page<EmployeeResponse> findAll(Pageable pageable, boolean includeIdDocuments, boolean includeEmploymentInformation);
 
     /**
      * Retrieves an employee by their ID.

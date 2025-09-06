@@ -84,10 +84,18 @@ public class EmployeeController {
             @Parameter(description = "Page number (1-based)", example = "1")
             @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "Number of records per page", example = "10")
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Include ID Documents in the response", example = "false")
+            @RequestParam(defaultValue = "false") boolean includeIdDocuments,
+            @Parameter(description = "Include Employment Information in the response", example = "false")
+            @RequestParam(defaultValue = "false") boolean includeEmploymentInformation
     ) throws BadRequestException {
         log.debug("Fetching all employees with page: {} and size: {}", page, size);
-        final var PAGE = employeeService.findAll(PageRequest.of(page - 1, size));
+        final var PAGE = employeeService.findAll(
+                PageRequest.of(page - 1, size),
+                includeIdDocuments,
+                includeEmploymentInformation
+        );
         return ResponseEntity.ok(StandardApiResponse.success(
                 PAGE.getContent(),
                 PaginationMeta.builder()
