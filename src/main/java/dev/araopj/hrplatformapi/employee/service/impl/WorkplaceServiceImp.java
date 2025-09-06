@@ -2,15 +2,14 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
+import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
-import dev.araopj.hrplatformapi.employee.service.EmploymentInformationService;
 import dev.araopj.hrplatformapi.employee.service.WorkplaceService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
-import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
 import dev.araopj.hrplatformapi.utils.mappers.WorkplaceMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.WORKPLACE;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
@@ -35,10 +35,11 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 @RequiredArgsConstructor
 public class WorkplaceServiceImp implements WorkplaceService {
 
-    private final EmploymentInformationService employmentInformationService;
+    private final EmploymentInformationRepository employmentInformationRepository;
     private final WorkplaceRepository workplaceRepository;
-    private final EmploymentInformationMapper employmentInformationMapper;
+
     private final WorkplaceMapper workplaceMapper;
+
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "employmentInformation");
     private final String ENTITY_NAME = WorkplaceResponse.class.getName();
@@ -90,10 +91,11 @@ public class WorkplaceServiceImp implements WorkplaceService {
             ));
         });
 
-        final var EXISTING_EMPLOYMENT_INFORMATION = employmentInformationService.findById(EMPLOYMENT_INFORMATION_ID).orElseThrow();
+        final var EXISTING_EMPLOYMENT_INFORMATION = employmentInformationRepository.findById(EMPLOYMENT_INFORMATION_ID)
+                .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_ID, EMPLOYMENT_INFORMATION));
 
         final var WORKPLACE_TO_SAVE = workplaceMapper.toEntity(workplaceRequest,
-                employmentInformationMapper.toEntity(EXISTING_EMPLOYMENT_INFORMATION)
+                EXISTING_EMPLOYMENT_INFORMATION
         );
 
         log.debug("Workplace to save [{}]", WORKPLACE_TO_SAVE);
