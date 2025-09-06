@@ -11,6 +11,7 @@ import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
+import dev.araopj.hrplatformapi.utils.formatter.StringFormatter;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
@@ -117,27 +118,26 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public EmployeeResponse create(EmployeeRequest employeeRequest) {
         employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
-                        employeeRequest.employeeNumber(),
-                        employeeRequest.email(),
-                        employeeRequest.taxPayerIdentificationNumber(),
-                        employeeRequest.firstName(),
-                        employeeRequest.lastName(),
-                        employeeRequest.firstName(),
-                        employeeRequest.middleName(),
-                        employeeRequest.lastName()
-                )
-                .ifPresent(employee -> {
-                    throw new IllegalArgumentException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s %s] or name [%s %s %s] already exists".formatted(
-                            employee.getEmployeeNumber(),
-                            employee.getEmail(),
-                            employee.getTaxPayerIdentificationNumber(),
-                            employee.getFirstName(),
-                            employee.getLastName(),
+                employeeRequest.employeeNumber(),
+                employeeRequest.email(),
+                employeeRequest.taxPayerIdentificationNumber(),
+                employeeRequest.firstName(),
+                employeeRequest.lastName(),
+                employeeRequest.firstName(),
+                employeeRequest.middleName(),
+                employeeRequest.lastName()
+        ).ifPresent(employee -> {
+            throw new IllegalArgumentException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s]already exists".formatted(
+                    employee.getEmployeeNumber(),
+                    employee.getEmail(),
+                    employee.getTaxPayerIdentificationNumber(),
+                    StringFormatter.formatEmployeeName(
                             employee.getFirstName(),
                             employee.getMiddleName(),
                             employee.getLastName()
-                    ));
-                });
+                    )
+            ));
+        });
 
         final var EMPLOYEE_TO_SAVE = employeeMapper.toEntity(
                 employeeRequest,
