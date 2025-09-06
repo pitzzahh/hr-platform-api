@@ -1,4 +1,4 @@
-# HR Platform API
+****# HR Platform API
 
 A **SpringBoot RESTful API** for managing HR data such as employees, salaries, audits, and user roles/permissions.
 Designed with clean architecture, modular packages, and standardized API responses for smooth integration.
@@ -19,36 +19,43 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ```
 ~/hrplatformapi
-├── audit/             
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── employee/
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── salary/           
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── user/             
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── utils/            
-└── exception/         
+├───audit
+│   ├───controller
+│   ├───dto
+│   │   ├───request
+│   │   └───response
+│   ├───model
+│   ├───repository
+│   └───service
+│       └───impl
+├───config
+├───employee
+│   ├───controller
+│   ├───dto
+│   │   ├───request
+│   │   └───response
+│   ├───model
+│   ├───repository
+│   └───service
+│       └───impl
+├───exception
+├───salary
+│   ├───controller
+│   ├───dto
+│   │   ├───request
+│   │   └───response
+│   ├───model
+│   ├───repository
+│   └───service
+│       └───impl
+├───user
+│   ├───model
+│   └───repository
+└───utils
+    ├───annotations
+    ├───enums
+    ├───formatter
+    └───mappers    
 ```
 
 ---
