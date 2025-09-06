@@ -2,8 +2,6 @@ package dev.araopj.hrplatformapi.utils.mappers;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
-import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
-import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
 import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
@@ -71,8 +69,11 @@ public class EmployeeMapper {
 
     public EmployeeResponse toDto(
             Employee employee,
-            Set<IdDocumentResponse> idDocumentResponses,
-            Set<EmploymentInformationResponse> employmentInformationResponses
+            boolean includeIdDocuments,
+            boolean includeEmploymentInformation,
+            IdDocumentMapper idDocumentMapper,
+            EmploymentInformationMapper employmentInformationMapper,
+            EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper
     ) {
         if (employee == null) {
             throw new IllegalArgumentException("employee cannot be null");
@@ -95,8 +96,28 @@ public class EmployeeMapper {
                 .bankAccountNumber(employee.getBankAccountNumber())
                 .archived(employee.isArchived())
                 .userId(employee.getUserId())
-                .idDocumentResponses(idDocumentResponses)
-                .employmentInformationResponses(employmentInformationResponses)
+                .idDocumentResponses(includeIdDocuments ?
+                        employee.getIdDocuments()
+                                .stream()
+                                .map(idDocument -> idDocumentMapper.toDto(idDocument, false))
+                                .collect(java.util.stream.Collectors.toSet())
+                        : null
+                )
+                .employmentInformationResponses(
+                        includeEmploymentInformation ?
+                                employee.getEmploymentInformation()
+                                        .stream()
+                                        .map(employmentInformation -> employmentInformationMapper.toDto(
+                                                        employmentInformation,
+                                                        false,
+                                                        this,
+                                                        idDocumentMapper,
+                                                        employmentInformationSalaryOverrideMapper
+                                                )
+                                        )
+                                        .collect(java.util.stream.Collectors.toSet())
+                                : null
+                )
                 .build();
     }
 }

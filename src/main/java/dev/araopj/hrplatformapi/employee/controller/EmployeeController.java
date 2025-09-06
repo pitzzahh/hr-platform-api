@@ -42,12 +42,14 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     /**
-     * Retrieves a paginated list of all employee entries.
+     * Retrieves a paginated list of all employees.
      *
-     * @param page The page number (1-based).
-     * @param size The number of records per page.
+     * @param page                         The page number to retrieve (1-based).
+     * @param size                         The number of records per page.
+     * @param includeIdDocuments           Whether to include ID documents in the response.
+     * @param includeEmploymentInformation Whether to include employment information in the response.
      * @return A ResponseEntity containing a StandardApiResponse with a list of EmployeeResponse and pagination metadata.
-     * @throws BadRequestException If invalid parameters are provided.
+     * @throws BadRequestException If invalid pagination parameters are provided.
      */
     @Operation(
             summary = "Get all employees",
@@ -109,9 +111,12 @@ public class EmployeeController {
 
     /**
      * Retrieves a specific employee by its ID or user ID.
+     * If both 'id' and 'userId' are provided, 'id' takes precedence.
      *
-     * @param id     The ID of the employee to retrieve.
-     * @param userId (Optional) The user ID associated with the employee.
+     * @param id                           The ID of the employee to retrieve.
+     * @param userId                       The user ID of the employee to retrieve (optional).
+     * @param includeIdDocuments           Whether to include ID documents in the response.
+     * @param includeEmploymentInformation Whether to include employment information in the response.
      * @return A ResponseEntity containing a StandardApiResponse with the EmployeeResponse.
      * @throws NotFoundException If the employee is not found.
      */
@@ -153,12 +158,16 @@ public class EmployeeController {
             @Parameter(description = "ID of the employee to retrieve", required = true)
             @PathVariable String id,
             @Parameter(description = "User ID of the employee to retrieve")
-            @RequestParam(required = false) String userId
+            @RequestParam(required = false) String userId,
+            @Parameter(description = "Include ID Documents in the response", example = "false")
+            @RequestParam(defaultValue = "false") boolean includeIdDocuments,
+            @Parameter(description = "Include Employment Information in the response", example = "false")
+            @RequestParam(defaultValue = "false") boolean includeEmploymentInformation
     ) {
         log.debug("Fetching employee with id [{}] or user id [{}]", id, userId);
         var response = (id != null && !id.isEmpty() && userId != null && !userId.isEmpty())
-                ? employeeService.findById(id)
-                : (id == null && userId != null && !userId.isEmpty() ? employeeService.findByUserId(userId) : employeeService.findById(id));
+                ? employeeService.findById(id, includeIdDocuments, includeEmploymentInformation)
+                : (id == null && userId != null && !userId.isEmpty() ? employeeService.findByUserId(userId, includeIdDocuments, includeEmploymentInformation) : employeeService.findById(id, includeIdDocuments, includeEmploymentInformation));
         return response
                 .map(StandardApiResponse::success)
                 .map(ResponseEntity::ok)
