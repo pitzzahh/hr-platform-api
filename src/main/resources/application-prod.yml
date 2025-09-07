@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: hr-platform-api
+    version: 0.0.1-SNAPSHOT
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+  data:
+    jdbc:
+      dialect: postgresql
+logging:
+  level:
+    root: warn
+management:
+  endpoint:
+    health:
+      show-details: never
