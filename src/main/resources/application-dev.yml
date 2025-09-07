@@ -23,6 +23,7 @@ spring:
 logging:
   level:
     dev.araopj.hrplatformapi: debug
+    root: info
 
 management:
   endpoints:
