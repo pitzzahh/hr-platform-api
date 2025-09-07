@@ -61,7 +61,7 @@ class SalaryGradeServiceImpTest {
                 .legalBasis("NBC 591")
                 .salaryGrade(1)
                 .effectiveDate(LocalDate.of(2020, 1, 1))
-                .salaryData(null) // Set to null to avoid validation issues when includeSalaryData is false
+                .salaryData(null)
                 .build();
 
         salaryGrade = SalaryGrade.builder()
@@ -112,8 +112,8 @@ class SalaryGradeServiceImpTest {
                             .builder()
                             .step(1)
                             .amount(1000.0)
-                            .build())
-                    ).build();
+                            .build()))
+                    .build();
             when(salaryGradeRepository.findBySalaryGradeAndEffectiveDate(anyInt(), any())).thenReturn(Optional.empty());
             when(salaryGradeMapper.toEntity(any(SalaryGradeRequest.class))).thenReturn(salaryGrade);
             when(salaryDataMapper.toEntity(any(SalaryDataRequest.WithoutSalaryGradeId.class))).thenReturn(new SalaryData());
@@ -125,6 +125,68 @@ class SalaryGradeServiceImpTest {
             assertNotNull(result);
             assertEquals(1, result.size());
             verify(auditUtil, times(1)).audit(eq(AuditAction.CREATE), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("Should create multiple salary grades with mixed salary data")
+        void shouldCreateMultipleSalaryGradesWithMixedSalaryData() throws BadRequestException {
+            var requestWithData = SalaryGradeRequest.builder()
+                    .legalBasis("NBC 591")
+                    .salaryGrade(1)
+                    .effectiveDate(LocalDate.of(2020, 1, 1))
+                    .salaryData(List.of(SalaryDataRequest.WithoutSalaryGradeId
+                            .builder()
+                            .step(1)
+                            .amount(1000.0)
+                            .build()))
+                    .build();
+            var requestWithoutData = SalaryGradeRequest.builder()
+                    .legalBasis("NBC 592")
+                    .salaryGrade(2)
+                    .effectiveDate(LocalDate.of(2021, 1, 1))
+                    .salaryData(null)
+                    .build();
+            var salaryGrade2 = SalaryGrade.builder()
+                    .id("2")
+                    .legalBasis("NBC 592")
+                    .salaryGrade(2)
+                    .effectiveDate(LocalDate.of(2021, 1, 1))
+                    .salaryData(null)
+                    .build();
+            var salaryGradeResponse2 = SalaryGradeResponse.builder()
+                    .id("2")
+                    .legalBasis("NBC 592")
+                    .salaryGrade(2)
+                    .effectiveDate(LocalDate.of(2021, 1, 1))
+                    .build();
+
+            when(salaryGradeRepository.findBySalaryGradeAndEffectiveDate(anyInt(), any()))
+                    .thenReturn(Optional.empty());
+            when(salaryGradeMapper.toEntity(eq(requestWithData))).thenReturn(salaryGrade);
+            when(salaryGradeMapper.toEntity(eq(requestWithoutData))).thenReturn(salaryGrade2);
+            when(salaryGradeRepository.saveAll(anyList())).thenReturn(List.of(salaryGrade, salaryGrade2));
+            when(salaryGradeMapper.toDto(eq(salaryGrade), eq(false))).thenReturn(salaryGradeResponse);
+            when(salaryGradeMapper.toDto(eq(salaryGrade2), eq(false))).thenReturn(salaryGradeResponse2);
+
+            var result = salaryGradeService.create(List.of(requestWithData, requestWithoutData), false);
+
+            assertNotNull(result);
+            assertEquals(2, result.size());
+            assertEquals("1", result.get(0).id());
+            assertEquals("2", result.get(1).id());
+            verify(salaryGradeRepository, times(1)).saveAll(anyList());
+            verify(auditUtil, times(2)).audit(eq(AuditAction.CREATE), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("Should handle empty salary grade request list")
+        void shouldHandleEmptySalaryGradeRequestList() throws BadRequestException {
+            var result = salaryGradeService.create(List.of(), false);
+
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+            verify(salaryGradeRepository, never()).saveAll(anyList());
+            verify(auditUtil, never()).audit(any(), any(), any(), any(), any(), any());
         }
 
         @Test
