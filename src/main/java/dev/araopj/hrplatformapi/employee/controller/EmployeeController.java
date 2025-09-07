@@ -176,17 +176,27 @@ public class EmployeeController {
     }
 
     /**
-     * Creates a new employee entry, or multiple entries if a set of EmployeeRequest is provided.
+     * Creates a new employee entry, or multiple entries if a list of EmployeeRequest is provided.
      *
-     * @param employeeRequest The employee details to create (a set of EmployeeRequest).
+     * @param employeeRequest The employee details to create (a list of EmployeeRequest).
      * @return A ResponseEntity containing a StandardApiResponse with the created EmployeeResponse.
      */
     @Operation(
             summary = "Create employee",
-            description = "Create a new employee entry.",
+            description = """
+                    Create a new employee entry, or multiple entries if a list of EmployeeRequest is provided.
+                    """,
             responses = {
                     @ApiResponse(
                             responseCode = "200",
+                            description = "Successfully created the list of employees",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = StandardApiResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "201",
                             description = "Successfully created the employee",
                             content = @Content(
                                     mediaType = "application/json",

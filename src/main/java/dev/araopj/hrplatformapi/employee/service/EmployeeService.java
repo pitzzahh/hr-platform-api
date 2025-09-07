@@ -71,10 +71,10 @@ public interface EmployeeService {
     Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation);
 
     /**
-     * Creates a new employee record.
+     * Creates new employee records.
      *
      * @param employeeRequest The employee data to create.
-     * @return The created employee response.
+     * @return A list of created employee responses.
      */
     List<EmployeeResponse> create(List<EmployeeRequest> employeeRequest);
 
