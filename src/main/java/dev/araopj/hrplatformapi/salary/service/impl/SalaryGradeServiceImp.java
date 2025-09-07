@@ -3,7 +3,6 @@ package dev.araopj.hrplatformapi.salary.service.impl;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
-import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
@@ -18,10 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SALARY_GRADE;
@@ -82,14 +78,18 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
             List<SalaryGradeRequest> salaryGradeRequests,
             boolean includeSalaryData
     ) throws BadRequestException {
+        if (salaryGradeRequests.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         // Validate all requests first
         salaryGradeRequests.forEach(request -> validateSalaryGradeExistence(includeSalaryData, request));
 
-        List<SalaryGrade> salaryGradesToSave = salaryGradeRequests.stream()
+        var salaryGradesToSave = salaryGradeRequests.stream()
                 .map(request -> {
                     var salaryGrade = salaryGradeMapper.toEntity(request);
 
-                    if (includeSalaryData) {
+                    if (includeSalaryData && request.salaryData() != null) {
                         salaryGrade.setSalaryData(
                                 request.salaryData().stream()
                                         .map(salaryDataMapper::toEntity)
