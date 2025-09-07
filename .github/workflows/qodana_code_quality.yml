@@ -1,40 +1,86 @@
-#-------------------------------------------------------------------------------#
-#            Discover all capabilities of Qodana in our documentation           #
-#             https://www.jetbrains.com/help/qodana/about-qodana.html           #
-#-------------------------------------------------------------------------------#
+name: CI Pipeline with Qodana
 
-name: Qodana
 on:
-  workflow_dispatch:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
 
 jobs:
-  qodana:
+  build-and-test:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
       checks: write
     steps:
-      - uses: actions/checkout@v4
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - name: 'Qodana Scan'
+          fetch-depth: 0 # Required for Qodana pull request analysis
+          ref: ${{ github.event.pull_request.head.sha }} # Ensure correct PR head
+
+      # Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Cache Maven dependencies
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      # Run Maven tests
+      - name: Run tests
+        run: mvn --batch-mode clean test
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+
+      # Upload Maven test results
+      - name: Upload Maven test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-test-results
+          path: target/surefire-reports/
+
+      # Cache Qodana dependencies
+      - name: Cache Qodana
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/work/_temp/qodana/caches
+          key: qodana-2025.2-${{ github.sha }}
+          restore-keys: qodana-2025.2-
+
+      # Run Qodana Scan
+      - name: Qodana Scan
         uses: JetBrains/qodana-action@v2025.2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
         with:
-          # In pr-mode: 'true' Qodana checks only changed files
-          pr-mode: false
+          pr-mode: true
           use-caches: true
           post-pr-comment: true
           use-annotations: true
-          # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
           upload-result: false
-          # quick-fixes available in Ultimate and Ultimate Plus plans
           push-fixes: 'none'
+          args: --skip-pull # Avoid redundant image pulling
+          cache-dir: /home/runner/work/_temp/qodana/caches
+          results-dir: /home/runner/work/_temp/qodana/results
+
+      # Upload Qodana results (optional, for debugging)
+      - name: Upload Qodana results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qodana-results
+          path: /home/runner/work/_temp/qodana/results/
