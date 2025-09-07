@@ -74,9 +74,8 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public Optional<SalaryDataResponse> findByIdAndSalaryGradeId(String id, String salaryGradeId) {
-        var data = salaryDataRepository.findByIdAndSalaryGradeId(id, salaryGradeId);
-
-        if (data.isEmpty()) {
+        var optionalSalaryData = salaryDataRepository.findByIdAndSalaryGradeId(id, salaryGradeId);
+        if (optionalSalaryData.isEmpty()) {
             log.warn("{} not found with id {} and salaryGradeId {}", ENTITY_NAME, id, salaryGradeId);
             throw new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId");
         }
@@ -85,12 +84,12 @@ public class SalaryDataServiceImp implements SalaryDataService {
                 VIEW,
                 id,
                 Optional.empty(),
-                redact(data.get(), REDACTED),
+                redact(optionalSalaryData.get(), REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        return Optional.of(data
+        return Optional.of(optionalSalaryData
                 .map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()))
                 .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId")));
     }
