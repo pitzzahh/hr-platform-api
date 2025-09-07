@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder
 public record EmployeeResponse(
         String id,
-        Long employeeNumber,
+        String employeeNumber,
         String itemNumber,
         String firstName,
         @JsonInclude(JsonInclude.Include.NON_NULL)

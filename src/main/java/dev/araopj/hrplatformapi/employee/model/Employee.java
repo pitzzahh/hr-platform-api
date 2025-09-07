@@ -24,7 +24,7 @@ public class Employee extends EntityTimestamp implements Serializable {
     private String id;
 
     @Column(unique = true, nullable = false)
-    private Long employeeNumber;
+    private String employeeNumber;
 
     @Column(nullable = false)
     private String itemNumber;

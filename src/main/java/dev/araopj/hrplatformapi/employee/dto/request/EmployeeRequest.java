@@ -15,7 +15,12 @@ import java.util.Set;
 @Builder
 public record EmployeeRequest(
         @NotNull
-        Long employeeNumber,
+        @NotBlank
+        @Pattern(
+                regexp = "^\\d+$",
+                message = "Employee number must be a whole number (no decimals)"
+        )
+        String employeeNumber,
         @NotNull
         @NotBlank
         String itemNumber,
@@ -56,8 +61,13 @@ public record EmployeeRequest(
         Set<EmploymentInformationRequest> employmentInformationRequests
 ) {
     public record WithoutArchivedAndUserIdAndIdentifierRequestsAndEmploymentInformationRequests(
+            @NotBlank
             @NotNull
-            Long employeeNumber,
+            @Pattern(
+                    regexp = "^\\d+$",
+                    message = "Employee number must be a whole number (no decimals)"
+            )
+            String employeeNumber,
             @NotNull
             @NotBlank
             String itemNumber,

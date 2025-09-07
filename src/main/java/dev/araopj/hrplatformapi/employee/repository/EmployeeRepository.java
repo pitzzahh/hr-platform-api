@@ -18,5 +18,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     Page<Employee> findAllWithIdDocuments(Pageable pageable);
     @Query("SELECT e FROM Employee e LEFT JOIN FETCH e.employmentInformation")
     Page<Employee> findAllWithEmploymentInformation(Pageable pageable);
-    Optional<Employee> findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(Long employeeNumber, String email, String taxPayerIdentificationNumber, String firstName, String lastName, String firstName1, String middleName, String lastName1);
+    Optional<Employee> findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(String employeeNumber, String email, String taxPayerIdentificationNumber, String firstName, String lastName, String firstName1, String middleName, String lastName1);
 }
