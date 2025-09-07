@@ -57,12 +57,12 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
         auditUtil.audit(
                 VIEW,
                 "[]",
-                Optional.empty(),
-                Map.of(
+                Optional.of(Map.of(
                         "timestamp", Instant.now().toString(),
                         "entity", ENTITY_NAME,
                         "count", EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA.size()
-                ),
+                )),
+                Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );

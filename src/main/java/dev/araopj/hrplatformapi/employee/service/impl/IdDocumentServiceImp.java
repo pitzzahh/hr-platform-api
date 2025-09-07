@@ -38,20 +38,22 @@ public class IdDocumentServiceImp implements IdDocumentService {
 
     @Override
     public List<IdDocumentResponse> findAll() {
-        var IDENTIFIERS = idDocumentRepository.findAll();
+        var ID_DOCUMENTS = idDocumentRepository.findAll();
         auditUtil.audit(
                 VIEW,
                 "[]",
                 Optional.of(Map.of(
                         "timestamp", Instant.now().toString(),
                         "entity", ENTITY_NAME,
-                        "count", IDENTIFIERS.size()
+                        "count", ID_DOCUMENTS.size()
                 )),
                 Optional.empty(),
                 Optional.empty(),
                 "List<%s>".formatted(ENTITY_NAME)
         );
-        return List.of();
+        return ID_DOCUMENTS.stream()
+                .map(entity -> idDocumentMapper.toDto(entity, true))
+                .toList();
     }
 
     @Override

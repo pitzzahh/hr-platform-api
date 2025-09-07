@@ -47,13 +47,13 @@ public class PositionServiceImp implements PositionService {
         auditUtil.audit(
                 VIEW,
                 "[]",
-                Optional.empty(),
-                PaginationMeta.builder()
+                Optional.of(PaginationMeta.builder()
                         .totalElements(POSITION_DATA.getTotalElements())
                         .size(POSITION_DATA.getSize())
                         .page(POSITION_DATA.getNumber() + 1)
                         .totalPages(POSITION_DATA.getTotalPages())
-                        .build(),
+                        .build()),
+                Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
