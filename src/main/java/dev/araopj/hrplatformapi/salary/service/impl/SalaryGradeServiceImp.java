@@ -3,12 +3,12 @@ package dev.araopj.hrplatformapi.salary.service.impl;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
-import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
+import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryGradeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +35,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
 
     private final SalaryGradeRepository salaryGradeRepository;
     private final SalaryGradeMapper salaryGradeMapper;
+    private final SalaryDataMapper salaryDataMapper;
     private final AuditUtil auditUtil;
     private final Set<String> REDACTED = Set.of("id", "salaryData");
     private final String ENTITY_NAME = SalaryGradeResponse.class.getName();
@@ -84,23 +85,14 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         // Validate all requests first
         salaryGradeRequests.forEach(request -> validateSalaryGradeExistence(includeSalaryData, request));
 
-        var salaryGradesToSave = salaryGradeRequests.stream()
+        List<SalaryGrade> salaryGradesToSave = salaryGradeRequests.stream()
                 .map(request -> {
-                    var salaryGrade = SalaryGrade.builder()
-                            .legalBasis(request.legalBasis())
-                            .tranche(request.tranche())
-                            .effectiveDate(request.effectiveDate())
-                            .salaryGrade(request.salaryGrade())
-                            .build();
+                    var salaryGrade = salaryGradeMapper.toEntity(request);
 
                     if (includeSalaryData) {
                         salaryGrade.setSalaryData(
                                 request.salaryData().stream()
-                                        .map(salaryDataRequest -> SalaryData.builder()
-                                                .step(salaryDataRequest.step())
-                                                .amount(salaryDataRequest.amount())
-                                                .salaryGrade(salaryGrade)
-                                                .build())
+                                        .map(salaryDataMapper::toEntity)
                                         .toList()
                         );
                     }
@@ -167,7 +159,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(redact(salaryGradeMapper.toDto(SALARY_GRADE_TO_BE_REMOVED, false), REDACTED)), // Redact DTO instead of entity
+                Optional.of(redact(salaryGradeMapper.toDto(SALARY_GRADE_TO_BE_REMOVED, false), REDACTED)),
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
@@ -191,7 +183,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         });
 
         // Validate salary data if required
-        if (includeSalaryData && request.salaryData() == null || request.salaryData().isEmpty()) {
+        if (includeSalaryData && (request.salaryData() == null || request.salaryData().isEmpty())) {
             throw new IllegalStateException("Salary data must be provided when includeSalaryData is true.");
         }
     }

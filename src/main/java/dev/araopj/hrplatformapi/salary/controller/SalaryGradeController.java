@@ -234,7 +234,7 @@ public class SalaryGradeController {
             boolean includeSalaryData
     ) throws BadRequestException {
         log.debug("Request to create salaryGradeRequests: {}", salaryGradeRequests);
-        final var batch = salaryGradeService.createBatch(salaryGradeRequests, includeSalaryData);
+        final var batch = salaryGradeService.create(salaryGradeRequests, includeSalaryData);
         if (batch.size() == 1) {
             URI location = URI.create(String.format("/api/v1/salary-grades/%s", batch.getFirst().id()));
             return ResponseEntity.created(location).body(StandardApiResponse.success(batch));
