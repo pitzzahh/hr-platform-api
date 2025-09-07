@@ -14,43 +14,41 @@ import java.util.Set;
 
 @Builder
 public record EmployeeRequest(
-        @NotNull
-        @NotBlank
+        @NotNull(message = "Employee number is required")
+        @NotBlank(message = "Employee number cannot be empty")
         @Pattern(
                 regexp = "^\\d+$",
-                message = "Employee number must be a whole number (no decimals)"
-        )
+                message = "Employee number must contain only digits (e.g., 12345)")
         String employeeNumber,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "Item number is required")
+        @NotBlank(message = "Item number cannot be empty")
         String itemNumber,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "First name is required")
+        @NotBlank(message = "First name cannot be empty")
         String firstName,
         String middleName,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "Last name is required")
+        @NotBlank(message = "Last name cannot be empty")
         String lastName,
         String photo,
-        @NotNull
+        @NotNull(message = "Date of birth is required")
         LocalDate dateOfBirth,
-        @NotNull
-        @NotBlank
-        @Email
+        @NotNull(message = "Email address is required")
+        @NotBlank(message = "Email address cannot be empty")
+        @Email(message = "Email address must be valid (e.g., user@example.com)")
         String email,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "Phone number is required")
+        @NotBlank(message = "Phone number cannot be empty")
         @Pattern(
                 regexp = "^(09\\d{9}|9\\d{9}|\\+639\\d{9})$",
-                message = "Phone number must be: 11 digits starting with 09, or 10 digits starting with 9, or 13 characters starting with +639"
-        )
+                message = "Phone number must be 11 digits starting with 09, 10 digits starting with 9, or 13 characters starting with +639 (e.g., +639123456789)")
         String phoneNumber,
-        @NotNull
+        @NotNull(message = "Gender is required")
         Gender gender,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "Taxpayer identification number is required")
+        @NotBlank(message = "Taxpayer identification number cannot be empty")
         String taxPayerIdentificationNumber,
-        @NotNull
+        @NotNull(message = "Civil status is required")
         CivilStatus civilStatus,
         String bankAccountNumber,
         boolean archived,
@@ -61,45 +59,43 @@ public record EmployeeRequest(
         Set<EmploymentInformationRequest> employmentInformationRequests
 ) {
     public record WithoutArchivedAndUserIdAndIdentifierRequestsAndEmploymentInformationRequests(
-            @NotBlank
-            @NotNull
+            @NotNull(message = "Employee number is required")
+            @NotBlank(message = "Employee number cannot be empty")
             @Pattern(
                     regexp = "^\\d+$",
-                    message = "Employee number must be a whole number (no decimals)"
+                    message = "Employee number must contain only digits (e.g., 12345)"
             )
             String employeeNumber,
-            @NotNull
-            @NotBlank
+            @NotNull(message = "Item number is required")
+            @NotBlank(message = "Item number cannot be empty")
             String itemNumber,
-            @NotNull
-            @NotBlank
+            @NotNull(message = "First name is required")
+            @NotBlank(message = "First name cannot be empty")
             String firstName,
             String middleName,
-            @NotNull
-            @NotBlank
+            @NotNull(message = "Last name is required")
+            @NotBlank(message = "Last name cannot be empty")
             String lastName,
             String photo,
-            @NotNull
+            @NotNull(message = "Date of birth is required")
             LocalDate dateOfBirth,
-            @NotNull
-            @NotBlank
-            @Email
+            @NotNull(message = "Email address is required")
+            @NotBlank(message = "Email address cannot be empty")
+            @Email(message = "Email address must be valid (e.g., user@example.com)")
             String email,
-            @NotNull
-            @NotBlank
+            @NotNull(message = "Phone number is required")
+            @NotBlank(message = "Phone number cannot be empty")
             @Pattern(
                     regexp = "^(09\\d{9}|9\\d{9}|\\+639\\d{9})$",
-                    message = "Phone number must be: 11 digits starting with 09, or 10 digits starting with 9, or 13 characters starting with +639"
-            )
+                    message = "Phone number must be 11 digits starting with 09, 10 digits starting with 9, or 13 characters starting with +639 (e.g., +639123456789)")
             String phoneNumber,
-            @NotNull
+            @NotNull(message = "Gender is required")
             Gender gender,
-            @NotNull
-            @NotBlank
+            @NotNull(message = "Taxpayer identification number is required")
+            @NotBlank(message = "Taxpayer identification number cannot be empty")
             String taxPayerIdentificationNumber,
-            @NotNull
+            @NotNull(message = "Civil status is required")
             CivilStatus civilStatus,
             String bankAccountNumber) {
-
     }
 }

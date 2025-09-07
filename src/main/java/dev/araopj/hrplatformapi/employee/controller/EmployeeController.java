@@ -23,8 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 /**
  * REST controller for managing employee data.
@@ -220,14 +220,19 @@ public class EmployeeController {
             }
     )
     @PostMapping
-    public ResponseEntity<StandardApiResponse<Set<EmployeeResponse>>> create(
+    public ResponseEntity<StandardApiResponse<List<EmployeeResponse>>> create(
             @Valid
             @RequestBody
             @Parameter(description = "Employee details to create", required = true)
-            Set<EmployeeRequest> employeeRequest
+            List<EmployeeRequest> employeeRequest
     ) {
         log.debug("Request to create employees: {}", employeeRequest);
-        return ResponseEntity.ok(StandardApiResponse.success(employeeService.create(employeeRequest)));
+        final var batch = employeeService.create(employeeRequest);
+        if (batch.size() == 1) {
+            URI location = URI.create(String.format("/api/v1/employees/%s", batch.getFirst().id()));
+            return ResponseEntity.created(location).body(StandardApiResponse.success(batch));
+        }
+        return ResponseEntity.ok(StandardApiResponse.success(batch));
     }
 
     /**

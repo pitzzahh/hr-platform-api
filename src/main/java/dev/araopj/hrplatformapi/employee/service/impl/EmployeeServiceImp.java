@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -117,7 +118,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public Set<EmployeeResponse> create(Set<EmployeeRequest> employeeRequests) {
+    public List<EmployeeResponse> create(List<EmployeeRequest> employeeRequests) {
 
         employeeRequests.forEach(
                 employeeRequest -> {
@@ -152,7 +153,7 @@ public class EmployeeServiceImp implements EmployeeService {
                         getEmploymentInformationRequests(employeeRequest),
                         getIdDocumentRequests(employeeRequest)
                 ))
-                .collect(Collectors.toSet());
+                .toList();
 
         log.debug("Employee to save [{}]", EMPLOYEE_TO_SAVE);
 
@@ -175,7 +176,7 @@ public class EmployeeServiceImp implements EmployeeService {
                         idDocumentMapper,
                         employmentInformationMapper,
                         employmentInformationSalaryOverrideMapper
-                )).collect(Collectors.toSet());
+                )).toList();
 
     }
 
