@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: hr-platform-api
+    version: 0.0.1-SNAPSHOT
+  jackson:
+    deserialization:
+      accept-single-value-as-array: true
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+scalar:
+  theme: elysiajs
+  url: http://localhost:8080/v3/api-docs
+  enabled: true
+  path: /docs
+  hide-models: true
+  layout: classic
+
+springdoc:
+  swagger-ui:
+    enabled: false

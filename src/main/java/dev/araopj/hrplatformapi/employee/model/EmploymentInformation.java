@@ -1,9 +1,9 @@
 package dev.araopj.hrplatformapi.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,11 +19,12 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
 
     @Id
     @Uuid
-    String id;
+    private String id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "employee_id", nullable = false)
-    Employee employee;
+    private Employee employee;
 
     @Column(nullable = false)
     private LocalDate startDate;
@@ -32,31 +33,30 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     private LocalDate endDate;
 
     @Column(nullable = false)
-    EmploymentStatus employmentStatus;
+    @Enumerated(EnumType.STRING)
+    private EmploymentStatus employmentStatus;
 
     @Column(nullable = false)
-    String sourceOfFund;
+    private String sourceOfFund;
 
     @Column
-    String remarks;
+    private String remarks;
 
     @OneToOne
-    @JoinColumn(name = "employment_information_salary_override_id", unique = true)
-    EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
+    @JoinColumn(name = "employment_information_salary_override_id")
+    private EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
     @Column(nullable = false)
-    @Size(min = 1, max = 8, message = "Salary step must be between 1 and 8")
-    int step;
+    private int step;
 
     @Column
-    @Size(min = 1, max = 8, message = "Anticipated step must be between 1 and 8")
-    int anticipatedStep;
+    private int anticipatedStep;
 
     @OneToOne
-    @JoinColumn(name = "position_id", nullable = false, unique = true)
-    Position position;
+    @JoinColumn(name = "position_id", nullable = false)
+    private Position position;
 
     @OneToOne
-    @JoinColumn(name = "division_station_place_of_assignment_id", nullable = false, unique = true)
-    DivisionStationPlaceOfAssignment divisionStationPlaceOfAssignment;
+    @JoinColumn(name = "workplace_id", nullable = false)
+    private Workplace workplace;
 }

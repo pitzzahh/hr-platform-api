@@ -1,12 +1,11 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-import dev.araopj.hrplatformapi.utils.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum EmploymentStatus implements EnumUtil.HasCode {
+public enum EmploymentStatus {
 
     PERMANENT("PERM", "Permanent"),
     RESIGNED("RES", "Resigned"),

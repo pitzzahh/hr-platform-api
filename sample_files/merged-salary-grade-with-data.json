@@ -5,14 +5,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 1,
     "salaryData": [
-      {"step": "1", "amount": 12034.0},
-      {"step": "2", "amount": 12134.0},
-      {"step": "3", "amount": 12236.0},
-      {"step": "4", "amount": 12339.0},
-      {"step": "5", "amount": 12442.0},
-      {"step": "6", "amount": 12545.0},
-      {"step": "7", "amount": 12651.0},
-      {"step": "8", "amount": 12756.0}
+      {
+        "step": "1",
+        "amount": 12034
+      },
+      {
+        "step": "2",
+        "amount": 12134
+      },
+      {
+        "step": "3",
+        "amount": 12236
+      },
+      {
+        "step": "4",
+        "amount": 12339
+      },
+      {
+        "step": "5",
+        "amount": 12442
+      },
+      {
+        "step": "6",
+        "amount": 12545
+      },
+      {
+        "step": "7",
+        "amount": 12651
+      },
+      {
+        "step": "8",
+        "amount": 12756
+      }
     ]
   },
   {
@@ -21,14 +45,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 2,
     "salaryData": [
-      {"step": "1", "amount": 12790.0},
-      {"step": "2", "amount": 12888.0},
-      {"step": "3", "amount": 12987.0},
-      {"step": "4", "amount": 13087.0},
-      {"step": "5", "amount": 13187.0},
-      {"step": "6", "amount": 13288.0},
-      {"step": "7", "amount": 13390.0},
-      {"step": "8", "amount": 13493.0}
+      {
+        "step": "1",
+        "amount": 12790
+      },
+      {
+        "step": "2",
+        "amount": 12888
+      },
+      {
+        "step": "3",
+        "amount": 12987
+      },
+      {
+        "step": "4",
+        "amount": 13087
+      },
+      {
+        "step": "5",
+        "amount": 13187
+      },
+      {
+        "step": "6",
+        "amount": 13288
+      },
+      {
+        "step": "7",
+        "amount": 13390
+      },
+      {
+        "step": "8",
+        "amount": 13493
+      }
     ]
   },
   {
@@ -37,14 +85,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 3,
     "salaryData": [
-      {"step": "1", "amount": 13572.0},
-      {"step": "2", "amount": 13677.0},
-      {"step": "3", "amount": 13781.0},
-      {"step": "4", "amount": 13888.0},
-      {"step": "5", "amount": 13995.0},
-      {"step": "6", "amount": 14101.0},
-      {"step": "7", "amount": 14210.0},
-      {"step": "8", "amount": 14319.0}
+      {
+        "step": "1",
+        "amount": 13572
+      },
+      {
+        "step": "2",
+        "amount": 13677
+      },
+      {
+        "step": "3",
+        "amount": 13781
+      },
+      {
+        "step": "4",
+        "amount": 13888
+      },
+      {
+        "step": "5",
+        "amount": 13995
+      },
+      {
+        "step": "6",
+        "amount": 14101
+      },
+      {
+        "step": "7",
+        "amount": 14210
+      },
+      {
+        "step": "8",
+        "amount": 14319
+      }
     ]
   },
   {
@@ -53,14 +125,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 4,
     "salaryData": [
-      {"step": "1", "amount": 14400.0},
-      {"step": "2", "amount": 14511.0},
-      {"step": "3", "amount": 14622.0},
-      {"step": "4", "amount": 14735.0},
-      {"step": "5", "amount": 14848.0},
-      {"step": "6", "amount": 14961.0},
-      {"step": "7", "amount": 15077.0},
-      {"step": "8", "amount": 15192.0}
+      {
+        "step": "1",
+        "amount": 14400
+      },
+      {
+        "step": "2",
+        "amount": 14511
+      },
+      {
+        "step": "3",
+        "amount": 14622
+      },
+      {
+        "step": "4",
+        "amount": 14735
+      },
+      {
+        "step": "5",
+        "amount": 14848
+      },
+      {
+        "step": "6",
+        "amount": 14961
+      },
+      {
+        "step": "7",
+        "amount": 15077
+      },
+      {
+        "step": "8",
+        "amount": 15192
+      }
     ]
   },
   {
@@ -69,14 +165,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 5,
     "salaryData": [
-      {"step": "1", "amount": 15275.0},
-      {"step": "2", "amount": 15393.0},
-      {"step": "3", "amount": 15511.0},
-      {"step": "4", "amount": 15630.0},
-      {"step": "5", "amount": 15750.0},
-      {"step": "6", "amount": 15871.0},
-      {"step": "7", "amount": 15993.0},
-      {"step": "8", "amount": 16115.0}
+      {
+        "step": "1",
+        "amount": 15275
+      },
+      {
+        "step": "2",
+        "amount": 15393
+      },
+      {
+        "step": "3",
+        "amount": 15511
+      },
+      {
+        "step": "4",
+        "amount": 15630
+      },
+      {
+        "step": "5",
+        "amount": 15750
+      },
+      {
+        "step": "6",
+        "amount": 15871
+      },
+      {
+        "step": "7",
+        "amount": 15993
+      },
+      {
+        "step": "8",
+        "amount": 16115
+      }
     ]
   },
   {
@@ -85,14 +205,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 6,
     "salaryData": [
-      {"step": "1", "amount": 16200.0},
-      {"step": "2", "amount": 16325.0},
-      {"step": "3", "amount": 16450.0},
-      {"step": "4", "amount": 16577.0},
-      {"step": "5", "amount": 16704.0},
-      {"step": "6", "amount": 16832.0},
-      {"step": "7", "amount": 16962.0},
-      {"step": "8", "amount": 17092.0}
+      {
+        "step": "1",
+        "amount": 16200
+      },
+      {
+        "step": "2",
+        "amount": 16325
+      },
+      {
+        "step": "3",
+        "amount": 16450
+      },
+      {
+        "step": "4",
+        "amount": 16577
+      },
+      {
+        "step": "5",
+        "amount": 16704
+      },
+      {
+        "step": "6",
+        "amount": 16832
+      },
+      {
+        "step": "7",
+        "amount": 16962
+      },
+      {
+        "step": "8",
+        "amount": 17092
+      }
     ]
   },
   {
@@ -101,14 +245,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 7,
     "salaryData": [
-      {"step": "1", "amount": 17179.0},
-      {"step": "2", "amount": 17311.0},
-      {"step": "3", "amount": 17444.0},
-      {"step": "4", "amount": 17578.0},
-      {"step": "5", "amount": 17713.0},
-      {"step": "6", "amount": 17849.0},
-      {"step": "7", "amount": 17985.0},
-      {"step": "8", "amount": 18124.0}
+      {
+        "step": "1",
+        "amount": 17179
+      },
+      {
+        "step": "2",
+        "amount": 17311
+      },
+      {
+        "step": "3",
+        "amount": 17444
+      },
+      {
+        "step": "4",
+        "amount": 17578
+      },
+      {
+        "step": "5",
+        "amount": 17713
+      },
+      {
+        "step": "6",
+        "amount": 17849
+      },
+      {
+        "step": "7",
+        "amount": 17985
+      },
+      {
+        "step": "8",
+        "amount": 18124
+      }
     ]
   },
   {
@@ -117,14 +285,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 8,
     "salaryData": [
-      {"step": "1", "amount": 18251.0},
-      {"step": "2", "amount": 18417.0},
-      {"step": "3", "amount": 18583.0},
-      {"step": "4", "amount": 18751.0},
-      {"step": "5", "amount": 18920.0},
-      {"step": "6", "amount": 19091.0},
-      {"step": "7", "amount": 19264.0},
-      {"step": "8", "amount": 19438.0}
+      {
+        "step": "1",
+        "amount": 18251
+      },
+      {
+        "step": "2",
+        "amount": 18417
+      },
+      {
+        "step": "3",
+        "amount": 18583
+      },
+      {
+        "step": "4",
+        "amount": 18751
+      },
+      {
+        "step": "5",
+        "amount": 18920
+      },
+      {
+        "step": "6",
+        "amount": 19091
+      },
+      {
+        "step": "7",
+        "amount": 19264
+      },
+      {
+        "step": "8",
+        "amount": 19438
+      }
     ]
   },
   {
@@ -133,14 +325,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 9,
     "salaryData": [
-      {"step": "1", "amount": 19593.0},
-      {"step": "2", "amount": 19757.0},
-      {"step": "3", "amount": 19922.0},
-      {"step": "4", "amount": 20089.0},
-      {"step": "5", "amount": 20257.0},
-      {"step": "6", "amount": 20426.0},
-      {"step": "7", "amount": 20597.0},
-      {"step": "8", "amount": 20769.0}
+      {
+        "step": "1",
+        "amount": 19593
+      },
+      {
+        "step": "2",
+        "amount": 19757
+      },
+      {
+        "step": "3",
+        "amount": 19922
+      },
+      {
+        "step": "4",
+        "amount": 20089
+      },
+      {
+        "step": "5",
+        "amount": 20257
+      },
+      {
+        "step": "6",
+        "amount": 20426
+      },
+      {
+        "step": "7",
+        "amount": 20597
+      },
+      {
+        "step": "8",
+        "amount": 20769
+      }
     ]
   },
   {
@@ -149,14 +365,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 10,
     "salaryData": [
-      {"step": "1", "amount": 21205.0},
-      {"step": "2", "amount": 21382.0},
-      {"step": "3", "amount": 21561.0},
-      {"step": "4", "amount": 21741.0},
-      {"step": "5", "amount": 21923.0},
-      {"step": "6", "amount": 22106.0},
-      {"step": "7", "amount": 22291.0},
-      {"step": "8", "amount": 22477.0}
+      {
+        "step": "1",
+        "amount": 21205
+      },
+      {
+        "step": "2",
+        "amount": 21382
+      },
+      {
+        "step": "3",
+        "amount": 21561
+      },
+      {
+        "step": "4",
+        "amount": 21741
+      },
+      {
+        "step": "5",
+        "amount": 21923
+      },
+      {
+        "step": "6",
+        "amount": 22106
+      },
+      {
+        "step": "7",
+        "amount": 22291
+      },
+      {
+        "step": "8",
+        "amount": 22477
+      }
     ]
   },
   {
@@ -165,14 +405,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 11,
     "salaryData": [
-      {"step": "1", "amount": 23877.0},
-      {"step": "2", "amount": 24161.0},
-      {"step": "3", "amount": 24450.0},
-      {"step": "4", "amount": 24742.0},
-      {"step": "5", "amount": 25038.0},
-      {"step": "6", "amount": 25339.0},
-      {"step": "7", "amount": 25643.0},
-      {"step": "8", "amount": 25952.0}
+      {
+        "step": "1",
+        "amount": 23877
+      },
+      {
+        "step": "2",
+        "amount": 24161
+      },
+      {
+        "step": "3",
+        "amount": 24450
+      },
+      {
+        "step": "4",
+        "amount": 24742
+      },
+      {
+        "step": "5",
+        "amount": 25038
+      },
+      {
+        "step": "6",
+        "amount": 25339
+      },
+      {
+        "step": "7",
+        "amount": 25643
+      },
+      {
+        "step": "8",
+        "amount": 25952
+      }
     ]
   },
   {
@@ -181,14 +445,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 12,
     "salaryData": [
-      {"step": "1", "amount": 26052.0},
-      {"step": "2", "amount": 26336.0},
-      {"step": "3", "amount": 26624.0},
-      {"step": "4", "amount": 26915.0},
-      {"step": "5", "amount": 27210.0},
-      {"step": "6", "amount": 27509.0},
-      {"step": "7", "amount": 27811.0},
-      {"step": "8", "amount": 28117.0}
+      {
+        "step": "1",
+        "amount": 26052
+      },
+      {
+        "step": "2",
+        "amount": 26336
+      },
+      {
+        "step": "3",
+        "amount": 26624
+      },
+      {
+        "step": "4",
+        "amount": 26915
+      },
+      {
+        "step": "5",
+        "amount": 27210
+      },
+      {
+        "step": "6",
+        "amount": 27509
+      },
+      {
+        "step": "7",
+        "amount": 27811
+      },
+      {
+        "step": "8",
+        "amount": 28117
+      }
     ]
   },
   {
@@ -197,14 +485,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 13,
     "salaryData": [
-      {"step": "1", "amount": 28276.0},
-      {"step": "2", "amount": 28589.0},
-      {"step": "3", "amount": 28905.0},
-      {"step": "4", "amount": 29225.0},
-      {"step": "5", "amount": 29550.0},
-      {"step": "6", "amount": 29878.0},
-      {"step": "7", "amount": 30210.0},
-      {"step": "8", "amount": 30547.0}
+      {
+        "step": "1",
+        "amount": 28276
+      },
+      {
+        "step": "2",
+        "amount": 28589
+      },
+      {
+        "step": "3",
+        "amount": 28905
+      },
+      {
+        "step": "4",
+        "amount": 29225
+      },
+      {
+        "step": "5",
+        "amount": 29550
+      },
+      {
+        "step": "6",
+        "amount": 29878
+      },
+      {
+        "step": "7",
+        "amount": 30210
+      },
+      {
+        "step": "8",
+        "amount": 30547
+      }
     ]
   },
   {
@@ -213,14 +525,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 14,
     "salaryData": [
-      {"step": "1", "amount": 30799.0},
-      {"step": "2", "amount": 31143.0},
-      {"step": "3", "amount": 31491.0},
-      {"step": "4", "amount": 31844.0},
-      {"step": "5", "amount": 32200.0},
-      {"step": "6", "amount": 32561.0},
-      {"step": "7", "amount": 32927.0},
-      {"step": "8", "amount": 33297.0}
+      {
+        "step": "1",
+        "amount": 30799
+      },
+      {
+        "step": "2",
+        "amount": 31143
+      },
+      {
+        "step": "3",
+        "amount": 31491
+      },
+      {
+        "step": "4",
+        "amount": 31844
+      },
+      {
+        "step": "5",
+        "amount": 32200
+      },
+      {
+        "step": "6",
+        "amount": 32561
+      },
+      {
+        "step": "7",
+        "amount": 32927
+      },
+      {
+        "step": "8",
+        "amount": 33297
+      }
     ]
   },
   {
@@ -229,14 +565,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 15,
     "salaryData": [
-      {"step": "1", "amount": 33575.0},
-      {"step": "2", "amount": 33953.0},
-      {"step": "3", "amount": 34336.0},
-      {"step": "4", "amount": 34724.0},
-      {"step": "5", "amount": 35116.0},
-      {"step": "6", "amount": 35513.0},
-      {"step": "7", "amount": 35915.0},
-      {"step": "8", "amount": 36323.0}
+      {
+        "step": "1",
+        "amount": 33575
+      },
+      {
+        "step": "2",
+        "amount": 33953
+      },
+      {
+        "step": "3",
+        "amount": 34336
+      },
+      {
+        "step": "4",
+        "amount": 34724
+      },
+      {
+        "step": "5",
+        "amount": 35116
+      },
+      {
+        "step": "6",
+        "amount": 35513
+      },
+      {
+        "step": "7",
+        "amount": 35915
+      },
+      {
+        "step": "8",
+        "amount": 36323
+      }
     ]
   },
   {
@@ -245,14 +605,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 16,
     "salaryData": [
-      {"step": "1", "amount": 36628.0},
-      {"step": "2", "amount": 37044.0},
-      {"step": "3", "amount": 37465.0},
-      {"step": "4", "amount": 37891.0},
-      {"step": "5", "amount": 38323.0},
-      {"step": "6", "amount": 38760.0},
-      {"step": "7", "amount": 39203.0},
-      {"step": "8", "amount": 39650.0}
+      {
+        "step": "1",
+        "amount": 36628
+      },
+      {
+        "step": "2",
+        "amount": 37044
+      },
+      {
+        "step": "3",
+        "amount": 37465
+      },
+      {
+        "step": "4",
+        "amount": 37891
+      },
+      {
+        "step": "5",
+        "amount": 38323
+      },
+      {
+        "step": "6",
+        "amount": 38760
+      },
+      {
+        "step": "7",
+        "amount": 39203
+      },
+      {
+        "step": "8",
+        "amount": 39650
+      }
     ]
   },
   {
@@ -261,14 +645,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 17,
     "salaryData": [
-      {"step": "1", "amount": 39986.0},
-      {"step": "2", "amount": 40444.0},
-      {"step": "3", "amount": 40907.0},
-      {"step": "4", "amount": 41376.0},
-      {"step": "5", "amount": 41851.0},
-      {"step": "6", "amount": 42332.0},
-      {"step": "7", "amount": 42818.0},
-      {"step": "8", "amount": 43311.0}
+      {
+        "step": "1",
+        "amount": 39986
+      },
+      {
+        "step": "2",
+        "amount": 40444
+      },
+      {
+        "step": "3",
+        "amount": 40907
+      },
+      {
+        "step": "4",
+        "amount": 41376
+      },
+      {
+        "step": "5",
+        "amount": 41851
+      },
+      {
+        "step": "6",
+        "amount": 42332
+      },
+      {
+        "step": "7",
+        "amount": 42818
+      },
+      {
+        "step": "8",
+        "amount": 43311
+      }
     ]
   },
   {
@@ -277,14 +685,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 18,
     "salaryData": [
-      {"step": "1", "amount": 43681.0},
-      {"step": "2", "amount": 44184.0},
-      {"step": "3", "amount": 44694.0},
-      {"step": "4", "amount": 45209.0},
-      {"step": "5", "amount": 45732.0},
-      {"step": "6", "amount": 46261.0},
-      {"step": "7", "amount": 46796.0},
-      {"step": "8", "amount": 47338.0}
+      {
+        "step": "1",
+        "amount": 43681
+      },
+      {
+        "step": "2",
+        "amount": 44184
+      },
+      {
+        "step": "3",
+        "amount": 44694
+      },
+      {
+        "step": "4",
+        "amount": 45209
+      },
+      {
+        "step": "5",
+        "amount": 45732
+      },
+      {
+        "step": "6",
+        "amount": 46261
+      },
+      {
+        "step": "7",
+        "amount": 46796
+      },
+      {
+        "step": "8",
+        "amount": 47338
+      }
     ]
   },
   {
@@ -293,14 +725,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 19,
     "salaryData": [
-      {"step": "1", "amount": 48313.0},
-      {"step": "2", "amount": 49052.0},
-      {"step": "3", "amount": 49803.0},
-      {"step": "4", "amount": 50566.0},
-      {"step": "5", "amount": 51342.0},
-      {"step": "6", "amount": 52130.0},
-      {"step": "7", "amount": 52932.0},
-      {"step": "8", "amount": 53746.0}
+      {
+        "step": "1",
+        "amount": 48313
+      },
+      {
+        "step": "2",
+        "amount": 49052
+      },
+      {
+        "step": "3",
+        "amount": 49803
+      },
+      {
+        "step": "4",
+        "amount": 50566
+      },
+      {
+        "step": "5",
+        "amount": 51342
+      },
+      {
+        "step": "6",
+        "amount": 52130
+      },
+      {
+        "step": "7",
+        "amount": 52932
+      },
+      {
+        "step": "8",
+        "amount": 53746
+      }
     ]
   },
   {
@@ -309,14 +765,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 20,
     "salaryData": [
-      {"step": "1", "amount": 54251.0},
-      {"step": "2", "amount": 55085.0},
-      {"step": "3", "amount": 55934.0},
-      {"step": "4", "amount": 56796.0},
-      {"step": "5", "amount": 57673.0},
-      {"step": "6", "amount": 58564.0},
-      {"step": "7", "amount": 59469.0},
-      {"step": "8", "amount": 60389.0}
+      {
+        "step": "1",
+        "amount": 54251
+      },
+      {
+        "step": "2",
+        "amount": 55085
+      },
+      {
+        "step": "3",
+        "amount": 55934
+      },
+      {
+        "step": "4",
+        "amount": 56796
+      },
+      {
+        "step": "5",
+        "amount": 57673
+      },
+      {
+        "step": "6",
+        "amount": 58564
+      },
+      {
+        "step": "7",
+        "amount": 59469
+      },
+      {
+        "step": "8",
+        "amount": 60389
+      }
     ]
   },
   {
@@ -325,14 +805,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 21,
     "salaryData": [
-      {"step": "1", "amount": 60901.0},
-      {"step": "2", "amount": 61844.0},
-      {"step": "3", "amount": 62803.0},
-      {"step": "4", "amount": 63777.0},
-      {"step": "5", "amount": 64768.0},
-      {"step": "6", "amount": 65774.0},
-      {"step": "7", "amount": 66797.0},
-      {"step": "8", "amount": 67837.0}
+      {
+        "step": "1",
+        "amount": 60901
+      },
+      {
+        "step": "2",
+        "amount": 61844
+      },
+      {
+        "step": "3",
+        "amount": 62803
+      },
+      {
+        "step": "4",
+        "amount": 63777
+      },
+      {
+        "step": "5",
+        "amount": 64768
+      },
+      {
+        "step": "6",
+        "amount": 65774
+      },
+      {
+        "step": "7",
+        "amount": 66797
+      },
+      {
+        "step": "8",
+        "amount": 67837
+      }
     ]
   },
   {
@@ -341,14 +845,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 22,
     "salaryData": [
-      {"step": "1", "amount": 68415.0},
-      {"step": "2", "amount": 69481.0},
-      {"step": "3", "amount": 70565.0},
-      {"step": "4", "amount": 71666.0},
-      {"step": "5", "amount": 72785.0},
-      {"step": "6", "amount": 73923.0},
-      {"step": "7", "amount": 75079.0},
-      {"step": "8", "amount": 76253.0}
+      {
+        "step": "1",
+        "amount": 68415
+      },
+      {
+        "step": "2",
+        "amount": 69481
+      },
+      {
+        "step": "3",
+        "amount": 70565
+      },
+      {
+        "step": "4",
+        "amount": 71666
+      },
+      {
+        "step": "5",
+        "amount": 72785
+      },
+      {
+        "step": "6",
+        "amount": 73923
+      },
+      {
+        "step": "7",
+        "amount": 75079
+      },
+      {
+        "step": "8",
+        "amount": 76253
+      }
     ]
   },
   {
@@ -357,14 +885,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 23,
     "salaryData": [
-      {"step": "1", "amount": 76907.0},
-      {"step": "2", "amount": 78111.0},
-      {"step": "3", "amount": 79336.0},
-      {"step": "4", "amount": 80583.0},
-      {"step": "5", "amount": 81899.0},
-      {"step": "6", "amount": 83235.0},
-      {"step": "7", "amount": 84594.0},
-      {"step": "8", "amount": 85975.0}
+      {
+        "step": "1",
+        "amount": 76907
+      },
+      {
+        "step": "2",
+        "amount": 78111
+      },
+      {
+        "step": "3",
+        "amount": 79336
+      },
+      {
+        "step": "4",
+        "amount": 80583
+      },
+      {
+        "step": "5",
+        "amount": 81899
+      },
+      {
+        "step": "6",
+        "amount": 83235
+      },
+      {
+        "step": "7",
+        "amount": 84594
+      },
+      {
+        "step": "8",
+        "amount": 85975
+      }
     ]
   },
   {
@@ -373,14 +925,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 24,
     "salaryData": [
-      {"step": "1", "amount": 86742.0},
-      {"step": "2", "amount": 88158.0},
-      {"step": "3", "amount": 89597.0},
-      {"step": "4", "amount": 91059.0},
-      {"step": "5", "amount": 92545.0},
-      {"step": "6", "amount": 94057.0},
-      {"step": "7", "amount": 95592.0},
-      {"step": "8", "amount": 97152.0}
+      {
+        "step": "1",
+        "amount": 86742
+      },
+      {
+        "step": "2",
+        "amount": 88158
+      },
+      {
+        "step": "3",
+        "amount": 89597
+      },
+      {
+        "step": "4",
+        "amount": 91059
+      },
+      {
+        "step": "5",
+        "amount": 92545
+      },
+      {
+        "step": "6",
+        "amount": 94057
+      },
+      {
+        "step": "7",
+        "amount": 95592
+      },
+      {
+        "step": "8",
+        "amount": 97152
+      }
     ]
   },
   {
@@ -389,14 +965,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 25,
     "salaryData": [
-      {"step": "1", "amount": 98886.0},
-      {"step": "2", "amount": 100500.0},
-      {"step": "3", "amount": 102140.0},
-      {"step": "4", "amount": 103808.0},
-      {"step": "5", "amount": 105502.0},
-      {"step": "6", "amount": 107224.0},
-      {"step": "7", "amount": 108974.0},
-      {"step": "8", "amount": 110753.0}
+      {
+        "step": "1",
+        "amount": 98886
+      },
+      {
+        "step": "2",
+        "amount": 100500
+      },
+      {
+        "step": "3",
+        "amount": 102140
+      },
+      {
+        "step": "4",
+        "amount": 103808
+      },
+      {
+        "step": "5",
+        "amount": 105502
+      },
+      {
+        "step": "6",
+        "amount": 107224
+      },
+      {
+        "step": "7",
+        "amount": 108974
+      },
+      {
+        "step": "8",
+        "amount": 110753
+      }
     ]
   },
   {
@@ -405,14 +1005,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 26,
     "salaryData": [
-      {"step": "1", "amount": 111742.0},
-      {"step": "2", "amount": 113565.0},
-      {"step": "3", "amount": 115419.0},
-      {"step": "4", "amount": 117303.0},
-      {"step": "5", "amount": 119217.0},
-      {"step": "6", "amount": 121163.0},
-      {"step": "7", "amount": 123140.0},
-      {"step": "8", "amount": 125150.0}
+      {
+        "step": "1",
+        "amount": 111742
+      },
+      {
+        "step": "2",
+        "amount": 113565
+      },
+      {
+        "step": "3",
+        "amount": 115419
+      },
+      {
+        "step": "4",
+        "amount": 117303
+      },
+      {
+        "step": "5",
+        "amount": 119217
+      },
+      {
+        "step": "6",
+        "amount": 121163
+      },
+      {
+        "step": "7",
+        "amount": 123140
+      },
+      {
+        "step": "8",
+        "amount": 125150
+      }
     ]
   },
   {
@@ -421,14 +1045,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 27,
     "salaryData": [
-      {"step": "1", "amount": 126267.0},
-      {"step": "2", "amount": 128329.0},
-      {"step": "3", "amount": 130423.0},
-      {"step": "4", "amount": 132552.0},
-      {"step": "5", "amount": 134715.0},
-      {"step": "6", "amount": 136914.0},
-      {"step": "7", "amount": 139149.0},
-      {"step": "8", "amount": 141420.0}
+      {
+        "step": "1",
+        "amount": 126267
+      },
+      {
+        "step": "2",
+        "amount": 128329
+      },
+      {
+        "step": "3",
+        "amount": 130423
+      },
+      {
+        "step": "4",
+        "amount": 132552
+      },
+      {
+        "step": "5",
+        "amount": 134715
+      },
+      {
+        "step": "6",
+        "amount": 136914
+      },
+      {
+        "step": "7",
+        "amount": 139149
+      },
+      {
+        "step": "8",
+        "amount": 141420
+      }
     ]
   },
   {
@@ -437,14 +1085,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 28,
     "salaryData": [
-      {"step": "1", "amount": 142683.0},
-      {"step": "2", "amount": 145011.0},
-      {"step": "3", "amount": 147378.0},
-      {"step": "4", "amount": 149784.0},
-      {"step": "5", "amount": 152228.0},
-      {"step": "6", "amount": 154714.0},
-      {"step": "7", "amount": 157239.0},
-      {"step": "8", "amount": 159804.0}
+      {
+        "step": "1",
+        "amount": 142683
+      },
+      {
+        "step": "2",
+        "amount": 145011
+      },
+      {
+        "step": "3",
+        "amount": 147378
+      },
+      {
+        "step": "4",
+        "amount": 149784
+      },
+      {
+        "step": "5",
+        "amount": 152228
+      },
+      {
+        "step": "6",
+        "amount": 154714
+      },
+      {
+        "step": "7",
+        "amount": 157239
+      },
+      {
+        "step": "8",
+        "amount": 159804
+      }
     ]
   },
   {
@@ -453,14 +1125,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 29,
     "salaryData": [
-      {"step": "1", "amount": 161231.0},
-      {"step": "2", "amount": 163863.0},
-      {"step": "3", "amount": 166537.0},
-      {"step": "4", "amount": 169256.0},
-      {"step": "5", "amount": 172018.0},
-      {"step": "6", "amount": 174826.0},
-      {"step": "7", "amount": 177679.0},
-      {"step": "8", "amount": 180579.0}
+      {
+        "step": "1",
+        "amount": 161231
+      },
+      {
+        "step": "2",
+        "amount": 163863
+      },
+      {
+        "step": "3",
+        "amount": 166537
+      },
+      {
+        "step": "4",
+        "amount": 169256
+      },
+      {
+        "step": "5",
+        "amount": 172018
+      },
+      {
+        "step": "6",
+        "amount": 174826
+      },
+      {
+        "step": "7",
+        "amount": 177679
+      },
+      {
+        "step": "8",
+        "amount": 180579
+      }
     ]
   },
   {
@@ -469,14 +1165,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 30,
     "salaryData": [
-      {"step": "1", "amount": 182191.0},
-      {"step": "2", "amount": 185165.0},
-      {"step": "3", "amount": 188187.0},
-      {"step": "4", "amount": 191259.0},
-      {"step": "5", "amount": 194380.0},
-      {"step": "6", "amount": 197553.0},
-      {"step": "7", "amount": 200777.0},
-      {"step": "8", "amount": 204054.0}
+      {
+        "step": "1",
+        "amount": 182191
+      },
+      {
+        "step": "2",
+        "amount": 185165
+      },
+      {
+        "step": "3",
+        "amount": 188187
+      },
+      {
+        "step": "4",
+        "amount": 191259
+      },
+      {
+        "step": "5",
+        "amount": 194380
+      },
+      {
+        "step": "6",
+        "amount": 197553
+      },
+      {
+        "step": "7",
+        "amount": 200777
+      },
+      {
+        "step": "8",
+        "amount": 204054
+      }
     ]
   },
   {
@@ -485,14 +1205,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 31,
     "salaryData": [
-      {"step": "1", "amount": 268121.0},
-      {"step": "2", "amount": 273358.0},
-      {"step": "3", "amount": 278697.0},
-      {"step": "4", "amount": 284140.0},
-      {"step": "5", "amount": 289691.0},
-      {"step": "6", "amount": 295349.0},
-      {"step": "7", "amount": 301117.0},
-      {"step": "8", "amount": 306999.0}
+      {
+        "step": "1",
+        "amount": 268121
+      },
+      {
+        "step": "2",
+        "amount": 273358
+      },
+      {
+        "step": "3",
+        "amount": 278697
+      },
+      {
+        "step": "4",
+        "amount": 284140
+      },
+      {
+        "step": "5",
+        "amount": 289691
+      },
+      {
+        "step": "6",
+        "amount": 295349
+      },
+      {
+        "step": "7",
+        "amount": 301117
+      },
+      {
+        "step": "8",
+        "amount": 306999
+      }
     ]
   },
   {
@@ -501,14 +1245,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 32,
     "salaryData": [
-      {"step": "1", "amount": 319660.0},
-      {"step": "2", "amount": 326107.0},
-      {"step": "3", "amount": 332682.0},
-      {"step": "4", "amount": 339392.0},
-      {"step": "5", "amount": 346236.0},
-      {"step": "6", "amount": 353218.0},
-      {"step": "7", "amount": 360342.0},
-      {"step": "8", "amount": 367609.0}
+      {
+        "step": "1",
+        "amount": 319660
+      },
+      {
+        "step": "2",
+        "amount": 326107
+      },
+      {
+        "step": "3",
+        "amount": 332682
+      },
+      {
+        "step": "4",
+        "amount": 339392
+      },
+      {
+        "step": "5",
+        "amount": 346236
+      },
+      {
+        "step": "6",
+        "amount": 353218
+      },
+      {
+        "step": "7",
+        "amount": 360342
+      },
+      {
+        "step": "8",
+        "amount": 367609
+      }
     ]
   },
   {
@@ -517,14 +1285,38 @@
     "effectiveDate": "2021-01-01",
     "salaryGrade": 33,
     "salaryData": [
-      {"step": "1", "amount": 403620.0},
-      {"step": "2", "amount": 415728.0},
-      {"step": "3", "amount": 0.0},
-      {"step": "4", "amount": 0.0},
-      {"step": "5", "amount": 0.0},
-      {"step": "6", "amount": 0.0},
-      {"step": "7", "amount": 0.0},
-      {"step": "8", "amount": 0.0}
+      {
+        "step": "1",
+        "amount": 403620
+      },
+      {
+        "step": "2",
+        "amount": 415728
+      },
+      {
+        "step": "3",
+        "amount": 0
+      },
+      {
+        "step": "4",
+        "amount": 0
+      },
+      {
+        "step": "5",
+        "amount": 0
+      },
+      {
+        "step": "6",
+        "amount": 0
+      },
+      {
+        "step": "7",
+        "amount": 0
+      },
+      {
+        "step": "8",
+        "amount": 0
+      }
     ]
   },
   {
@@ -533,14 +1325,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 1,
     "salaryData": [
-      {"step": "1", "amount": 12517.0},
-      {"step": "2", "amount": 12621.0},
-      {"step": "3", "amount": 12728.0},
-      {"step": "4", "amount": 12834.0},
-      {"step": "5", "amount": 12941.0},
-      {"step": "6", "amount": 13049.0},
-      {"step": "7", "amount": 13159.0},
-      {"step": "8", "amount": 13268.0}
+      {
+        "step": "1",
+        "amount": 12517
+      },
+      {
+        "step": "2",
+        "amount": 12621
+      },
+      {
+        "step": "3",
+        "amount": 12728
+      },
+      {
+        "step": "4",
+        "amount": 12834
+      },
+      {
+        "step": "5",
+        "amount": 12941
+      },
+      {
+        "step": "6",
+        "amount": 13049
+      },
+      {
+        "step": "7",
+        "amount": 13159
+      },
+      {
+        "step": "8",
+        "amount": 13268
+      }
     ]
   },
   {
@@ -549,14 +1365,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 2,
     "salaryData": [
-      {"step": "1", "amount": 13305.0},
-      {"step": "2", "amount": 13406.0},
-      {"step": "3", "amount": 13509.0},
-      {"step": "4", "amount": 13613.0},
-      {"step": "5", "amount": 13718.0},
-      {"step": "6", "amount": 13823.0},
-      {"step": "7", "amount": 13929.0},
-      {"step": "8", "amount": 14035.0}
+      {
+        "step": "1",
+        "amount": 13305
+      },
+      {
+        "step": "2",
+        "amount": 13406
+      },
+      {
+        "step": "3",
+        "amount": 13509
+      },
+      {
+        "step": "4",
+        "amount": 13613
+      },
+      {
+        "step": "5",
+        "amount": 13718
+      },
+      {
+        "step": "6",
+        "amount": 13823
+      },
+      {
+        "step": "7",
+        "amount": 13929
+      },
+      {
+        "step": "8",
+        "amount": 14035
+      }
     ]
   },
   {
@@ -565,14 +1405,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 3,
     "salaryData": [
-      {"step": "1", "amount": 14125.0},
-      {"step": "2", "amount": 14234.0},
-      {"step": "3", "amount": 14343.0},
-      {"step": "4", "amount": 14454.0},
-      {"step": "5", "amount": 14565.0},
-      {"step": "6", "amount": 14676.0},
-      {"step": "7", "amount": 14790.0},
-      {"step": "8", "amount": 14903.0}
+      {
+        "step": "1",
+        "amount": 14125
+      },
+      {
+        "step": "2",
+        "amount": 14234
+      },
+      {
+        "step": "3",
+        "amount": 14343
+      },
+      {
+        "step": "4",
+        "amount": 14454
+      },
+      {
+        "step": "5",
+        "amount": 14565
+      },
+      {
+        "step": "6",
+        "amount": 14676
+      },
+      {
+        "step": "7",
+        "amount": 14790
+      },
+      {
+        "step": "8",
+        "amount": 14903
+      }
     ]
   },
   {
@@ -581,14 +1445,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 4,
     "salaryData": [
-      {"step": "1", "amount": 14993.0},
-      {"step": "2", "amount": 15109.0},
-      {"step": "3", "amount": 15224.0},
-      {"step": "4", "amount": 15341.0},
-      {"step": "5", "amount": 15459.0},
-      {"step": "6", "amount": 15577.0},
-      {"step": "7", "amount": 15698.0},
-      {"step": "8", "amount": 15818.0}
+      {
+        "step": "1",
+        "amount": 14993
+      },
+      {
+        "step": "2",
+        "amount": 15109
+      },
+      {
+        "step": "3",
+        "amount": 15224
+      },
+      {
+        "step": "4",
+        "amount": 15341
+      },
+      {
+        "step": "5",
+        "amount": 15459
+      },
+      {
+        "step": "6",
+        "amount": 15577
+      },
+      {
+        "step": "7",
+        "amount": 15698
+      },
+      {
+        "step": "8",
+        "amount": 15818
+      }
     ]
   },
   {
@@ -597,14 +1485,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 5,
     "salaryData": [
-      {"step": "1", "amount": 15909.0},
-      {"step": "2", "amount": 16032.0},
-      {"step": "3", "amount": 16155.0},
-      {"step": "4", "amount": 16279.0},
-      {"step": "5", "amount": 16404.0},
-      {"step": "6", "amount": 16530.0},
-      {"step": "7", "amount": 16657.0},
-      {"step": "8", "amount": 16784.0}
+      {
+        "step": "1",
+        "amount": 15909
+      },
+      {
+        "step": "2",
+        "amount": 16032
+      },
+      {
+        "step": "3",
+        "amount": 16155
+      },
+      {
+        "step": "4",
+        "amount": 16279
+      },
+      {
+        "step": "5",
+        "amount": 16404
+      },
+      {
+        "step": "6",
+        "amount": 16530
+      },
+      {
+        "step": "7",
+        "amount": 16657
+      },
+      {
+        "step": "8",
+        "amount": 16784
+      }
     ]
   },
   {
@@ -613,14 +1525,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 6,
     "salaryData": [
-      {"step": "1", "amount": 16877.0},
-      {"step": "2", "amount": 17007.0},
-      {"step": "3", "amount": 17137.0},
-      {"step": "4", "amount": 17269.0},
-      {"step": "5", "amount": 17402.0},
-      {"step": "6", "amount": 17535.0},
-      {"step": "7", "amount": 17670.0},
-      {"step": "8", "amount": 17806.0}
+      {
+        "step": "1",
+        "amount": 16877
+      },
+      {
+        "step": "2",
+        "amount": 17007
+      },
+      {
+        "step": "3",
+        "amount": 17137
+      },
+      {
+        "step": "4",
+        "amount": 17269
+      },
+      {
+        "step": "5",
+        "amount": 17402
+      },
+      {
+        "step": "6",
+        "amount": 17535
+      },
+      {
+        "step": "7",
+        "amount": 17670
+      },
+      {
+        "step": "8",
+        "amount": 17806
+      }
     ]
   },
   {
@@ -629,14 +1565,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 7,
     "salaryData": [
-      {"step": "1", "amount": 17899.0},
-      {"step": "2", "amount": 18037.0},
-      {"step": "3", "amount": 18176.0},
-      {"step": "4", "amount": 18315.0},
-      {"step": "5", "amount": 18455.0},
-      {"step": "6", "amount": 18598.0},
-      {"step": "7", "amount": 18740.0},
-      {"step": "8", "amount": 18884.0}
+      {
+        "step": "1",
+        "amount": 17899
+      },
+      {
+        "step": "2",
+        "amount": 18037
+      },
+      {
+        "step": "3",
+        "amount": 18176
+      },
+      {
+        "step": "4",
+        "amount": 18315
+      },
+      {
+        "step": "5",
+        "amount": 18455
+      },
+      {
+        "step": "6",
+        "amount": 18598
+      },
+      {
+        "step": "7",
+        "amount": 18740
+      },
+      {
+        "step": "8",
+        "amount": 18884
+      }
     ]
   },
   {
@@ -645,14 +1605,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 8,
     "salaryData": [
-      {"step": "1", "amount": 18998.0},
-      {"step": "2", "amount": 19170.0},
-      {"step": "3", "amount": 19343.0},
-      {"step": "4", "amount": 19518.0},
-      {"step": "5", "amount": 19694.0},
-      {"step": "6", "amount": 19872.0},
-      {"step": "7", "amount": 20052.0},
-      {"step": "8", "amount": 20233.0}
+      {
+        "step": "1",
+        "amount": 18998
+      },
+      {
+        "step": "2",
+        "amount": 19170
+      },
+      {
+        "step": "3",
+        "amount": 19343
+      },
+      {
+        "step": "4",
+        "amount": 19518
+      },
+      {
+        "step": "5",
+        "amount": 19694
+      },
+      {
+        "step": "6",
+        "amount": 19872
+      },
+      {
+        "step": "7",
+        "amount": 20052
+      },
+      {
+        "step": "8",
+        "amount": 20233
+      }
     ]
   },
   {
@@ -661,14 +1645,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 9,
     "salaryData": [
-      {"step": "1", "amount": 20402.0},
-      {"step": "2", "amount": 20572.0},
-      {"step": "3", "amount": 20745.0},
-      {"step": "4", "amount": 20918.0},
-      {"step": "5", "amount": 21093.0},
-      {"step": "6", "amount": 21269.0},
-      {"step": "7", "amount": 21447.0},
-      {"step": "8", "amount": 21626.0}
+      {
+        "step": "1",
+        "amount": 20402
+      },
+      {
+        "step": "2",
+        "amount": 20572
+      },
+      {
+        "step": "3",
+        "amount": 20745
+      },
+      {
+        "step": "4",
+        "amount": 20918
+      },
+      {
+        "step": "5",
+        "amount": 21093
+      },
+      {
+        "step": "6",
+        "amount": 21269
+      },
+      {
+        "step": "7",
+        "amount": 21447
+      },
+      {
+        "step": "8",
+        "amount": 21626
+      }
     ]
   },
   {
@@ -677,14 +1685,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 10,
     "salaryData": [
-      {"step": "1", "amount": 22190.0},
-      {"step": "2", "amount": 22376.0},
-      {"step": "3", "amount": 22563.0},
-      {"step": "4", "amount": 22752.0},
-      {"step": "5", "amount": 22942.0},
-      {"step": "6", "amount": 23134.0},
-      {"step": "7", "amount": 23327.0},
-      {"step": "8", "amount": 23522.0}
+      {
+        "step": "1",
+        "amount": 22190
+      },
+      {
+        "step": "2",
+        "amount": 22376
+      },
+      {
+        "step": "3",
+        "amount": 22563
+      },
+      {
+        "step": "4",
+        "amount": 22752
+      },
+      {
+        "step": "5",
+        "amount": 22942
+      },
+      {
+        "step": "6",
+        "amount": 23134
+      },
+      {
+        "step": "7",
+        "amount": 23327
+      },
+      {
+        "step": "8",
+        "amount": 23522
+      }
     ]
   },
   {
@@ -693,14 +1725,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 11,
     "salaryData": [
-      {"step": "1", "amount": 25439.0},
-      {"step": "2", "amount": 25723.0},
-      {"step": "3", "amount": 26012.0},
-      {"step": "4", "amount": 26304.0},
-      {"step": "5", "amount": 26600.0},
-      {"step": "6", "amount": 26901.0},
-      {"step": "7", "amount": 27205.0},
-      {"step": "8", "amount": 27514.0}
+      {
+        "step": "1",
+        "amount": 25439
+      },
+      {
+        "step": "2",
+        "amount": 25723
+      },
+      {
+        "step": "3",
+        "amount": 26012
+      },
+      {
+        "step": "4",
+        "amount": 26304
+      },
+      {
+        "step": "5",
+        "amount": 26600
+      },
+      {
+        "step": "6",
+        "amount": 26901
+      },
+      {
+        "step": "7",
+        "amount": 27205
+      },
+      {
+        "step": "8",
+        "amount": 27514
+      }
     ]
   },
   {
@@ -709,14 +1765,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 12,
     "salaryData": [
-      {"step": "1", "amount": 27608.0},
-      {"step": "2", "amount": 27892.0},
-      {"step": "3", "amount": 28180.0},
-      {"step": "4", "amount": 28471.0},
-      {"step": "5", "amount": 28766.0},
-      {"step": "6", "amount": 29065.0},
-      {"step": "7", "amount": 29367.0},
-      {"step": "8", "amount": 29673.0}
+      {
+        "step": "1",
+        "amount": 27608
+      },
+      {
+        "step": "2",
+        "amount": 27892
+      },
+      {
+        "step": "3",
+        "amount": 28180
+      },
+      {
+        "step": "4",
+        "amount": 28471
+      },
+      {
+        "step": "5",
+        "amount": 28766
+      },
+      {
+        "step": "6",
+        "amount": 29065
+      },
+      {
+        "step": "7",
+        "amount": 29367
+      },
+      {
+        "step": "8",
+        "amount": 29673
+      }
     ]
   },
   {
@@ -725,14 +1805,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 13,
     "salaryData": [
-      {"step": "1", "amount": 29798.0},
-      {"step": "2", "amount": 30111.0},
-      {"step": "3", "amount": 30427.0},
-      {"step": "4", "amount": 30747.0},
-      {"step": "5", "amount": 31072.0},
-      {"step": "6", "amount": 31400.0},
-      {"step": "7", "amount": 31732.0},
-      {"step": "8", "amount": 32069.0}
+      {
+        "step": "1",
+        "amount": 29798
+      },
+      {
+        "step": "2",
+        "amount": 30111
+      },
+      {
+        "step": "3",
+        "amount": 30427
+      },
+      {
+        "step": "4",
+        "amount": 30747
+      },
+      {
+        "step": "5",
+        "amount": 31072
+      },
+      {
+        "step": "6",
+        "amount": 31400
+      },
+      {
+        "step": "7",
+        "amount": 31732
+      },
+      {
+        "step": "8",
+        "amount": 32069
+      }
     ]
   },
   {
@@ -741,14 +1845,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 14,
     "salaryData": [
-      {"step": "1", "amount": 32321.0},
-      {"step": "2", "amount": 32665.0},
-      {"step": "3", "amount": 33013.0},
-      {"step": "4", "amount": 33366.0},
-      {"step": "5", "amount": 33722.0},
-      {"step": "6", "amount": 34083.0},
-      {"step": "7", "amount": 34449.0},
-      {"step": "8", "amount": 34819.0}
+      {
+        "step": "1",
+        "amount": 32321
+      },
+      {
+        "step": "2",
+        "amount": 32665
+      },
+      {
+        "step": "3",
+        "amount": 33013
+      },
+      {
+        "step": "4",
+        "amount": 33366
+      },
+      {
+        "step": "5",
+        "amount": 33722
+      },
+      {
+        "step": "6",
+        "amount": 34083
+      },
+      {
+        "step": "7",
+        "amount": 34449
+      },
+      {
+        "step": "8",
+        "amount": 34819
+      }
     ]
   },
   {
@@ -757,14 +1885,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 15,
     "salaryData": [
-      {"step": "1", "amount": 35097.0},
-      {"step": "2", "amount": 35475.0},
-      {"step": "3", "amount": 35858.0},
-      {"step": "4", "amount": 36246.0},
-      {"step": "5", "amount": 36638.0},
-      {"step": "6", "amount": 37035.0},
-      {"step": "7", "amount": 37437.0},
-      {"step": "8", "amount": 37845.0}
+      {
+        "step": "1",
+        "amount": 35097
+      },
+      {
+        "step": "2",
+        "amount": 35475
+      },
+      {
+        "step": "3",
+        "amount": 35858
+      },
+      {
+        "step": "4",
+        "amount": 36246
+      },
+      {
+        "step": "5",
+        "amount": 36638
+      },
+      {
+        "step": "6",
+        "amount": 37035
+      },
+      {
+        "step": "7",
+        "amount": 37437
+      },
+      {
+        "step": "8",
+        "amount": 37845
+      }
     ]
   },
   {
@@ -773,14 +1925,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 16,
     "salaryData": [
-      {"step": "1", "amount": 38150.0},
-      {"step": "2", "amount": 38566.0},
-      {"step": "3", "amount": 38987.0},
-      {"step": "4", "amount": 39413.0},
-      {"step": "5", "amount": 39845.0},
-      {"step": "6", "amount": 40282.0},
-      {"step": "7", "amount": 40725.0},
-      {"step": "8", "amount": 41172.0}
+      {
+        "step": "1",
+        "amount": 38150
+      },
+      {
+        "step": "2",
+        "amount": 38566
+      },
+      {
+        "step": "3",
+        "amount": 38987
+      },
+      {
+        "step": "4",
+        "amount": 39413
+      },
+      {
+        "step": "5",
+        "amount": 39845
+      },
+      {
+        "step": "6",
+        "amount": 40282
+      },
+      {
+        "step": "7",
+        "amount": 40725
+      },
+      {
+        "step": "8",
+        "amount": 41172
+      }
     ]
   },
   {
@@ -789,14 +1965,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 17,
     "salaryData": [
-      {"step": "1", "amount": 41508.0},
-      {"step": "2", "amount": 41966.0},
-      {"step": "3", "amount": 42429.0},
-      {"step": "4", "amount": 42898.0},
-      {"step": "5", "amount": 43373.0},
-      {"step": "6", "amount": 43854.0},
-      {"step": "7", "amount": 44340.0},
-      {"step": "8", "amount": 44833.0}
+      {
+        "step": "1",
+        "amount": 41508
+      },
+      {
+        "step": "2",
+        "amount": 41966
+      },
+      {
+        "step": "3",
+        "amount": 42429
+      },
+      {
+        "step": "4",
+        "amount": 42898
+      },
+      {
+        "step": "5",
+        "amount": 43373
+      },
+      {
+        "step": "6",
+        "amount": 43854
+      },
+      {
+        "step": "7",
+        "amount": 44340
+      },
+      {
+        "step": "8",
+        "amount": 44833
+      }
     ]
   },
   {
@@ -805,14 +2005,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 18,
     "salaryData": [
-      {"step": "1", "amount": 45203.0},
-      {"step": "2", "amount": 45706.0},
-      {"step": "3", "amount": 46216.0},
-      {"step": "4", "amount": 46731.0},
-      {"step": "5", "amount": 47254.0},
-      {"step": "6", "amount": 47783.0},
-      {"step": "7", "amount": 48318.0},
-      {"step": "8", "amount": 48860.0}
+      {
+        "step": "1",
+        "amount": 45203
+      },
+      {
+        "step": "2",
+        "amount": 45706
+      },
+      {
+        "step": "3",
+        "amount": 46216
+      },
+      {
+        "step": "4",
+        "amount": 46731
+      },
+      {
+        "step": "5",
+        "amount": 47254
+      },
+      {
+        "step": "6",
+        "amount": 47783
+      },
+      {
+        "step": "7",
+        "amount": 48318
+      },
+      {
+        "step": "8",
+        "amount": 48860
+      }
     ]
   },
   {
@@ -821,14 +2045,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 19,
     "salaryData": [
-      {"step": "1", "amount": 49835.0},
-      {"step": "2", "amount": 50574.0},
-      {"step": "3", "amount": 51325.0},
-      {"step": "4", "amount": 52088.0},
-      {"step": "5", "amount": 52864.0},
-      {"step": "6", "amount": 53652.0},
-      {"step": "7", "amount": 54454.0},
-      {"step": "8", "amount": 55268.0}
+      {
+        "step": "1",
+        "amount": 49835
+      },
+      {
+        "step": "2",
+        "amount": 50574
+      },
+      {
+        "step": "3",
+        "amount": 51325
+      },
+      {
+        "step": "4",
+        "amount": 52088
+      },
+      {
+        "step": "5",
+        "amount": 52864
+      },
+      {
+        "step": "6",
+        "amount": 53652
+      },
+      {
+        "step": "7",
+        "amount": 54454
+      },
+      {
+        "step": "8",
+        "amount": 55268
+      }
     ]
   },
   {
@@ -837,14 +2085,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 20,
     "salaryData": [
-      {"step": "1", "amount": 55799.0},
-      {"step": "2", "amount": 56633.0},
-      {"step": "3", "amount": 57482.0},
-      {"step": "4", "amount": 58344.0},
-      {"step": "5", "amount": 59221.0},
-      {"step": "6", "amount": 60112.0},
-      {"step": "7", "amount": 61017.0},
-      {"step": "8", "amount": 61937.0}
+      {
+        "step": "1",
+        "amount": 55799
+      },
+      {
+        "step": "2",
+        "amount": 56633
+      },
+      {
+        "step": "3",
+        "amount": 57482
+      },
+      {
+        "step": "4",
+        "amount": 58344
+      },
+      {
+        "step": "5",
+        "amount": 59221
+      },
+      {
+        "step": "6",
+        "amount": 60112
+      },
+      {
+        "step": "7",
+        "amount": 61017
+      },
+      {
+        "step": "8",
+        "amount": 61937
+      }
     ]
   },
   {
@@ -853,14 +2125,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 21,
     "salaryData": [
-      {"step": "1", "amount": 62449.0},
-      {"step": "2", "amount": 63392.0},
-      {"step": "3", "amount": 64351.0},
-      {"step": "4", "amount": 65325.0},
-      {"step": "5", "amount": 66316.0},
-      {"step": "6", "amount": 67322.0},
-      {"step": "7", "amount": 68345.0},
-      {"step": "8", "amount": 69385.0}
+      {
+        "step": "1",
+        "amount": 62449
+      },
+      {
+        "step": "2",
+        "amount": 63392
+      },
+      {
+        "step": "3",
+        "amount": 64351
+      },
+      {
+        "step": "4",
+        "amount": 65325
+      },
+      {
+        "step": "5",
+        "amount": 66316
+      },
+      {
+        "step": "6",
+        "amount": 67322
+      },
+      {
+        "step": "7",
+        "amount": 68345
+      },
+      {
+        "step": "8",
+        "amount": 69385
+      }
     ]
   },
   {
@@ -869,14 +2165,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 22,
     "salaryData": [
-      {"step": "1", "amount": 69963.0},
-      {"step": "2", "amount": 71029.0},
-      {"step": "3", "amount": 72113.0},
-      {"step": "4", "amount": 73214.0},
-      {"step": "5", "amount": 74333.0},
-      {"step": "6", "amount": 75471.0},
-      {"step": "7", "amount": 76627.0},
-      {"step": "8", "amount": 77801.0}
+      {
+        "step": "1",
+        "amount": 69963
+      },
+      {
+        "step": "2",
+        "amount": 71029
+      },
+      {
+        "step": "3",
+        "amount": 72113
+      },
+      {
+        "step": "4",
+        "amount": 73214
+      },
+      {
+        "step": "5",
+        "amount": 74333
+      },
+      {
+        "step": "6",
+        "amount": 75471
+      },
+      {
+        "step": "7",
+        "amount": 76627
+      },
+      {
+        "step": "8",
+        "amount": 77801
+      }
     ]
   },
   {
@@ -885,14 +2205,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 23,
     "salaryData": [
-      {"step": "1", "amount": 78455.0},
-      {"step": "2", "amount": 79659.0},
-      {"step": "3", "amount": 80884.0},
-      {"step": "4", "amount": 82133.0},
-      {"step": "5", "amount": 83474.0},
-      {"step": "6", "amount": 84836.0},
-      {"step": "7", "amount": 86220.0},
-      {"step": "8", "amount": 87628.0}
+      {
+        "step": "1",
+        "amount": 78455
+      },
+      {
+        "step": "2",
+        "amount": 79659
+      },
+      {
+        "step": "3",
+        "amount": 80884
+      },
+      {
+        "step": "4",
+        "amount": 82133
+      },
+      {
+        "step": "5",
+        "amount": 83474
+      },
+      {
+        "step": "6",
+        "amount": 84836
+      },
+      {
+        "step": "7",
+        "amount": 86220
+      },
+      {
+        "step": "8",
+        "amount": 87628
+      }
     ]
   },
   {
@@ -901,14 +2245,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 24,
     "salaryData": [
-      {"step": "1", "amount": 88410.0},
-      {"step": "2", "amount": 89853.0},
-      {"step": "3", "amount": 91320.0},
-      {"step": "4", "amount": 92810.0},
-      {"step": "5", "amount": 94325.0},
-      {"step": "6", "amount": 95865.0},
-      {"step": "7", "amount": 97430.0},
-      {"step": "8", "amount": 99020.0}
+      {
+        "step": "1",
+        "amount": 88410
+      },
+      {
+        "step": "2",
+        "amount": 89853
+      },
+      {
+        "step": "3",
+        "amount": 91320
+      },
+      {
+        "step": "4",
+        "amount": 92810
+      },
+      {
+        "step": "5",
+        "amount": 94325
+      },
+      {
+        "step": "6",
+        "amount": 95865
+      },
+      {
+        "step": "7",
+        "amount": 97430
+      },
+      {
+        "step": "8",
+        "amount": 99020
+      }
     ]
   },
   {
@@ -917,14 +2285,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 25,
     "salaryData": [
-      {"step": "1", "amount": 100788.0},
-      {"step": "2", "amount": 102433.0},
-      {"step": "3", "amount": 104105.0},
-      {"step": "4", "amount": 105804.0},
-      {"step": "5", "amount": 107531.0},
-      {"step": "6", "amount": 109286.0},
-      {"step": "7", "amount": 111070.0},
-      {"step": "8", "amount": 112883.0}
+      {
+        "step": "1",
+        "amount": 100788
+      },
+      {
+        "step": "2",
+        "amount": 102433
+      },
+      {
+        "step": "3",
+        "amount": 104105
+      },
+      {
+        "step": "4",
+        "amount": 105804
+      },
+      {
+        "step": "5",
+        "amount": 107531
+      },
+      {
+        "step": "6",
+        "amount": 109286
+      },
+      {
+        "step": "7",
+        "amount": 111070
+      },
+      {
+        "step": "8",
+        "amount": 112883
+      }
     ]
   },
   {
@@ -933,14 +2325,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 26,
     "salaryData": [
-      {"step": "1", "amount": 113891.0},
-      {"step": "2", "amount": 115749.0},
-      {"step": "3", "amount": 117639.0},
-      {"step": "4", "amount": 119558.0},
-      {"step": "5", "amount": 121510.0},
-      {"step": "6", "amount": 123493.0},
-      {"step": "7", "amount": 125508.0},
-      {"step": "8", "amount": 127557.0}
+      {
+        "step": "1",
+        "amount": 113891
+      },
+      {
+        "step": "2",
+        "amount": 115749
+      },
+      {
+        "step": "3",
+        "amount": 117639
+      },
+      {
+        "step": "4",
+        "amount": 119558
+      },
+      {
+        "step": "5",
+        "amount": 121510
+      },
+      {
+        "step": "6",
+        "amount": 123493
+      },
+      {
+        "step": "7",
+        "amount": 125508
+      },
+      {
+        "step": "8",
+        "amount": 127557
+      }
     ]
   },
   {
@@ -949,14 +2365,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 27,
     "salaryData": [
-      {"step": "1", "amount": 128696.0},
-      {"step": "2", "amount": 130797.0},
-      {"step": "3", "amount": 132931.0},
-      {"step": "4", "amount": 135101.0},
-      {"step": "5", "amount": 137306.0},
-      {"step": "6", "amount": 139547.0},
-      {"step": "7", "amount": 141825.0},
-      {"step": "8", "amount": 144140.0}
+      {
+        "step": "1",
+        "amount": 128696
+      },
+      {
+        "step": "2",
+        "amount": 130797
+      },
+      {
+        "step": "3",
+        "amount": 132931
+      },
+      {
+        "step": "4",
+        "amount": 135101
+      },
+      {
+        "step": "5",
+        "amount": 137306
+      },
+      {
+        "step": "6",
+        "amount": 139547
+      },
+      {
+        "step": "7",
+        "amount": 141825
+      },
+      {
+        "step": "8",
+        "amount": 144140
+      }
     ]
   },
   {
@@ -965,14 +2405,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 28,
     "salaryData": [
-      {"step": "1", "amount": 145427.0},
-      {"step": "2", "amount": 147800.0},
-      {"step": "3", "amount": 150213.0},
-      {"step": "4", "amount": 152664.0},
-      {"step": "5", "amount": 155155.0},
-      {"step": "6", "amount": 157689.0},
-      {"step": "7", "amount": 160262.0},
-      {"step": "8", "amount": 162877.0}
+      {
+        "step": "1",
+        "amount": 145427
+      },
+      {
+        "step": "2",
+        "amount": 147800
+      },
+      {
+        "step": "3",
+        "amount": 150213
+      },
+      {
+        "step": "4",
+        "amount": 152664
+      },
+      {
+        "step": "5",
+        "amount": 155155
+      },
+      {
+        "step": "6",
+        "amount": 157689
+      },
+      {
+        "step": "7",
+        "amount": 160262
+      },
+      {
+        "step": "8",
+        "amount": 162877
+      }
     ]
   },
   {
@@ -981,14 +2445,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 29,
     "salaryData": [
-      {"step": "1", "amount": 164332.0},
-      {"step": "2", "amount": 167015.0},
-      {"step": "3", "amount": 169740.0},
-      {"step": "4", "amount": 172511.0},
-      {"step": "5", "amount": 175326.0},
-      {"step": "6", "amount": 178188.0},
-      {"step": "7", "amount": 181096.0},
-      {"step": "8", "amount": 184052.0}
+      {
+        "step": "1",
+        "amount": 164332
+      },
+      {
+        "step": "2",
+        "amount": 167015
+      },
+      {
+        "step": "3",
+        "amount": 169740
+      },
+      {
+        "step": "4",
+        "amount": 172511
+      },
+      {
+        "step": "5",
+        "amount": 175326
+      },
+      {
+        "step": "6",
+        "amount": 178188
+      },
+      {
+        "step": "7",
+        "amount": 181096
+      },
+      {
+        "step": "8",
+        "amount": 184052
+      }
     ]
   },
   {
@@ -997,14 +2485,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 30,
     "salaryData": [
-      {"step": "1", "amount": 185695.0},
-      {"step": "2", "amount": 188726.0},
-      {"step": "3", "amount": 191806.0},
-      {"step": "4", "amount": 194937.0},
-      {"step": "5", "amount": 198118.0},
-      {"step": "6", "amount": 201352.0},
-      {"step": "7", "amount": 204638.0},
-      {"step": "8", "amount": 207978.0}
+      {
+        "step": "1",
+        "amount": 185695
+      },
+      {
+        "step": "2",
+        "amount": 188726
+      },
+      {
+        "step": "3",
+        "amount": 191806
+      },
+      {
+        "step": "4",
+        "amount": 194937
+      },
+      {
+        "step": "5",
+        "amount": 198118
+      },
+      {
+        "step": "6",
+        "amount": 201352
+      },
+      {
+        "step": "7",
+        "amount": 204638
+      },
+      {
+        "step": "8",
+        "amount": 207978
+      }
     ]
   },
   {
@@ -1013,14 +2525,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 31,
     "salaryData": [
-      {"step": "1", "amount": 273278.0},
-      {"step": "2", "amount": 278615.0},
-      {"step": "3", "amount": 284057.0},
-      {"step": "4", "amount": 289605.0},
-      {"step": "5", "amount": 295262.0},
-      {"step": "6", "amount": 301028.0},
-      {"step": "7", "amount": 306908.0},
-      {"step": "8", "amount": 312902.0}
+      {
+        "step": "1",
+        "amount": 273278
+      },
+      {
+        "step": "2",
+        "amount": 278615
+      },
+      {
+        "step": "3",
+        "amount": 284057
+      },
+      {
+        "step": "4",
+        "amount": 289605
+      },
+      {
+        "step": "5",
+        "amount": 295262
+      },
+      {
+        "step": "6",
+        "amount": 301028
+      },
+      {
+        "step": "7",
+        "amount": 306908
+      },
+      {
+        "step": "8",
+        "amount": 312902
+      }
     ]
   },
   {
@@ -1029,14 +2565,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 32,
     "salaryData": [
-      {"step": "1", "amount": 325807.0},
-      {"step": "2", "amount": 332378.0},
-      {"step": "3", "amount": 339080.0},
-      {"step": "4", "amount": 345918.0},
-      {"step": "5", "amount": 352894.0},
-      {"step": "6", "amount": 360011.0},
-      {"step": "7", "amount": 367272.0},
-      {"step": "8", "amount": 374678.0}
+      {
+        "step": "1",
+        "amount": 325807
+      },
+      {
+        "step": "2",
+        "amount": 332378
+      },
+      {
+        "step": "3",
+        "amount": 339080
+      },
+      {
+        "step": "4",
+        "amount": 345918
+      },
+      {
+        "step": "5",
+        "amount": 352894
+      },
+      {
+        "step": "6",
+        "amount": 360011
+      },
+      {
+        "step": "7",
+        "amount": 367272
+      },
+      {
+        "step": "8",
+        "amount": 374678
+      }
     ]
   },
   {
@@ -1045,14 +2605,38 @@
     "effectiveDate": "2022-01-01",
     "salaryGrade": 33,
     "salaryData": [
-      {"step": "1", "amount": 411382.0},
-      {"step": "2", "amount": 423723.0},
-      {"step": "3", "amount": 0.0},
-      {"step": "4", "amount": 0.0},
-      {"step": "5", "amount": 0.0},
-      {"step": "6", "amount": 0.0},
-      {"step": "7", "amount": 0.0},
-      {"step": "8", "amount": 0.0}
+      {
+        "step": "1",
+        "amount": 411382
+      },
+      {
+        "step": "2",
+        "amount": 423723
+      },
+      {
+        "step": "3",
+        "amount": 0
+      },
+      {
+        "step": "4",
+        "amount": 0
+      },
+      {
+        "step": "5",
+        "amount": 0
+      },
+      {
+        "step": "6",
+        "amount": 0
+      },
+      {
+        "step": "7",
+        "amount": 0
+      },
+      {
+        "step": "8",
+        "amount": 0
+      }
     ]
   },
   {
@@ -1061,14 +2645,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 1,
     "salaryData": [
-      {"step": "1", "amount": 13000.0},
-      {"step": "2", "amount": 13109.0},
-      {"step": "3", "amount": 13219.0},
-      {"step": "4", "amount": 13329.0},
-      {"step": "5", "amount": 13441.0},
-      {"step": "6", "amount": 13553.0},
-      {"step": "7", "amount": 13666.0},
-      {"step": "8", "amount": 13780.0}
+      {
+        "step": "1",
+        "amount": 13000
+      },
+      {
+        "step": "2",
+        "amount": 13109
+      },
+      {
+        "step": "3",
+        "amount": 13219
+      },
+      {
+        "step": "4",
+        "amount": 13329
+      },
+      {
+        "step": "5",
+        "amount": 13441
+      },
+      {
+        "step": "6",
+        "amount": 13553
+      },
+      {
+        "step": "7",
+        "amount": 13666
+      },
+      {
+        "step": "8",
+        "amount": 13780
+      }
     ]
   },
   {
@@ -1077,14 +2685,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 2,
     "salaryData": [
-      {"step": "1", "amount": 13819.0},
-      {"step": "2", "amount": 13925.0},
-      {"step": "3", "amount": 14032.0},
-      {"step": "4", "amount": 14140.0},
-      {"step": "5", "amount": 14248.0},
-      {"step": "6", "amount": 14357.0},
-      {"step": "7", "amount": 14468.0},
-      {"step": "8", "amount": 14578.0}
+      {
+        "step": "1",
+        "amount": 13819
+      },
+      {
+        "step": "2",
+        "amount": 13925
+      },
+      {
+        "step": "3",
+        "amount": 14032
+      },
+      {
+        "step": "4",
+        "amount": 14140
+      },
+      {
+        "step": "5",
+        "amount": 14248
+      },
+      {
+        "step": "6",
+        "amount": 14357
+      },
+      {
+        "step": "7",
+        "amount": 14468
+      },
+      {
+        "step": "8",
+        "amount": 14578
+      }
     ]
   },
   {
@@ -1093,14 +2725,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 3,
     "salaryData": [
-      {"step": "1", "amount": 14678.0},
-      {"step": "2", "amount": 14792.0},
-      {"step": "3", "amount": 14905.0},
-      {"step": "4", "amount": 15020.0},
-      {"step": "5", "amount": 15136.0},
-      {"step": "6", "amount": 15251.0},
-      {"step": "7", "amount": 15369.0},
-      {"step": "8", "amount": 15486.0}
+      {
+        "step": "1",
+        "amount": 14678
+      },
+      {
+        "step": "2",
+        "amount": 14792
+      },
+      {
+        "step": "3",
+        "amount": 14905
+      },
+      {
+        "step": "4",
+        "amount": 15020
+      },
+      {
+        "step": "5",
+        "amount": 15136
+      },
+      {
+        "step": "6",
+        "amount": 15251
+      },
+      {
+        "step": "7",
+        "amount": 15369
+      },
+      {
+        "step": "8",
+        "amount": 15486
+      }
     ]
   },
   {
@@ -1109,14 +2765,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 4,
     "salaryData": [
-      {"step": "1", "amount": 15586.0},
-      {"step": "2", "amount": 15706.0},
-      {"step": "3", "amount": 15827.0},
-      {"step": "4", "amount": 15948.0},
-      {"step": "5", "amount": 16071.0},
-      {"step": "6", "amount": 16193.0},
-      {"step": "7", "amount": 16318.0},
-      {"step": "8", "amount": 16443.0}
+      {
+        "step": "1",
+        "amount": 15586
+      },
+      {
+        "step": "2",
+        "amount": 15706
+      },
+      {
+        "step": "3",
+        "amount": 15827
+      },
+      {
+        "step": "4",
+        "amount": 15948
+      },
+      {
+        "step": "5",
+        "amount": 16071
+      },
+      {
+        "step": "6",
+        "amount": 16193
+      },
+      {
+        "step": "7",
+        "amount": 16318
+      },
+      {
+        "step": "8",
+        "amount": 16443
+      }
     ]
   },
   {
@@ -1125,14 +2805,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 5,
     "salaryData": [
-      {"step": "1", "amount": 16543.0},
-      {"step": "2", "amount": 16671.0},
-      {"step": "3", "amount": 16799.0},
-      {"step": "4", "amount": 16928.0},
-      {"step": "5", "amount": 17057.0},
-      {"step": "6", "amount": 17189.0},
-      {"step": "7", "amount": 17321.0},
-      {"step": "8", "amount": 17453.0}
+      {
+        "step": "1",
+        "amount": 16543
+      },
+      {
+        "step": "2",
+        "amount": 16671
+      },
+      {
+        "step": "3",
+        "amount": 16799
+      },
+      {
+        "step": "4",
+        "amount": 16928
+      },
+      {
+        "step": "5",
+        "amount": 17057
+      },
+      {
+        "step": "6",
+        "amount": 17189
+      },
+      {
+        "step": "7",
+        "amount": 17321
+      },
+      {
+        "step": "8",
+        "amount": 17453
+      }
     ]
   },
   {
@@ -1141,14 +2845,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 6,
     "salaryData": [
-      {"step": "1", "amount": 17553.0},
-      {"step": "2", "amount": 17688.0},
-      {"step": "3", "amount": 17824.0},
-      {"step": "4", "amount": 17962.0},
-      {"step": "5", "amount": 18100.0},
-      {"step": "6", "amount": 18238.0},
-      {"step": "7", "amount": 18379.0},
-      {"step": "8", "amount": 18520.0}
+      {
+        "step": "1",
+        "amount": 17553
+      },
+      {
+        "step": "2",
+        "amount": 17688
+      },
+      {
+        "step": "3",
+        "amount": 17824
+      },
+      {
+        "step": "4",
+        "amount": 17962
+      },
+      {
+        "step": "5",
+        "amount": 18100
+      },
+      {
+        "step": "6",
+        "amount": 18238
+      },
+      {
+        "step": "7",
+        "amount": 18379
+      },
+      {
+        "step": "8",
+        "amount": 18520
+      }
     ]
   },
   {
@@ -1157,14 +2885,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 7,
     "salaryData": [
-      {"step": "1", "amount": 18620.0},
-      {"step": "2", "amount": 18763.0},
-      {"step": "3", "amount": 18907.0},
-      {"step": "4", "amount": 19053.0},
-      {"step": "5", "amount": 19198.0},
-      {"step": "6", "amount": 19346.0},
-      {"step": "7", "amount": 19494.0},
-      {"step": "8", "amount": 19644.0}
+      {
+        "step": "1",
+        "amount": 18620
+      },
+      {
+        "step": "2",
+        "amount": 18763
+      },
+      {
+        "step": "3",
+        "amount": 18907
+      },
+      {
+        "step": "4",
+        "amount": 19053
+      },
+      {
+        "step": "5",
+        "amount": 19198
+      },
+      {
+        "step": "6",
+        "amount": 19346
+      },
+      {
+        "step": "7",
+        "amount": 19494
+      },
+      {
+        "step": "8",
+        "amount": 19644
+      }
     ]
   },
   {
@@ -1173,14 +2925,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 8,
     "salaryData": [
-      {"step": "1", "amount": 19744.0},
-      {"step": "2", "amount": 19923.0},
-      {"step": "3", "amount": 20104.0},
-      {"step": "4", "amount": 20285.0},
-      {"step": "5", "amount": 20468.0},
-      {"step": "6", "amount": 20653.0},
-      {"step": "7", "amount": 20840.0},
-      {"step": "8", "amount": 21029.0}
+      {
+        "step": "1",
+        "amount": 19744
+      },
+      {
+        "step": "2",
+        "amount": 19923
+      },
+      {
+        "step": "3",
+        "amount": 20104
+      },
+      {
+        "step": "4",
+        "amount": 20285
+      },
+      {
+        "step": "5",
+        "amount": 20468
+      },
+      {
+        "step": "6",
+        "amount": 20653
+      },
+      {
+        "step": "7",
+        "amount": 20840
+      },
+      {
+        "step": "8",
+        "amount": 21029
+      }
     ]
   },
   {
@@ -1189,14 +2965,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 9,
     "salaryData": [
-      {"step": "1", "amount": 21211.0},
-      {"step": "2", "amount": 21388.0},
-      {"step": "3", "amount": 21567.0},
-      {"step": "4", "amount": 21747.0},
-      {"step": "5", "amount": 21929.0},
-      {"step": "6", "amount": 22112.0},
-      {"step": "7", "amount": 22297.0},
-      {"step": "8", "amount": 22483.0}
+      {
+        "step": "1",
+        "amount": 21211
+      },
+      {
+        "step": "2",
+        "amount": 21388
+      },
+      {
+        "step": "3",
+        "amount": 21567
+      },
+      {
+        "step": "4",
+        "amount": 21747
+      },
+      {
+        "step": "5",
+        "amount": 21929
+      },
+      {
+        "step": "6",
+        "amount": 22112
+      },
+      {
+        "step": "7",
+        "amount": 22297
+      },
+      {
+        "step": "8",
+        "amount": 22483
+      }
     ]
   },
   {
@@ -1205,14 +3005,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 10,
     "salaryData": [
-      {"step": "1", "amount": 23176.0},
-      {"step": "2", "amount": 23370.0},
-      {"step": "3", "amount": 23565.0},
-      {"step": "4", "amount": 23762.0},
-      {"step": "5", "amount": 23961.0},
-      {"step": "6", "amount": 24161.0},
-      {"step": "7", "amount": 24363.0},
-      {"step": "8", "amount": 24567.0}
+      {
+        "step": "1",
+        "amount": 23176
+      },
+      {
+        "step": "2",
+        "amount": 23370
+      },
+      {
+        "step": "3",
+        "amount": 23565
+      },
+      {
+        "step": "4",
+        "amount": 23762
+      },
+      {
+        "step": "5",
+        "amount": 23961
+      },
+      {
+        "step": "6",
+        "amount": 24161
+      },
+      {
+        "step": "7",
+        "amount": 24363
+      },
+      {
+        "step": "8",
+        "amount": 24567
+      }
     ]
   },
   {
@@ -1221,14 +3045,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 11,
     "salaryData": [
-      {"step": "1", "amount": 27000.0},
-      {"step": "2", "amount": 27284.0},
-      {"step": "3", "amount": 27573.0},
-      {"step": "4", "amount": 27865.0},
-      {"step": "5", "amount": 28161.0},
-      {"step": "6", "amount": 28462.0},
-      {"step": "7", "amount": 28766.0},
-      {"step": "8", "amount": 29075.0}
+      {
+        "step": "1",
+        "amount": 27000
+      },
+      {
+        "step": "2",
+        "amount": 27284
+      },
+      {
+        "step": "3",
+        "amount": 27573
+      },
+      {
+        "step": "4",
+        "amount": 27865
+      },
+      {
+        "step": "5",
+        "amount": 28161
+      },
+      {
+        "step": "6",
+        "amount": 28462
+      },
+      {
+        "step": "7",
+        "amount": 28766
+      },
+      {
+        "step": "8",
+        "amount": 29075
+      }
     ]
   },
   {
@@ -1237,14 +3085,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 12,
     "salaryData": [
-      {"step": "1", "amount": 29165.0},
-      {"step": "2", "amount": 29449.0},
-      {"step": "3", "amount": 29737.0},
-      {"step": "4", "amount": 30028.0},
-      {"step": "5", "amount": 30323.0},
-      {"step": "6", "amount": 30622.0},
-      {"step": "7", "amount": 30924.0},
-      {"step": "8", "amount": 31230.0}
+      {
+        "step": "1",
+        "amount": 29165
+      },
+      {
+        "step": "2",
+        "amount": 29449
+      },
+      {
+        "step": "3",
+        "amount": 29737
+      },
+      {
+        "step": "4",
+        "amount": 30028
+      },
+      {
+        "step": "5",
+        "amount": 30323
+      },
+      {
+        "step": "6",
+        "amount": 30622
+      },
+      {
+        "step": "7",
+        "amount": 30924
+      },
+      {
+        "step": "8",
+        "amount": 31230
+      }
     ]
   },
   {
@@ -1253,14 +3125,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 13,
     "salaryData": [
-      {"step": "1", "amount": 31320.0},
-      {"step": "2", "amount": 31633.0},
-      {"step": "3", "amount": 31949.0},
-      {"step": "4", "amount": 32269.0},
-      {"step": "5", "amount": 32594.0},
-      {"step": "6", "amount": 32922.0},
-      {"step": "7", "amount": 33254.0},
-      {"step": "8", "amount": 33591.0}
+      {
+        "step": "1",
+        "amount": 31320
+      },
+      {
+        "step": "2",
+        "amount": 31633
+      },
+      {
+        "step": "3",
+        "amount": 31949
+      },
+      {
+        "step": "4",
+        "amount": 32269
+      },
+      {
+        "step": "5",
+        "amount": 32594
+      },
+      {
+        "step": "6",
+        "amount": 32922
+      },
+      {
+        "step": "7",
+        "amount": 33254
+      },
+      {
+        "step": "8",
+        "amount": 33591
+      }
     ]
   },
   {
@@ -1269,14 +3165,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 14,
     "salaryData": [
-      {"step": "1", "amount": 33843.0},
-      {"step": "2", "amount": 34187.0},
-      {"step": "3", "amount": 34535.0},
-      {"step": "4", "amount": 34888.0},
-      {"step": "5", "amount": 35244.0},
-      {"step": "6", "amount": 35605.0},
-      {"step": "7", "amount": 35971.0},
-      {"step": "8", "amount": 36341.0}
+      {
+        "step": "1",
+        "amount": 33843
+      },
+      {
+        "step": "2",
+        "amount": 34187
+      },
+      {
+        "step": "3",
+        "amount": 34535
+      },
+      {
+        "step": "4",
+        "amount": 34888
+      },
+      {
+        "step": "5",
+        "amount": 35244
+      },
+      {
+        "step": "6",
+        "amount": 35605
+      },
+      {
+        "step": "7",
+        "amount": 35971
+      },
+      {
+        "step": "8",
+        "amount": 36341
+      }
     ]
   },
   {
@@ -1285,14 +3205,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 15,
     "salaryData": [
-      {"step": "1", "amount": 36619.0},
-      {"step": "2", "amount": 36997.0},
-      {"step": "3", "amount": 37380.0},
-      {"step": "4", "amount": 37768.0},
-      {"step": "5", "amount": 38160.0},
-      {"step": "6", "amount": 38557.0},
-      {"step": "7", "amount": 38959.0},
-      {"step": "8", "amount": 39367.0}
+      {
+        "step": "1",
+        "amount": 36619
+      },
+      {
+        "step": "2",
+        "amount": 36997
+      },
+      {
+        "step": "3",
+        "amount": 37380
+      },
+      {
+        "step": "4",
+        "amount": 37768
+      },
+      {
+        "step": "5",
+        "amount": 38160
+      },
+      {
+        "step": "6",
+        "amount": 38557
+      },
+      {
+        "step": "7",
+        "amount": 38959
+      },
+      {
+        "step": "8",
+        "amount": 39367
+      }
     ]
   },
   {
@@ -1301,14 +3245,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 16,
     "salaryData": [
-      {"step": "1", "amount": 39672.0},
-      {"step": "2", "amount": 40088.0},
-      {"step": "3", "amount": 40509.0},
-      {"step": "4", "amount": 40935.0},
-      {"step": "5", "amount": 41367.0},
-      {"step": "6", "amount": 41804.0},
-      {"step": "7", "amount": 42247.0},
-      {"step": "8", "amount": 42694.0}
+      {
+        "step": "1",
+        "amount": 39672
+      },
+      {
+        "step": "2",
+        "amount": 40088
+      },
+      {
+        "step": "3",
+        "amount": 40509
+      },
+      {
+        "step": "4",
+        "amount": 40935
+      },
+      {
+        "step": "5",
+        "amount": 41367
+      },
+      {
+        "step": "6",
+        "amount": 41804
+      },
+      {
+        "step": "7",
+        "amount": 42247
+      },
+      {
+        "step": "8",
+        "amount": 42694
+      }
     ]
   },
   {
@@ -1317,14 +3285,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 17,
     "salaryData": [
-      {"step": "1", "amount": 43030.0},
-      {"step": "2", "amount": 43488.0},
-      {"step": "3", "amount": 43951.0},
-      {"step": "4", "amount": 44420.0},
-      {"step": "5", "amount": 44895.0},
-      {"step": "6", "amount": 45376.0},
-      {"step": "7", "amount": 45862.0},
-      {"step": "8", "amount": 46355.0}
+      {
+        "step": "1",
+        "amount": 43030
+      },
+      {
+        "step": "2",
+        "amount": 43488
+      },
+      {
+        "step": "3",
+        "amount": 43951
+      },
+      {
+        "step": "4",
+        "amount": 44420
+      },
+      {
+        "step": "5",
+        "amount": 44895
+      },
+      {
+        "step": "6",
+        "amount": 45376
+      },
+      {
+        "step": "7",
+        "amount": 45862
+      },
+      {
+        "step": "8",
+        "amount": 46355
+      }
     ]
   },
   {
@@ -1333,14 +3325,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 18,
     "salaryData": [
-      {"step": "1", "amount": 46725.0},
-      {"step": "2", "amount": 47228.0},
-      {"step": "3", "amount": 47738.0},
-      {"step": "4", "amount": 48253.0},
-      {"step": "5", "amount": 48776.0},
-      {"step": "6", "amount": 49305.0},
-      {"step": "7", "amount": 49840.0},
-      {"step": "8", "amount": 50382.0}
+      {
+        "step": "1",
+        "amount": 46725
+      },
+      {
+        "step": "2",
+        "amount": 47228
+      },
+      {
+        "step": "3",
+        "amount": 47738
+      },
+      {
+        "step": "4",
+        "amount": 48253
+      },
+      {
+        "step": "5",
+        "amount": 48776
+      },
+      {
+        "step": "6",
+        "amount": 49305
+      },
+      {
+        "step": "7",
+        "amount": 49840
+      },
+      {
+        "step": "8",
+        "amount": 50382
+      }
     ]
   },
   {
@@ -1349,14 +3365,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 19,
     "salaryData": [
-      {"step": "1", "amount": 51357.0},
-      {"step": "2", "amount": 52096.0},
-      {"step": "3", "amount": 52847.0},
-      {"step": "4", "amount": 53610.0},
-      {"step": "5", "amount": 54386.0},
-      {"step": "6", "amount": 55174.0},
-      {"step": "7", "amount": 55976.0},
-      {"step": "8", "amount": 56790.0}
+      {
+        "step": "1",
+        "amount": 51357
+      },
+      {
+        "step": "2",
+        "amount": 52096
+      },
+      {
+        "step": "3",
+        "amount": 52847
+      },
+      {
+        "step": "4",
+        "amount": 53610
+      },
+      {
+        "step": "5",
+        "amount": 54386
+      },
+      {
+        "step": "6",
+        "amount": 55174
+      },
+      {
+        "step": "7",
+        "amount": 55976
+      },
+      {
+        "step": "8",
+        "amount": 56790
+      }
     ]
   },
   {
@@ -1365,14 +3405,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 20,
     "salaryData": [
-      {"step": "1", "amount": 57347.0},
-      {"step": "2", "amount": 58181.0},
-      {"step": "3", "amount": 59030.0},
-      {"step": "4", "amount": 59892.0},
-      {"step": "5", "amount": 60769.0},
-      {"step": "6", "amount": 61660.0},
-      {"step": "7", "amount": 62565.0},
-      {"step": "8", "amount": 63485.0}
+      {
+        "step": "1",
+        "amount": 57347
+      },
+      {
+        "step": "2",
+        "amount": 58181
+      },
+      {
+        "step": "3",
+        "amount": 59030
+      },
+      {
+        "step": "4",
+        "amount": 59892
+      },
+      {
+        "step": "5",
+        "amount": 60769
+      },
+      {
+        "step": "6",
+        "amount": 61660
+      },
+      {
+        "step": "7",
+        "amount": 62565
+      },
+      {
+        "step": "8",
+        "amount": 63485
+      }
     ]
   },
   {
@@ -1381,14 +3445,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 21,
     "salaryData": [
-      {"step": "1", "amount": 63997.0},
-      {"step": "2", "amount": 64940.0},
-      {"step": "3", "amount": 65899.0},
-      {"step": "4", "amount": 66873.0},
-      {"step": "5", "amount": 67864.0},
-      {"step": "6", "amount": 68870.0},
-      {"step": "7", "amount": 69893.0},
-      {"step": "8", "amount": 70933.0}
+      {
+        "step": "1",
+        "amount": 63997
+      },
+      {
+        "step": "2",
+        "amount": 64940
+      },
+      {
+        "step": "3",
+        "amount": 65899
+      },
+      {
+        "step": "4",
+        "amount": 66873
+      },
+      {
+        "step": "5",
+        "amount": 67864
+      },
+      {
+        "step": "6",
+        "amount": 68870
+      },
+      {
+        "step": "7",
+        "amount": 69893
+      },
+      {
+        "step": "8",
+        "amount": 70933
+      }
     ]
   },
   {
@@ -1397,14 +3485,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 22,
     "salaryData": [
-      {"step": "1", "amount": 71511.0},
-      {"step": "2", "amount": 72577.0},
-      {"step": "3", "amount": 73661.0},
-      {"step": "4", "amount": 74762.0},
-      {"step": "5", "amount": 75881.0},
-      {"step": "6", "amount": 77019.0},
-      {"step": "7", "amount": 78175.0},
-      {"step": "8", "amount": 79349.0}
+      {
+        "step": "1",
+        "amount": 71511
+      },
+      {
+        "step": "2",
+        "amount": 72577
+      },
+      {
+        "step": "3",
+        "amount": 73661
+      },
+      {
+        "step": "4",
+        "amount": 74762
+      },
+      {
+        "step": "5",
+        "amount": 75881
+      },
+      {
+        "step": "6",
+        "amount": 77019
+      },
+      {
+        "step": "7",
+        "amount": 78175
+      },
+      {
+        "step": "8",
+        "amount": 79349
+      }
     ]
   },
   {
@@ -1413,14 +3525,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 23,
     "salaryData": [
-      {"step": "1", "amount": 80003.0},
-      {"step": "2", "amount": 81207.0},
-      {"step": "3", "amount": 82432.0},
-      {"step": "4", "amount": 83683.0},
-      {"step": "5", "amount": 85049.0},
-      {"step": "6", "amount": 86437.0},
-      {"step": "7", "amount": 87847.0},
-      {"step": "8", "amount": 89281.0}
+      {
+        "step": "1",
+        "amount": 80003
+      },
+      {
+        "step": "2",
+        "amount": 81207
+      },
+      {
+        "step": "3",
+        "amount": 82432
+      },
+      {
+        "step": "4",
+        "amount": 83683
+      },
+      {
+        "step": "5",
+        "amount": 85049
+      },
+      {
+        "step": "6",
+        "amount": 86437
+      },
+      {
+        "step": "7",
+        "amount": 87847
+      },
+      {
+        "step": "8",
+        "amount": 89281
+      }
     ]
   },
   {
@@ -1429,14 +3565,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 24,
     "salaryData": [
-      {"step": "1", "amount": 90078.0},
-      {"step": "2", "amount": 91548.0},
-      {"step": "3", "amount": 93043.0},
-      {"step": "4", "amount": 94562.0},
-      {"step": "5", "amount": 96105.0},
-      {"step": "6", "amount": 97674.0},
-      {"step": "7", "amount": 99268.0},
-      {"step": "8", "amount": 100888.0}
+      {
+        "step": "1",
+        "amount": 90078
+      },
+      {
+        "step": "2",
+        "amount": 91548
+      },
+      {
+        "step": "3",
+        "amount": 93043
+      },
+      {
+        "step": "4",
+        "amount": 94562
+      },
+      {
+        "step": "5",
+        "amount": 96105
+      },
+      {
+        "step": "6",
+        "amount": 97674
+      },
+      {
+        "step": "7",
+        "amount": 99268
+      },
+      {
+        "step": "8",
+        "amount": 100888
+      }
     ]
   },
   {
@@ -1445,14 +3605,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 25,
     "salaryData": [
-      {"step": "1", "amount": 102690.0},
-      {"step": "2", "amount": 104366.0},
-      {"step": "3", "amount": 106069.0},
-      {"step": "4", "amount": 107800.0},
-      {"step": "5", "amount": 109560.0},
-      {"step": "6", "amount": 111348.0},
-      {"step": "7", "amount": 113166.0},
-      {"step": "8", "amount": 115012.0}
+      {
+        "step": "1",
+        "amount": 102690
+      },
+      {
+        "step": "2",
+        "amount": 104366
+      },
+      {
+        "step": "3",
+        "amount": 106069
+      },
+      {
+        "step": "4",
+        "amount": 107800
+      },
+      {
+        "step": "5",
+        "amount": 109560
+      },
+      {
+        "step": "6",
+        "amount": 111348
+      },
+      {
+        "step": "7",
+        "amount": 113166
+      },
+      {
+        "step": "8",
+        "amount": 115012
+      }
     ]
   },
   {
@@ -1461,14 +3645,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 26,
     "salaryData": [
-      {"step": "1", "amount": 116040.0},
-      {"step": "2", "amount": 117933.0},
-      {"step": "3", "amount": 119858.0},
-      {"step": "4", "amount": 121814.0},
-      {"step": "5", "amount": 123803.0},
-      {"step": "6", "amount": 125823.0},
-      {"step": "7", "amount": 127876.0},
-      {"step": "8", "amount": 129964.0}
+      {
+        "step": "1",
+        "amount": 116040
+      },
+      {
+        "step": "2",
+        "amount": 117933
+      },
+      {
+        "step": "3",
+        "amount": 119858
+      },
+      {
+        "step": "4",
+        "amount": 121814
+      },
+      {
+        "step": "5",
+        "amount": 123803
+      },
+      {
+        "step": "6",
+        "amount": 125823
+      },
+      {
+        "step": "7",
+        "amount": 127876
+      },
+      {
+        "step": "8",
+        "amount": 129964
+      }
     ]
   },
   {
@@ -1477,14 +3685,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 27,
     "salaryData": [
-      {"step": "1", "amount": 131124.0},
-      {"step": "2", "amount": 133264.0},
-      {"step": "3", "amount": 135440.0},
-      {"step": "4", "amount": 137650.0},
-      {"step": "5", "amount": 139897.0},
-      {"step": "6", "amount": 142180.0},
-      {"step": "7", "amount": 144501.0},
-      {"step": "8", "amount": 146859.0}
+      {
+        "step": "1",
+        "amount": 131124
+      },
+      {
+        "step": "2",
+        "amount": 133264
+      },
+      {
+        "step": "3",
+        "amount": 135440
+      },
+      {
+        "step": "4",
+        "amount": 137650
+      },
+      {
+        "step": "5",
+        "amount": 139897
+      },
+      {
+        "step": "6",
+        "amount": 142180
+      },
+      {
+        "step": "7",
+        "amount": 144501
+      },
+      {
+        "step": "8",
+        "amount": 146859
+      }
     ]
   },
   {
@@ -1493,14 +3725,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 28,
     "salaryData": [
-      {"step": "1", "amount": 148171.0},
-      {"step": "2", "amount": 150589.0},
-      {"step": "3", "amount": 153047.0},
-      {"step": "4", "amount": 155545.0},
-      {"step": "5", "amount": 158083.0},
-      {"step": "6", "amount": 160664.0},
-      {"step": "7", "amount": 163286.0},
-      {"step": "8", "amount": 165951.0}
+      {
+        "step": "1",
+        "amount": 148171
+      },
+      {
+        "step": "2",
+        "amount": 150589
+      },
+      {
+        "step": "3",
+        "amount": 153047
+      },
+      {
+        "step": "4",
+        "amount": 155545
+      },
+      {
+        "step": "5",
+        "amount": 158083
+      },
+      {
+        "step": "6",
+        "amount": 160664
+      },
+      {
+        "step": "7",
+        "amount": 163286
+      },
+      {
+        "step": "8",
+        "amount": 165951
+      }
     ]
   },
   {
@@ -1509,14 +3765,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 29,
     "salaryData": [
-      {"step": "1", "amount": 167432.0},
-      {"step": "2", "amount": 170166.0},
-      {"step": "3", "amount": 172943.0},
-      {"step": "4", "amount": 175766.0},
-      {"step": "5", "amount": 178634.0},
-      {"step": "6", "amount": 181550.0},
-      {"step": "7", "amount": 184513.0},
-      {"step": "8", "amount": 187525.0}
+      {
+        "step": "1",
+        "amount": 167432
+      },
+      {
+        "step": "2",
+        "amount": 170166
+      },
+      {
+        "step": "3",
+        "amount": 172943
+      },
+      {
+        "step": "4",
+        "amount": 175766
+      },
+      {
+        "step": "5",
+        "amount": 178634
+      },
+      {
+        "step": "6",
+        "amount": 181550
+      },
+      {
+        "step": "7",
+        "amount": 184513
+      },
+      {
+        "step": "8",
+        "amount": 187525
+      }
     ]
   },
   {
@@ -1525,14 +3805,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 30,
     "salaryData": [
-      {"step": "1", "amount": 189199.0},
-      {"step": "2", "amount": 192286.0},
-      {"step": "3", "amount": 195425.0},
-      {"step": "4", "amount": 198615.0},
-      {"step": "5", "amount": 201856.0},
-      {"step": "6", "amount": 205151.0},
-      {"step": "7", "amount": 208499.0},
-      {"step": "8", "amount": 211902.0}
+      {
+        "step": "1",
+        "amount": 189199
+      },
+      {
+        "step": "2",
+        "amount": 192286
+      },
+      {
+        "step": "3",
+        "amount": 195425
+      },
+      {
+        "step": "4",
+        "amount": 198615
+      },
+      {
+        "step": "5",
+        "amount": 201856
+      },
+      {
+        "step": "6",
+        "amount": 205151
+      },
+      {
+        "step": "7",
+        "amount": 208499
+      },
+      {
+        "step": "8",
+        "amount": 211902
+      }
     ]
   },
   {
@@ -1541,14 +3845,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 31,
     "salaryData": [
-      {"step": "1", "amount": 278434.0},
-      {"step": "2", "amount": 283872.0},
-      {"step": "3", "amount": 289416.0},
-      {"step": "4", "amount": 295069.0},
-      {"step": "5", "amount": 300833.0},
-      {"step": "6", "amount": 306708.0},
-      {"step": "7", "amount": 312699.0},
-      {"step": "8", "amount": 318806.0}
+      {
+        "step": "1",
+        "amount": 278434
+      },
+      {
+        "step": "2",
+        "amount": 283872
+      },
+      {
+        "step": "3",
+        "amount": 289416
+      },
+      {
+        "step": "4",
+        "amount": 295069
+      },
+      {
+        "step": "5",
+        "amount": 300833
+      },
+      {
+        "step": "6",
+        "amount": 306708
+      },
+      {
+        "step": "7",
+        "amount": 312699
+      },
+      {
+        "step": "8",
+        "amount": 318806
+      }
     ]
   },
   {
@@ -1557,14 +3885,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 32,
     "salaryData": [
-      {"step": "1", "amount": 331954.0},
-      {"step": "2", "amount": 338649.0},
-      {"step": "3", "amount": 345478.0},
-      {"step": "4", "amount": 352445.0},
-      {"step": "5", "amount": 359553.0},
-      {"step": "6", "amount": 366804.0},
-      {"step": "7", "amount": 374202.0},
-      {"step": "8", "amount": 381748.0}
+      {
+        "step": "1",
+        "amount": 331954
+      },
+      {
+        "step": "2",
+        "amount": 338649
+      },
+      {
+        "step": "3",
+        "amount": 345478
+      },
+      {
+        "step": "4",
+        "amount": 352445
+      },
+      {
+        "step": "5",
+        "amount": 359553
+      },
+      {
+        "step": "6",
+        "amount": 366804
+      },
+      {
+        "step": "7",
+        "amount": 374202
+      },
+      {
+        "step": "8",
+        "amount": 381748
+      }
     ]
   },
   {
@@ -1573,14 +3925,38 @@
     "effectiveDate": "2023-01-01",
     "salaryGrade": 33,
     "salaryData": [
-      {"step": "1", "amount": 419144.0},
-      {"step": "2", "amount": 431718.0},
-      {"step": "3", "amount": 0.0},
-      {"step": "4", "amount": 0.0},
-      {"step": "5", "amount": 0.0},
-      {"step": "6", "amount": 0.0},
-      {"step": "7", "amount": 0.0},
-      {"step": "8", "amount": 0.0}
+      {
+        "step": "1",
+        "amount": 419144
+      },
+      {
+        "step": "2",
+        "amount": 431718
+      },
+      {
+        "step": "3",
+        "amount": 0
+      },
+      {
+        "step": "4",
+        "amount": 0
+      },
+      {
+        "step": "5",
+        "amount": 0
+      },
+      {
+        "step": "6",
+        "amount": 0
+      },
+      {
+        "step": "7",
+        "amount": 0
+      },
+      {
+        "step": "8",
+        "amount": 0
+      }
     ]
   }
 ]

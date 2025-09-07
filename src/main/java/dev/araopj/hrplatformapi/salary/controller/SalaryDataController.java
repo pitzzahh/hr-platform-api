@@ -3,18 +3,16 @@ package dev.araopj.hrplatformapi.salary.controller;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import dev.araopj.hrplatformapi.salary.service.ISalaryDataService;
+import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
-import dev.araopj.hrplatformapi.utils.enums.CheckType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +39,7 @@ import java.util.List;
 )
 public class SalaryDataController {
 
-    private final ISalaryDataService salaryDataService;
+    private final SalaryDataService salaryDataService;
 
     /**
      * Retrieves a paginated list of all salary data entries, optionally filtered by salary grade ID.
@@ -97,7 +95,7 @@ public class SalaryDataController {
         return ResponseEntity.ok(StandardApiResponse.success(
                 PAGE.getContent(),
                 PaginationMeta.builder()
-                        .page(PAGE.getNumber() - 1)
+                        .page(PAGE.getNumber() + 1)
                         .size(PAGE.getSize())
                         .totalElements(PAGE.getTotalElements())
                         .totalPages(PAGE.getTotalPages())
@@ -169,18 +167,13 @@ public class SalaryDataController {
     /**
      * Creates a new salary data entry for a specific salary grade.
      *
-     * @param salaryDataRequest The salary data details to create.
-     * @param salaryGradeId     Optional ID of the salary grade from query parameter.
-     * @param checkType         The validation strategy for the salary grade ID.
-     * @return A ResponseEntity containing a StandardApiResponse with the created SalaryDataResponse.
-     * @throws BadRequestException If invalid data or parameters are provided.
-     * @throws NotFoundException   If the salary grade is not found.
+     * @param salaryDataRequest the details of the salary data to create
+     * @return a ResponseEntity containing a StandardApiResponse with the created SalaryDataResponse
      */
     @Operation(
             summary = "Create salary data",
             description = """
-                    Create a new salary data entry for a specific salary grade. \
-                    Validate the salary grade ID using the 'checkType' parameter to specify whether it comes from the request body or query parameter.
+                    Create a new salary data entry for a specific salary grade.
                     """,
             responses = {
                     @ApiResponse(
@@ -219,16 +212,13 @@ public class SalaryDataController {
     )
     @PostMapping
     public ResponseEntity<StandardApiResponse<SalaryDataResponse>> create(
+            @Valid
+            @RequestBody
             @Parameter(description = "Salary data details to create", required = true)
-            @RequestBody @Valid SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest,
-            @Parameter(description = "ID of the salary grade from query parameter")
-            @RequestParam String salaryGradeId
-    ) throws BadRequestException {
+            SalaryDataRequest salaryDataRequest
+    ) {
         log.debug("Request to create salaryDataRequest: {}", salaryDataRequest);
-
-        return ResponseEntity.ok(
-                StandardApiResponse.success(salaryDataService.create(salaryDataRequest, salaryGradeId)
-                ));
+        return ResponseEntity.ok(StandardApiResponse.success(salaryDataService.create(salaryDataRequest)));
     }
 
     /**

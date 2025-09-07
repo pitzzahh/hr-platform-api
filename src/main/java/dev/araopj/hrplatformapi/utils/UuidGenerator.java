@@ -10,9 +10,11 @@ import java.util.UUID;
 
 /**
  * Custom UUID generator that allows for client-assigned IDs.
- * Checks for an existing ID using a field annotated with @Uuid, or falls back to a default 'getId' method.
+ * Checks for an existing ID using a field annotated with @{@link Uuid}, or falls back to a default 'getId' method.
  * Generates a new UUID if no ID is assigned or if the ID is null.
- * Used with the @Uuid annotation on entity ID fields to indicate the UUID generation strategy.
+ * Used with the @{@link Uuid} annotation on entity ID fields to indicate the UUID generation strategy.
+ *
+ * @see Uuid
  */
 @Slf4j
 public class UuidGenerator extends SequenceStyleGenerator {

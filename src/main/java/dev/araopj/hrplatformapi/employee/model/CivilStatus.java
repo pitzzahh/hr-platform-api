@@ -1,12 +1,11 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-import dev.araopj.hrplatformapi.utils.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum CivilStatus implements EnumUtil.HasCode {
+public enum CivilStatus {
     SINGLE("S", "Single"),
     MARRIED("M", "Married"),
     WIDOWED("W", "Widowed");

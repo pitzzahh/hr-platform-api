@@ -7,8 +7,8 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ## ✨ Features
 
-* 👤 **Employee Management** — CRUD operations, employment history, positions, civil status.
-* 💰 **Salary Management** — Salary data and salary grade tracking.
+* 👤 **Employee Management** — CRUD operations, employment history, positions, civil status, ID documents.
+* 💰 **Salary Management** — Salary data, salary grade, and salary overrides.
 * 📜 **Audit Logging** — Track key user and system actions.
 * 🔐 **Authentication & Authorization** — User accounts, roles, API-Key authentication, and fine-grained permissions.
 * ⚡ **Robust Infrastructure** — Exception handling, pagination, mapping utilities, and more.
@@ -19,36 +19,43 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ```
 ~/hrplatformapi
-├── audit/             
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── employee/
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── salary/           
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── user/             
-│   ├── controller     
-│   ├── dto           
-│   ├── model          
-│   ├── repository    
-│   └── service
-│
-├── utils/            
-└── exception/         
+├───audit
+│   ├───controller
+│   ├───dto
+│   │   ├───request
+│   │   └───response
+│   ├───model
+│   ├───repository
+│   └───service
+│       └───impl
+├───config
+├───employee
+│   ├───controller
+│   ├───dto
+│   │   ├───request
+│   │   └───response
+│   ├───model
+│   ├───repository
+│   └───service
+│       └───impl
+├───exception
+├───salary
+│   ├───controller
+│   ├───dto
+│   │   ├───request
+│   │   └───response
+│   ├───model
+│   ├───repository
+│   └───service
+│       └───impl
+├───user
+│   ├───model
+│   └───repository
+└───utils
+├───annotations
+├───enums
+├───formatter
+└───mappers
 ```
 
 ---
@@ -80,16 +87,21 @@ src/main/resources/application.yml
 
 ## 🔗 API Endpoints
 
-| Resource     | Endpoint                | Methods                | Description                              |
-|--------------|-------------------------|------------------------|------------------------------------------|
-| Employee     | `/api/v1/employees`     | GET, POST, PUT, DELETE | Manage employees (CRUD, info, positions) |
-| Salary Grade | `/api/v1/salary-grades` | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)   |
-| Salary Data  | `/api/v1/salary-data`   | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)  |
-| Audit        | `/api/v1/audit`         | GET                    | View audit logs                          |
-| User         | `/api/v1/users`         | GET, POST, PUT, DELETE | Manage users, roles, and permissions     |
-| Roles        | `/api/v1/roles`         | POST                   | User login and token generation          |
-| Permission   | `/api/v1/permissions`   | POST                   | Manage user permissions                  |
-|
+| Resource                               | Endpoint                                                | Methods                | Description                                           |
+|----------------------------------------|---------------------------------------------------------|------------------------|-------------------------------------------------------|
+| Employee                               | `/api/v1/employees`                                     | GET, POST, PUT, DELETE | Manage employees (CRUD, info, positions)              |
+| Employee (by User ID)                  | `/api/v1/employees/user/{userId}`                       | GET                    | Retrieve employee by user ID                          |
+| Employment Information                 | `/api/v1/employees/{employeeId}/employment-information` | GET, POST, PUT, DELETE | Manage employment information for a specific employee |
+| ID Documents                           | `/api/v1/id-documents`                                  | GET, POST, PUT, DELETE | Manage employee ID documents                          |
+| Positions                              | `/api/v1/positions`                                     | GET, POST, PUT, DELETE | Manage employee positions                             |
+| Workplaces                             | `/api/v1/workplaces`                                    | GET, POST, PUT, DELETE | Manage employee workplaces                            |
+| Employment Information Salary Override | `/api/v1/employment-information-salary-overrides`       | GET, POST, PUT, DELETE | Manage salary overrides for employment information    |
+| Salary Grade                           | `/api/v1/salary-grades`                                 | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)                |
+| Salary Data                            | `/api/v1/salary-data`                                   | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)               |
+| Audit                                  | `/api/v1/audit`                                         | GET                    | View audit logs                                       |
+| User                                   | `/api/v1/users`                                         | GET, POST, PUT, DELETE | Manage users, roles, and permissions                  |
+| Roles                                  | `/api/v1/roles`                                         | POST                   | User login and token generation                       |
+| Permission                             | `/api/v1/permissions`                                   | POST                   | Manage user permissions                               |
 
 👉 Check the controller classes for full request/response examples.
 

@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.model.AuditAction;
-import dev.araopj.hrplatformapi.audit.service.AuditServiceImp;
+import dev.araopj.hrplatformapi.audit.service.impl.AuditServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +11,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static dev.araopj.hrplatformapi.audit.model.AuditAction.VIEW;
 
 /**
  * Utility class for auditing actions within the application.
@@ -58,12 +60,13 @@ public class AuditUtil {
      */
     public void audit(String id, String entityName) {
         audit(
-                AuditAction.VIEW,
-                "[]",
-                Optional.empty(),
-                Map.of("timestamp", Instant.now().toString(),
+                VIEW,
+                id,
+                Optional.of(Map.of("timestamp", Instant.now().toString(),
                         "entity", entityName,
-                        "request_id", id),
+                        "request_id", id)
+                ),
+                Optional.empty(),
                 Optional.empty(),
                 entityName
         );
@@ -83,9 +86,9 @@ public class AuditUtil {
     public ApiError audit(Exception ex, String message, Optional<ApiError> existingError) {
         var error = existingError
                 .orElse(ApiError.builder()
-                .message(message)
-                .details(List.of(ex.getMessage()))
-                .build());
+                        .message(message)
+                        .details(List.of(ex.getMessage()))
+                        .build());
         auditService.create(
                 AuditRequest.builder()
                         .entityType(ex.getClass().getTypeName())

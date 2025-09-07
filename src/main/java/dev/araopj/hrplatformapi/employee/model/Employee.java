@@ -1,15 +1,14 @@
 package dev.araopj.hrplatformapi.employee.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -22,64 +21,62 @@ public class Employee extends EntityTimestamp implements Serializable {
 
     @Id
     @Uuid
-    String id;
+    private String id;
 
     @Column(unique = true, nullable = false)
-    Long employeeNumber;
+    private String employeeNumber;
 
     @Column(nullable = false)
-    String itemNumber;
+    private String itemNumber;
 
     @Column(nullable = false)
-    String firstName;
+    private String firstName;
 
     @Column
-    String middleName;
+    private String middleName;
 
     @Column(nullable = false)
-    String lastName;
+    private String lastName;
 
     @Column
-    String photo;
+    private String photo;
 
     @Column(nullable = false)
-    LocalDate dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(nullable = false, unique = true)
-    @Pattern(
-            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
-            message = "Email must be a valid email address"
-    )
-    String email;
+    private String email;
 
     @Column
-    @Pattern(
-            regexp = "^(09\\d{9}|9\\d{9}|\\+639\\d{9})$",
-            message = "Phone number must be: 11 digits starting with 09, or 10 digits starting with 9, or 13 characters starting with +639"
-    )
-    String phoneNumber;
+    private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @Column(nullable = false)
-    Gender gender;
+    private String taxPayerIdentificationNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    String taxPayerIdentificationNumber;
-
-    @Column(nullable = false)
-    CivilStatus civilStatus;
+    private CivilStatus civilStatus;
 
     @Column
-    String bankAccountNumber;
+    private String bankAccountNumber;
 
     @Column
     boolean archived;
 
     @Column
-    String userId;
+    private String userId;
 
+    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Identifier> identifiers = new HashSet<>();
+    private Set<IdDocument> idDocuments;
 
+    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    Set<EmploymentInformation> employmentInformation;
+    private Set<EmploymentInformation> employmentInformation;
 }

@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.araopj.hrplatformapi.utils.EntityTimestamp;
 import dev.araopj.hrplatformapi.utils.annotations.Uuid;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.io.Serializable;
@@ -35,12 +33,10 @@ public class SalaryGrade extends EntityTimestamp implements Serializable {
     private LocalDate effectiveDate;
 
     @Column(nullable = false)
-    @Min(value = 1, message = "Salary grade must be at least 1")
-    @Max(value = 33, message = "Salary grade must be at most 33")
     private int salaryGrade;
 
     @JsonIgnore
     @JsonManagedReference
-    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "salaryGrade", cascade = CascadeType.ALL)
     private List<SalaryData> salaryData;
 }

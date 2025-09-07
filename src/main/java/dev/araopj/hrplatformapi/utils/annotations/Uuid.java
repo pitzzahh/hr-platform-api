@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.FIELD;
 
 /**
- * Annotation to specify that a field should use the UuidGenerator for ID generation.
+ * Annotation to specify that a field should use the {@link UuidGenerator} for ID generation.
  * This allows for client-assigned UUIDs, generating a new UUID only if none is provided
+ *
+ * @see UuidGenerator
  */
 @IdGeneratorType(UuidGenerator.class)
 @Target({FIELD})

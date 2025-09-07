@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.audit.controller;
 
 import dev.araopj.hrplatformapi.audit.dto.request.AuditRequest;
 import dev.araopj.hrplatformapi.audit.dto.response.AuditResponse;
-import dev.araopj.hrplatformapi.audit.service.IAuditService;
+import dev.araopj.hrplatformapi.audit.service.AuditService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
@@ -25,12 +25,11 @@ import java.util.List;
 
 /**
  * REST controller for managing audit records in the HR platform.
- * <p>
  * This controller provides endpoints for retrieving and creating audit records,
  * supporting pagination and validation. All responses are wrapped in a
  * {@link StandardApiResponse} for consistent API output.
  *
- * @see IAuditService
+ * @see AuditService
  * @see AuditRequest
  * @see AuditResponse
  * @see StandardApiResponse
@@ -42,11 +41,10 @@ import java.util.List;
 @Tag(name = "Audit", description = "Endpoints for managing audit records, including retrieval and creation.")
 public class AuditController {
 
-    private final IAuditService auditService;
+    private final AuditService auditService;
 
     /**
      * Retrieves a paginated list of all audit records.
-     * <p>
      * This endpoint supports pagination through query parameters for page number and size.
      * The response includes audit records and pagination metadata.
      *
@@ -76,7 +74,7 @@ public class AuditController {
         return ResponseEntity.ok(StandardApiResponse.success(
                 auditsPage.getContent(),
                 PaginationMeta.builder()
-                        .page(auditsPage.getNumber() - 1)
+                        .page(auditsPage.getNumber() + 1)
                         .size(auditsPage.getSize())
                         .totalElements(auditsPage.getTotalElements())
                         .totalPages(auditsPage.getTotalPages())
@@ -86,7 +84,6 @@ public class AuditController {
 
     /**
      * Retrieves a specific audit record by its ID.
-     * <p>
      * If the audit record is not found, a 404 response is returned with an error message.
      *
      * @param id the unique ID of the audit record
@@ -121,7 +118,6 @@ public class AuditController {
 
     /**
      * Creates a new audit record.
-     * <p>
      * The request is validated, and the created audit record is returned with a 201 status.
      *
      * @param request the {@link AuditRequest} containing audit details
