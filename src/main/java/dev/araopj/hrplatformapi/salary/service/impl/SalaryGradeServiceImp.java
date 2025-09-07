@@ -18,8 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SALARY_GRADE;
@@ -75,104 +77,54 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
     }
 
     @Override
-    public SalaryGradeResponse create(
-            SalaryGradeRequest salaryGradeRequest,
-            boolean includeSalaryData
-    ) throws BadRequestException {
-        validateSalaryGradeExistence(includeSalaryData, salaryGradeRequest);
-
-        var salaryGradeToSave = SalaryGrade.builder()
-                .legalBasis(salaryGradeRequest.legalBasis())
-                .tranche(salaryGradeRequest.tranche())
-                .effectiveDate(salaryGradeRequest.effectiveDate())
-                .salaryGrade(salaryGradeRequest.salaryGrade())
-                .build();
-
-        if (includeSalaryData) {
-            if (salaryGradeRequest.salaryData() == null || salaryGradeRequest.salaryData().isEmpty()) {
-                throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
-            }
-            salaryGradeToSave.setSalaryData(
-                    salaryGradeRequest.salaryData().stream()
-                            .map(salaryDataRequest -> SalaryData.builder()
-                                    .step(salaryDataRequest.step())
-                                    .amount(salaryDataRequest.amount())
-                                    .salaryGrade(salaryGradeToSave)
-                                    .build())
-                            .collect(Collectors.toList())
-            );
-        }
-
-        var savedSalaryGrade = salaryGradeRepository.save(salaryGradeToSave);
-        log.debug("Saved salary grade: {}", savedSalaryGrade);
-
-        auditUtil.audit(
-                CREATE,
-                savedSalaryGrade.getId(),
-                Optional.empty(),
-                redact(savedSalaryGrade, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
-        return salaryGradeMapper.toDto(savedSalaryGrade, includeSalaryData);
-    }
-
-    @Override
-    public List<SalaryGradeResponse> createBatch(
+    public List<SalaryGradeResponse> create(
             List<SalaryGradeRequest> salaryGradeRequests,
             boolean includeSalaryData
     ) throws BadRequestException {
-        var salaryGradesToSave = new ArrayList<SalaryGrade>();
-        var responses = new ArrayList<SalaryGradeResponse>();
-
         // Validate all requests first
-        for (var request : salaryGradeRequests) {
-            validateSalaryGradeExistence(includeSalaryData, request);
-        }
+        salaryGradeRequests.forEach(request -> validateSalaryGradeExistence(includeSalaryData, request));
 
-        // Build salary grade entities
-        for (var request : salaryGradeRequests) {
-            var salaryGradeToSave = SalaryGrade.builder()
-                    .legalBasis(request.legalBasis())
-                    .tranche(request.tranche())
-                    .effectiveDate(request.effectiveDate())
-                    .salaryGrade(request.salaryGrade())
-                    .build();
+        var salaryGradesToSave = salaryGradeRequests.stream()
+                .map(request -> {
+                    var salaryGrade = SalaryGrade.builder()
+                            .legalBasis(request.legalBasis())
+                            .tranche(request.tranche())
+                            .effectiveDate(request.effectiveDate())
+                            .salaryGrade(request.salaryGrade())
+                            .build();
 
-            if (includeSalaryData) {
-                salaryGradeToSave.setSalaryData(
-                        request.salaryData().stream()
-                                .map(salaryDataRequest -> SalaryData.builder()
-                                        .step(salaryDataRequest.step())
-                                        .amount(salaryDataRequest.amount())
-                                        .salaryGrade(salaryGradeToSave)
-                                        .build())
-                                .collect(Collectors.toList())
-                );
-            }
+                    if (includeSalaryData) {
+                        salaryGrade.setSalaryData(
+                                request.salaryData().stream()
+                                        .map(salaryDataRequest -> SalaryData.builder()
+                                                .step(salaryDataRequest.step())
+                                                .amount(salaryDataRequest.amount())
+                                                .salaryGrade(salaryGrade)
+                                                .build())
+                                        .toList()
+                        );
+                    }
+                    return salaryGrade;
+                })
+                .toList();
 
-            salaryGradesToSave.add(salaryGradeToSave);
-        }
-
-        // Save all salary grades in a single batch
         var savedSalaryGrades = salaryGradeRepository.saveAll(salaryGradesToSave);
+
         log.debug("Saved {} salary grades in batch", savedSalaryGrades.size());
 
-        // Audit each saved salary grade
-        for (var savedSalaryGrade : savedSalaryGrades) {
-            auditUtil.audit(
-                    CREATE,
-                    savedSalaryGrade.getId(),
-                    Optional.empty(),
-                    redact(savedSalaryGrade, REDACTED),
-                    Optional.empty(),
-                    ENTITY_NAME
-            );
-            responses.add(salaryGradeMapper.toDto(savedSalaryGrade, includeSalaryData));
-        }
-
-        return responses;
+        return savedSalaryGrades.stream()
+                .map(savedSalaryGrade -> {
+                    auditUtil.audit(
+                            CREATE,
+                            savedSalaryGrade.getId(),
+                            Optional.empty(),
+                            redact(savedSalaryGrade, REDACTED),
+                            Optional.empty(),
+                            ENTITY_NAME
+                    );
+                    return salaryGradeMapper.toDto(savedSalaryGrade, includeSalaryData);
+                })
+                .toList();
     }
 
     @Override
@@ -225,24 +177,22 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         return true;
     }
 
-    private void validateSalaryGradeExistence(boolean includeSalaryData, SalaryGradeRequest request) throws BadRequestException {
-        final var OPTIONAL_SALARY_GRADE = salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
+    private void validateSalaryGradeExistence(boolean includeSalaryData, SalaryGradeRequest request) {
+        salaryGradeRepository.findBySalaryGradeAndEffectiveDate(
                 request.salaryGrade(),
                 request.effectiveDate()
-        );
-
-        if (OPTIONAL_SALARY_GRADE.isPresent()) {
+        ).ifPresent(salaryGrade -> {
             log.warn("salaryGrade {} and effectiveDate {} already exists in SalaryGrade with id {}",
-                    request.salaryGrade(), request.effectiveDate(), OPTIONAL_SALARY_GRADE.get().getId());
-            throw new BadRequestException(
+                    request.salaryGrade(), request.effectiveDate(), salaryGrade.getId());
+            throw new IllegalArgumentException(
                     String.format("SalaryGrade with salaryGrade %d and effectiveDate %s already exists.",
                             request.salaryGrade(), request.effectiveDate())
             );
-        }
+        });
 
         // Validate salary data if required
         if (includeSalaryData && request.salaryData() == null || request.salaryData().isEmpty()) {
-            throw new BadRequestException("Salary data must be provided when includeSalaryData is true.");
+            throw new IllegalStateException("Salary data must be provided when includeSalaryData is true.");
         }
     }
 }

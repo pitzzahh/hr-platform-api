@@ -48,20 +48,6 @@ public interface SalaryGradeService {
     Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) throws BadRequestException;
 
     /**
-     * Creates a new salary grade record based on the provided request data.
-     * The method validates the input to ensure no duplicate salary grades exist (based on salary grade
-     * and effective date). If {@code includeSalaryData} is true, associated salary data must be provided
-     * in the request.
-     *
-     * @param salaryGradeRequest the {@link SalaryGradeRequest} containing salary grade details
-     * @param includeSalaryData  whether to include associated salary data in creation
-     * @return the created {@link SalaryGradeResponse} object
-     * @throws BadRequestException if the request is invalid (e.g., duplicate salary grade or missing salary data)
-     */
-    SalaryGradeResponse create(SalaryGradeRequest salaryGradeRequest, boolean includeSalaryData)
-            throws BadRequestException;
-
-    /**
      * Creates a batch of new salary grade records based on the provided list of request data.
      * The method validates each request to ensure no duplicate salary grades exist (based on salary grade
      * and effective date). If {@code includeSalaryData} is true, associated salary data must be provided
@@ -72,7 +58,7 @@ public interface SalaryGradeService {
      * @return a {@link List} of created {@link SalaryGradeResponse} objects
      * @throws BadRequestException if any request is invalid (e.g., duplicate salary grade or missing salary data)
      */
-    List<SalaryGradeResponse> createBatch(List<SalaryGradeRequest> salaryGradeRequests, boolean includeSalaryData)
+    List<SalaryGradeResponse> create(List<SalaryGradeRequest> salaryGradeRequests, boolean includeSalaryData)
             throws BadRequestException;
 
     /**
