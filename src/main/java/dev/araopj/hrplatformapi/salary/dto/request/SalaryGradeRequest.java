@@ -1,6 +1,10 @@
 package dev.araopj.hrplatformapi.salary.dto.request;
 
-import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -17,6 +21,7 @@ public record SalaryGradeRequest(
         @Min(value = 1, message = "Salary grade must be at least 1")
         @Max(value = 33, message = "Salary grade must be at most 33")
         int salaryGrade,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         List<SalaryDataRequest.WithoutSalaryGradeId> salaryData
 ) {
 }
