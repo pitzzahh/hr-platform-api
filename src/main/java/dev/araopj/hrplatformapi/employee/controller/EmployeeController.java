@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * REST controller for managing employee data.
@@ -175,11 +176,10 @@ public class EmployeeController {
     }
 
     /**
-     * Creates a new employee.
+     * Creates a new employee entry, or multiple entries if a set of EmployeeRequest is provided.
      *
-     * @param employeeRequest The details of the employee to create.
+     * @param employeeRequest The employee details to create (a set of EmployeeRequest).
      * @return A ResponseEntity containing a StandardApiResponse with the created EmployeeResponse.
-     * @throws IllegalArgumentException If the employee already exists with the given identifiers.
      */
     @Operation(
             summary = "Create employee",
@@ -220,13 +220,13 @@ public class EmployeeController {
             }
     )
     @PostMapping
-    public ResponseEntity<StandardApiResponse<EmployeeResponse>> create(
+    public ResponseEntity<StandardApiResponse<Set<EmployeeResponse>>> create(
             @Valid
             @RequestBody
             @Parameter(description = "Employee details to create", required = true)
-            EmployeeRequest employeeRequest
+            Set<EmployeeRequest> employeeRequest
     ) {
-        log.debug("Request to create employee: {}", employeeRequest);
+        log.debug("Request to create employees: {}", employeeRequest);
         return ResponseEntity.ok(StandardApiResponse.success(employeeService.create(employeeRequest)));
     }
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service interface for managing employee-related operations.
@@ -75,7 +76,7 @@ public interface EmployeeService {
      * @param employeeRequest The employee data to create.
      * @return The created employee response.
      */
-    EmployeeResponse create(EmployeeRequest employeeRequest);
+    Set<EmployeeResponse> create(Set<EmployeeRequest> employeeRequest);
 
     /**
      * Updates an existing employee record.

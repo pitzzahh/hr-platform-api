@@ -1,5 +1,6 @@
 package dev.araopj.hrplatformapi.employee.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.araopj.hrplatformapi.employee.model.CivilStatus;
 import dev.araopj.hrplatformapi.employee.model.Gender;
 import jakarta.validation.constraints.Email;
@@ -49,7 +50,9 @@ public record EmployeeRequest(
         String bankAccountNumber,
         boolean archived,
         String userId,
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         Set<IdDocumentRequest> idDocumentRequests,
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         Set<EmploymentInformationRequest> employmentInformationRequests
 ) {
     public record WithoutArchivedAndUserIdAndIdentifierRequestsAndEmploymentInformationRequests(

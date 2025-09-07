@@ -2,6 +2,7 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
+import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
@@ -116,56 +117,66 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public EmployeeResponse create(EmployeeRequest employeeRequest) {
-        employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
-                employeeRequest.employeeNumber(),
-                employeeRequest.email(),
-                employeeRequest.taxPayerIdentificationNumber(),
-                employeeRequest.firstName(),
-                employeeRequest.lastName(),
-                employeeRequest.firstName(),
-                employeeRequest.middleName(),
-                employeeRequest.lastName()
-        ).ifPresent(employee -> {
-            throw new IllegalArgumentException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s]already exists".formatted(
-                    employee.getEmployeeNumber(),
-                    employee.getEmail(),
-                    employee.getTaxPayerIdentificationNumber(),
-                    StringFormatter.formatEmployeeName(
-                            employee.getFirstName(),
-                            employee.getMiddleName(),
-                            employee.getLastName()
-                    )
-            ));
-        });
+    public Set<EmployeeResponse> create(Set<EmployeeRequest> employeeRequests) {
 
-        final var EMPLOYEE_TO_SAVE = employeeMapper.toEntity(
-                employeeRequest,
-                getEmploymentInformationRequests(employeeRequest),
-                getIdDocumentRequests(employeeRequest)
+        employeeRequests.forEach(
+                employeeRequest -> {
+                    employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
+                            employeeRequest.employeeNumber(),
+                            employeeRequest.email(),
+                            employeeRequest.taxPayerIdentificationNumber(),
+                            employeeRequest.firstName(),
+                            employeeRequest.lastName(),
+                            employeeRequest.firstName(),
+                            employeeRequest.middleName(),
+                            employeeRequest.lastName()
+                    ).ifPresent(employee -> {
+                        throw new IllegalArgumentException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s]already exists".formatted(
+                                employee.getEmployeeNumber(),
+                                employee.getEmail(),
+                                employee.getTaxPayerIdentificationNumber(),
+                                StringFormatter.formatEmployeeName(
+                                        employee.getFirstName(),
+                                        employee.getMiddleName(),
+                                        employee.getLastName()
+                                )
+                        ));
+                    });
+                }
         );
+
+        final var EMPLOYEE_TO_SAVE = employeeRequests
+                .stream()
+                .map(employeeRequest -> employeeMapper.toEntity(
+                        employeeRequest,
+                        getEmploymentInformationRequests(employeeRequest),
+                        getIdDocumentRequests(employeeRequest)
+                ))
+                .collect(Collectors.toSet());
 
         log.debug("Employee to save [{}]", EMPLOYEE_TO_SAVE);
 
-        final var SAVED_EMPLOYEE = employeeRepository.save(EMPLOYEE_TO_SAVE);
+        final var SAVED_EMPLOYEES = employeeRepository.saveAll(EMPLOYEE_TO_SAVE);
 
         auditUtil.audit(
                 CREATE,
-                SAVED_EMPLOYEE.getId(),
+                SAVED_EMPLOYEES.stream().map(Employee::getId).collect(Collectors.joining(", ")),
                 Optional.empty(),
-                redact(SAVED_EMPLOYEE, REDACTED),
+                redact(SAVED_EMPLOYEES, REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        return employeeMapper.toDto(
-                SAVED_EMPLOYEE,
-                false,
-                false,
-                idDocumentMapper,
-                employmentInformationMapper,
-                employmentInformationSalaryOverrideMapper
-        );
+        return SAVED_EMPLOYEES.stream()
+                .map(employee -> employeeMapper.toDto(
+                        employee,
+                        false,
+                        false,
+                        idDocumentMapper,
+                        employmentInformationMapper,
+                        employmentInformationSalaryOverrideMapper
+                )).collect(Collectors.toSet());
+
     }
 
     @Override
