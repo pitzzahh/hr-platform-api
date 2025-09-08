@@ -9,14 +9,14 @@ const config = {
         assetsInlineLimit: Infinity
     },
     kit: {
-        embedded: true,
         output: {
-            bundleStrategy: "inline"
+            bundleStrategy: "inline",
+            preloadStrategy: "preload-js"
         },
         adapter: adapter({
             pages: '../src/main/resources/static',
             assets: '../src/main/resources/static',
-            fallback: null,
+            fallback: null
         })
     },
 };
