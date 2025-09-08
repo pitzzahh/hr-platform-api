@@ -258,6 +258,23 @@ class SalaryDataServiceImpTest {
         void shouldHandleEmptyId() {
             assertThrows(IllegalArgumentException.class, () -> salaryDataService.findById(""));
         }
+
+        @Test
+        @DisplayName("Should return empty optional when id not found")
+        void shouldReturnEmptyOptionalWhenIdNotFound() {
+            when(salaryDataRepository.findById("non-existent-id")).thenReturn(Optional.empty());
+
+            assertThrows(NotFoundException.class, () -> salaryDataService.findById("non-existent-id"));
+
+            verify(auditUtil, times(1))
+                    .audit(
+                            "non-existent-id",
+                            ENTITY_NAME
+                    );
+
+            verify(salaryDataRepository, times(1))
+                    .findById("non-existent-id");
+        }
     }
 
 }
