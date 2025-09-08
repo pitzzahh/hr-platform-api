@@ -39,19 +39,18 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public Page<SalaryDataResponse> findAll(Pageable pageable) {
-        final var SALARY_DATA = salaryDataRepository.findAll(pageable);
+        final var SALARY_DATA_RESPONSE = salaryDataRepository.findAll(pageable).map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()));
 
         auditUtil.audit(
                 VIEW,
                 "[]",
-                Optional.of(redact(SALARY_DATA.toString(), REDACTED)),
+                Optional.of(redact(SALARY_DATA_RESPONSE.getContent(), REDACTED)), // Audit List<SalaryDataResponse>
                 Optional.empty(),
                 Optional.empty(),
                 "Page<%s>".formatted(ENTITY_NAME)
         );
 
-        return SALARY_DATA
-                .map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()));
+        return SALARY_DATA_RESPONSE;
     }
 
     @Override
@@ -77,8 +76,8 @@ public class SalaryDataServiceImp implements SalaryDataService {
         auditUtil.audit(
                 VIEW,
                 id,
+                Optional.of(redact(optionalSalaryData.get(), REDACTED)),
                 Optional.empty(),
-                redact(optionalSalaryData.get(), REDACTED),
                 Optional.empty(),
                 ENTITY_NAME
         );
