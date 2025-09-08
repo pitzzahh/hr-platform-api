@@ -1,7 +1,7 @@
 # HR Platform API
 
-[![CI Pipeline](https://github.com/pitzzahh/hr-platform-api/actions/workflows/ci.yml/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/ci.yml)
-[![CI Pipeline with Qodana](https://github.com/pitzzahh/hr-platform-api/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/qodana_code_quality.yml)
+[![Tests](https://github.com/pitzzahh/hr-platform-api/actions/workflows/ci.yml/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/test.yml)
+[![Qodana Code Quality](https://github.com/pitzzahh/hr-platform-api/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/qodana_code_quality.yml)
 [![CodeQL](https://github.com/pitzzahh/hr-platform-api/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/github-code-scanning/codeql)
 [![Automatic Dependency Submission](https://github.com/pitzzahh/hr-platform-api/actions/workflows/dependency-graph/auto-submission/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/dependency-graph/auto-submission)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)

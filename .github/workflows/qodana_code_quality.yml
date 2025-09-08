@@ -1,4 +1,4 @@
-name: CI Pipeline with Qodana
+name: Qodana Code Quality
 
 on:
   pull_request:
