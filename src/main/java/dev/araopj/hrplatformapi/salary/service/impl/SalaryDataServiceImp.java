@@ -55,6 +55,9 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public Optional<SalaryDataResponse> findById(String id) {
+        if(id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
         auditUtil.audit(
                 id,
                 ENTITY_NAME
