@@ -93,7 +93,6 @@
 		name="description"
 		content="View and manage salary grades and compensation data for HR platform"
 	/>
-	<script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -179,9 +178,9 @@
 								</div>
 								<div class="bg-gray-50 rounded-lg p-4">
 									<h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">
-										Tranche
+										Salary Grade
 									</h3>
-									<p class="text-gray-900 font-medium">{response.tranche}</p>
+									<p class="text-gray-900 font-medium">{response.salaryGrade}</p>
 								</div>
 							</div>
 
