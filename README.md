@@ -70,7 +70,7 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ### Prerequisites
 
-* ☕ Java **17+**
+* ☕ Java **21+**
 * 🔧 Maven **3.6+**
 * 🗄️ Database (e.g. PostgreSQL/MySQL — configurable)
 
