@@ -45,6 +45,9 @@ public class AuditServiceImp implements AuditService {
 
     @Override
     public Optional<AuditResponse> findById(@NotNull String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
         log.debug("Retrieving audit record with ID: {}", id);
         return auditRepository.findById(id)
                 .map(auditMapper::toDto);
@@ -52,6 +55,9 @@ public class AuditServiceImp implements AuditService {
 
     @Override
     public AuditResponse create(@NotNull AuditRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("AuditRequest cannot be null");
+        }
         log.debug("Creating audit record: {}", request);
         return auditMapper.toDto(auditRepository.save(auditMapper.toEntity(request)));
     }
