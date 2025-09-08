@@ -9,7 +9,6 @@ import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 import java.util.Set;
@@ -46,15 +44,10 @@ public class SalaryDataServiceImp implements SalaryDataService {
         auditUtil.audit(
                 VIEW,
                 "[]",
+                Optional.of(redact(SALARY_DATA.toString(), REDACTED)),
                 Optional.empty(),
-                PaginationMeta.builder()
-                        .totalElements(SALARY_DATA.getTotalElements())
-                        .size(SALARY_DATA.getSize())
-                        .page(SALARY_DATA.getNumber() + 1)
-                        .totalPages(SALARY_DATA.getTotalPages())
-                        .build(),
                 Optional.empty(),
-                ENTITY_NAME
+                "Page<%s>".formatted(ENTITY_NAME)
         );
 
         return SALARY_DATA
@@ -97,8 +90,12 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public SalaryDataResponse create(
-            @Validated SalaryDataRequest salaryDataRequest
+            SalaryDataRequest salaryDataRequest
     ) {
+
+        if (salaryDataRequest == null) {
+            throw new IllegalArgumentException("salaryDataRequest cannot be null");
+        }
 
         final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
 
