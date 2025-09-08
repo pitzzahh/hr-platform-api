@@ -245,7 +245,7 @@ class SalaryGradeServiceImpTest {
 
         @Test
         @DisplayName("Should return salary grade by ID")
-        void shouldReturnSalaryGradeById() throws BadRequestException {
+        void shouldReturnSalaryGradeById() {
             when(salaryGradeRepository.findById("1")).thenReturn(Optional.of(salaryGrade));
             when(salaryGradeMapper.toDto(any(SalaryGrade.class), eq(false))).thenReturn(salaryGradeResponse);
 
@@ -270,7 +270,7 @@ class SalaryGradeServiceImpTest {
 
         @Test
         @DisplayName("Should return empty for non-existent ID")
-        void shouldReturnEmptyForNonExistentId() throws BadRequestException {
+        void shouldReturnEmptyForNonExistentId() {
             when(salaryGradeRepository.findById("1")).thenReturn(Optional.empty());
 
             var optionalSalaryGradeResponse = salaryGradeService.findById("1", false);
