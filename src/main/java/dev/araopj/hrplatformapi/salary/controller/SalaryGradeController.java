@@ -110,8 +110,8 @@ public class SalaryGradeController {
      * @param id                The ID of the salary grade to retrieve.
      * @param includeSalaryData If true, includes associated salary data in the response.
      * @return A ResponseEntity containing a StandardApiResponse with the SalaryGradeResponse.
-     * @throws NotFoundException   If the salary grade is not found.
-     * @throws BadRequestException If the provided ID is invalid.
+     * @throws NotFoundException        If the salary grade is not found.
+     * @throws IllegalArgumentException If the provided ID is invalid (e.g., null or empty).
      */
     @Operation(
             summary = "Get salary grade by ID",
@@ -164,7 +164,7 @@ public class SalaryGradeController {
             @RequestParam(defaultValue = "false", required = false)
             @Parameter(description = "Include associated salary data in the response", example = "false")
             boolean includeSalaryData
-    ) throws BadRequestException {
+    ) {
         log.debug("Fetching salary grade with id: {}, includeSalaryData: {}", id, includeSalaryData);
         var response = salaryGradeService.findById(id, includeSalaryData);
         return response

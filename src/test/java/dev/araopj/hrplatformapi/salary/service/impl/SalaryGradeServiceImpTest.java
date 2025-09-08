@@ -257,15 +257,15 @@ class SalaryGradeServiceImpTest {
         }
 
         @Test
-        @DisplayName("Should throw BadRequestException for null ID")
-        void shouldThrowBadRequestExceptionForNullId() {
-            assertThrows(BadRequestException.class, () -> salaryGradeService.findById(null, false));
+        @DisplayName("Should throw IllegalArgumentException for null ID")
+        void shouldThrowIllegalArgumentExceptionForNullId() {
+            assertThrows(IllegalArgumentException.class, () -> salaryGradeService.findById(null, false));
         }
 
         @Test
-        @DisplayName("Should throw BadRequestException for empty ID")
-        void shouldThrowBadRequestExceptionForEmptyId() {
-            assertThrows(BadRequestException.class, () -> salaryGradeService.findById("", false));
+        @DisplayName("Should throw IllegalArgumentException for empty ID")
+        void shouldThrowIllegalArgumentExceptionForEmptyId() {
+            assertThrows(IllegalArgumentException.class, () -> salaryGradeService.findById("", false));
         }
 
         @Test

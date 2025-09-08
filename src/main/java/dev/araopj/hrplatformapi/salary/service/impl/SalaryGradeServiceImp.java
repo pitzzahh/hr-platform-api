@@ -57,9 +57,9 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
     }
 
     @Override
-    public Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) throws BadRequestException {
+    public Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("SalaryGrade ID must be provided as path");
+            throw new IllegalArgumentException("SalaryGrade ID must be provided as path");
         }
 
         auditUtil.audit(
@@ -85,26 +85,21 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
         // Validate all requests first
         salaryGradeRequests.forEach(request -> validateSalaryGradeExistence(includeSalaryData, request));
 
-        var salaryGradesToSave = salaryGradeRequests.stream()
-                .map(request -> {
-                    var salaryGrade = salaryGradeMapper.toEntity(request);
+        return salaryGradeRepository.saveAll(salaryGradeRequests.stream()
+                        .map(request -> {
+                            var salaryGrade = salaryGradeMapper.toEntity(request);
 
-                    if (includeSalaryData && request.salaryData() != null) {
-                        salaryGrade.setSalaryData(
-                                request.salaryData().stream()
-                                        .map(salaryDataMapper::toEntity)
-                                        .toList()
-                        );
-                    }
-                    return salaryGrade;
-                })
-                .toList();
-
-        var savedSalaryGrades = salaryGradeRepository.saveAll(salaryGradesToSave);
-
-        log.debug("Saved {} salary grades in batch", savedSalaryGrades.size());
-
-        return savedSalaryGrades.stream()
+                            if (includeSalaryData && request.salaryData() != null) {
+                                salaryGrade.setSalaryData(
+                                        request.salaryData().stream()
+                                                .map(salaryDataMapper::toEntity)
+                                                .toList()
+                                );
+                            }
+                            return salaryGrade;
+                        })
+                        .toList())
+                .stream()
                 .map(savedSalaryGrade -> {
                     auditUtil.audit(
                             CREATE,

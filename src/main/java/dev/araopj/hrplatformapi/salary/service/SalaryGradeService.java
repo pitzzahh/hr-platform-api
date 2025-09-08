@@ -43,9 +43,9 @@ public interface SalaryGradeService {
      * @param id                the unique ID of the salary grade record
      * @param includeSalaryData whether to include associated salary data in the response
      * @return an {@link Optional} containing the {@link SalaryGradeResponse} if found, or empty if not found
-     * @throws BadRequestException if the provided ID is null or empty
+     * @throws IllegalArgumentException if the provided ID is null or empty
      */
-    Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) throws BadRequestException;
+    Optional<SalaryGradeResponse> findById(String id, boolean includeSalaryData) throws IllegalArgumentException;
 
     /**
      * Creates a batch of new salary grade records based on the provided list of request data.
