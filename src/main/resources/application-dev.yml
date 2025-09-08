@@ -30,3 +30,14 @@ management:
     web:
       exposure:
         include: "*"
+scalar:
+  theme: elysiajs
+  url: http://localhost:8080/v3/api-docs
+  enabled: true
+  path: /docs
+  hide-models: true
+  layout: classic
+
+springdoc:
+  swagger-ui:
+    enabled: false

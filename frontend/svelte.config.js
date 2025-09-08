@@ -10,13 +10,11 @@ const config = {
     },
     kit: {
         output: {
-            bundleStrategy: "inline",
-            preloadStrategy: "preload-js"
+            bundleStrategy: "inline"
         },
         adapter: adapter({
             pages: '../src/main/resources/static',
-            assets: '../src/main/resources/static',
-            fallback: null
+            assets: '../src/main/resources/static'
         })
     },
 };
