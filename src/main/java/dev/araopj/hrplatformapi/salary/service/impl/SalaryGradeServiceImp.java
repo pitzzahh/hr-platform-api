@@ -93,7 +93,11 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
                             if (includeSalaryData && request.salaryData() != null) {
                                 salaryGrade.setSalaryData(
                                         request.salaryData().stream()
-                                                .map(salaryDataMapper::toEntity)
+                                                .map(e -> {
+                                                    var salaryData = salaryDataMapper.toEntity(e);
+                                                    salaryData.setSalaryGrade(salaryGrade);
+                                                    return salaryData;
+                                                })
                                                 .toList()
                                 );
                             }
