@@ -18,9 +18,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -135,7 +137,7 @@ class SalaryDataServiceImpTest {
         }
 
         @Test
-        @DisplayName("Should fail if amount is null")
+        @DisplayName("Should fail if salary grade is null")
         void shouldFailIfSalaryGradeIdIsNull() {
             var invalidRequest = SalaryDataRequest.builder()
                     .step(1)
@@ -144,6 +146,72 @@ class SalaryDataServiceImpTest {
                     .build();
 
             assertThrows(IllegalArgumentException.class, () -> salaryDataService.create(invalidRequest));
+        }
+
+        @Test
+        @DisplayName("Should fail if request is null")
+        void shouldHandleNullRequest() {
+            assertThrows(IllegalArgumentException.class, () -> salaryDataService.create(null));
+        }
+    }
+
+    @Nested
+    @DisplayName("Find Salary Data Tests")
+    class FindSalaryDataTest {
+
+        @Test
+        @DisplayName("Should find salary data when exists")
+        void shouldFindSalaryDataWhenExists() {
+            when(salaryDataRepository.findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId()))
+                    .thenReturn(Optional.of(salaryData));
+            when(salaryDataMapper.toDto(salaryData, salaryGrade)).thenReturn(salaryDataResponse);
+
+            var result = salaryDataService.findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId());
+
+            System.out.println("result = " + result);
+            assertNotNull(result);
+            assertTrue(result.isPresent());
+            assertEquals(salaryDataResponse, result.get());
+            verify(auditUtil, times(1))
+                    .audit(
+                            AuditAction.VIEW,
+                            salaryData.getId(),
+                            Optional.of(redact(salaryData, REDACTED)),
+                            Optional.empty(),
+                            Optional.empty(),
+                            ENTITY_NAME
+                    );
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException if salary data does not exist")
+        void shouldThrowNotFoundExceptionIfSalaryDataDoesNotExist() {
+            when(salaryDataRepository.findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(NotFoundException.class, () -> salaryDataService.findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId()));
+        }
+
+        @Test
+        @DisplayName("Should get all salary data when exists")
+        void shouldGetAllSalaryDataWhenExists() {
+            var page = new PageImpl<>(List.of(salaryData));
+            when(salaryDataRepository.findAll(pageable)).thenReturn(page);
+            when(salaryDataMapper.toDto(salaryData, salaryGrade)).thenReturn(salaryDataResponse);
+
+            var salaryDataResponsePage = salaryDataService.findAll(pageable);
+
+            assertNotNull(salaryDataResponsePage);
+            assertEquals(1, salaryDataResponsePage.getContent().size());
+            assertEquals(salaryDataResponse, salaryDataResponsePage.getContent().getFirst());
+            verify(auditUtil, times(1)).audit(
+                    AuditAction.VIEW,
+                    "[]",
+                    Optional.of(redact(salaryDataResponsePage.getContent(), REDACTED)),
+                    Optional.empty(),
+                    Optional.empty(),
+                    "Page<%s>".formatted(ENTITY_NAME)
+            );
         }
     }
 
