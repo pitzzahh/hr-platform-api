@@ -3,6 +3,7 @@ package dev.araopj.hrplatformapi.salary.service.impl;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
+import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
@@ -87,7 +88,7 @@ public class SalaryGradeServiceImp implements SalaryGradeService {
 
         return salaryGradeRepository.saveAll(salaryGradeRequests.stream()
                         .map(request -> {
-                            var salaryGrade = salaryGradeMapper.toEntity(request);
+                            SalaryGrade salaryGrade = salaryGradeMapper.toEntity(request);
 
                             if (includeSalaryData && request.salaryData() != null) {
                                 salaryGrade.setSalaryData(
