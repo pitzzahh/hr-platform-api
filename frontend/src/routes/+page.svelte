@@ -22,10 +22,27 @@
 	type ApiResponse = {
 		timestamp: string;
 		data: SalaryGrade[];
+		pagination: {
+			page: number;
+			size: number;
+			totalElements: number;
+			totalPages: number;
+		};
 	};
 
 	class ApiPoller {
-		response = $state<ApiResponse>({ timestamp: '', data: [] });
+		response = $state<ApiResponse>({
+			timestamp: '',
+			data: [],
+			pagination: {
+				page: 1,
+				size: 10,
+				totalElements: 0,
+				totalPages: 0
+			}
+		});
+		page = $state<number>(1);
+		size = $state<number>(10);
 		private intervalId: number | null = null;
 		private readonly intervalMs: number;
 
@@ -35,12 +52,19 @@
 
 		async fetchData() {
 			try {
-				const res = await fetch('/api/v1/salary-grades?includeSalaryData=true');
+				const res = await fetch(
+					`/api/v1/salary-grades?page=${this.page}&size=${this.size}&includeSalaryData=true`
+				);
 				this.response = (await res.json()) as ApiResponse;
 				console.log('Fetched data:', this.response);
 			} catch (error) {
 				console.error('API fetch error:', error);
 			}
+		}
+
+		setPage(newPage: number) {
+			this.page = newPage;
+			this.fetchData();
 		}
 
 		start() {
@@ -69,6 +93,7 @@
 		name="description"
 		content="View and manage salary grades and compensation data for HR platform"
 	/>
+	<script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -103,7 +128,7 @@
 								d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
 							/>
 						</svg>
-						Total Grades: {poller.response.data.length}
+						Total Grades: {poller.response.pagination.totalElements}
 					</div>
 				</div>
 			</div>
@@ -130,7 +155,7 @@
 									Salary Grade {response.salaryGrade}
 								</h2>
 								<div class="flex items-center gap-2 text-blue-100">
-									<svg class="w-4 h-4" stroke="currentColor" viewBox="0 0 2424">
+									<svg class="w-4 h-4" stroke="currentColor" viewBox="0 0 24 24">
 										<path
 											stroke-linecap="round"
 											stroke-linejoin="round"
@@ -230,6 +255,29 @@
 					</div>
 				{/each}
 			</div>
+
+			<!-- Pagination -->
+			{#if poller.response.pagination.totalPages > 1}
+				<div class="mt-8 flex justify-center items-center gap-2">
+					<button
+						onclick={() => poller.setPage(poller.page - 1)}
+						disabled={poller.page === 1}
+						class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+					>
+						Previous
+					</button>
+					<span class="text-gray-600"
+						>Page {poller.response.pagination.page} of {poller.response.pagination.totalPages}</span
+					>
+					<button
+						onclick={() => poller.setPage(poller.page + 1)}
+						disabled={poller.page === poller.response.pagination.totalPages}
+						class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+					>
+						Next
+					</button>
+				</div>
+			{/if}
 
 			<!-- Footer Info -->
 			<div class="mt-12 text-center">
