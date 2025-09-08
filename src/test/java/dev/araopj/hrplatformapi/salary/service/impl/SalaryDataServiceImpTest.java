@@ -215,4 +215,49 @@ class SalaryDataServiceImpTest {
         }
     }
 
+    @Nested
+    @DisplayName("SalaryDataServiceImp FindById Tests")
+    class FindByIdTests {
+
+        @Test
+        @DisplayName("Should find by id when exists")
+        void shouldFindByIdWhenExists() {
+            when(salaryDataRepository.findById(salaryData.getId()))
+                    .thenReturn(Optional.of(salaryData));
+            when(salaryDataMapper.toDto(salaryData, salaryGrade)).thenReturn(salaryDataResponse);
+
+            var result = salaryDataService.findById(salaryData.getId());
+
+            assertNotNull(result);
+            assertTrue(result.isPresent());
+            assertEquals(salaryDataResponse, result.get());
+            verify(auditUtil, times(1))
+                    .audit(
+                            salaryData.getId(),
+                            ENTITY_NAME
+                    );
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException if salary data does not exist")
+        void shouldThrowNotFoundExceptionIfSalaryDataDoesNotExist() {
+            when(salaryDataRepository.findById(salaryData.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(NotFoundException.class, () -> salaryDataService.findById(salaryData.getId()));
+        }
+
+        @Test
+        @DisplayName("Should handle null id")
+        void shouldHandleNullId() {
+            assertThrows(IllegalArgumentException.class, () -> salaryDataService.findById(null));
+        }
+
+        @Test
+        @DisplayName("Should handle empty id")
+        void shouldHandleEmptyId() {
+            assertThrows(IllegalArgumentException.class, () -> salaryDataService.findById(""));
+        }
+    }
+
 }
