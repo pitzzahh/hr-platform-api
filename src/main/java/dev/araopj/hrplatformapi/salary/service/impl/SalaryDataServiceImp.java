@@ -17,6 +17,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 import java.util.Set;
@@ -96,10 +97,15 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public SalaryDataResponse create(
-            SalaryDataRequest salaryDataRequest
+            @Validated SalaryDataRequest salaryDataRequest
     ) {
 
         final var SALARY_GRADE_ID = salaryDataRequest.salaryGradeId();
+
+        if (SALARY_GRADE_ID == null ||
+                (SALARY_GRADE_ID.trim().isEmpty())) {
+            throw new IllegalArgumentException("Salary grade ID cannot be null or blank");
+        }
         salaryDataRepository.findByStepAndAmountAndSalaryGradeId(salaryDataRequest.step(), salaryDataRequest.amount(), SALARY_GRADE_ID)
                 .ifPresent(sd -> {
                     throw new IllegalArgumentException(

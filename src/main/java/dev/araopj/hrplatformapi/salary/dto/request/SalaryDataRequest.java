@@ -13,7 +13,8 @@ public record SalaryDataRequest(
         int step,
         @NotNull(message = "amount is required")
         double amount,
-        @NotBlank(message = "salaryGradeId is required")
+        @NotBlank(message = "salaryGradeId cannot be blank")
+        @NotNull(message = "salaryGradeId cannot be null")
         String salaryGradeId
 ) {
     @Builder
