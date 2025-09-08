@@ -11,7 +11,7 @@ public class AuditMapper {
     /**
      * Converts an {@link AuditRequest} to an {@link Audit} entity.
      *
-     * @param request the audit request DTO (e.g., {@link AuditRequest}, {@link AuditRequest.WithChanges}, {@link AuditRequest.WithoutChanges})
+     * @param request the audit request DTO
      * @return the corresponding audit entity
      */
     public Audit toEntity(AuditRequest request) {
@@ -22,6 +22,41 @@ public class AuditMapper {
                 .oldData(request.oldData())
                 .newData(request.newData())
                 .changes(request.changes())
+                .performedBy(request.performedBy())
+                .build();
+    }
+
+    /**
+     * Converts an {@link AuditRequest.WithChanges} to an {@link Audit} entity.
+     *
+     * @param request the audit request DTO with changes
+     * @return the corresponding audit entity
+     */
+    public Audit toEntity(AuditRequest.WithChanges request) {
+        return Audit.builder()
+                .entityType(request.entityType())
+                .action(request.action())
+                .entityId(request.entityId())
+                .oldData(request.oldData())
+                .newData(request.newData())
+                .changes(request.changes())
+                .performedBy(request.performedBy())
+                .build();
+    }
+
+    /**
+     * Converts an {@link AuditRequest.WithoutChanges} to an {@link Audit} entity.
+     *
+     * @param request the audit request DTO without changes
+     * @return the corresponding audit entity
+     */
+    public Audit toEntity(AuditRequest.WithoutChanges request) {
+        return Audit.builder()
+                .entityType(request.entityType())
+                .action(request.action())
+                .entityId(request.entityId())
+                .oldData(request.oldData())
+                .newData(request.newData())
                 .performedBy(request.performedBy())
                 .build();
     }
