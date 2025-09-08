@@ -9,6 +9,8 @@ import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
+import dev.araopj.hrplatformapi.utils.DiffUtil;
+import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,14 +19,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +48,7 @@ class SalaryDataServiceImpTest {
 
     private SalaryGrade salaryGrade;
     private SalaryDataRequest salaryDataRequest;
+    private SalaryDataRequest.WithoutSalaryGradeId salaryDataRequestWithoutSalaryGradeId;
     private SalaryData salaryData;
     private SalaryDataResponse salaryDataResponse;
     private Pageable pageable;
@@ -68,6 +70,13 @@ class SalaryDataServiceImpTest {
                 .step(1)
                 .amount(1000)
                 .salaryGradeId(salaryGrade.getId())
+                .build();
+
+        salaryDataRequestWithoutSalaryGradeId = SalaryDataRequest
+                .WithoutSalaryGradeId
+                .builder()
+                .step(1)
+                .amount(1000)
                 .build();
 
         salaryData = SalaryData.builder()
@@ -271,9 +280,155 @@ class SalaryDataServiceImpTest {
                             "non-existent-id",
                             ENTITY_NAME
                     );
+        }
+    }
 
-            verify(salaryDataRepository, times(1))
-                    .findById("non-existent-id");
+    @Nested
+    @DisplayName("Update Salary Data Tests")
+    class UpdateSalaryDataTest {
+
+        @Test
+        @DisplayName("Should update salary data successfully when valid request")
+        void shouldUpdateSalaryDataSuccessfullyWhenValidRequest() {
+            var salaryDataRequest = SalaryDataRequest
+                    .WithoutSalaryGradeId
+                    .builder()
+                    .step(2)
+                    .amount(2000)
+                    .build();
+
+            var entityRequest = SalaryData.builder()
+                    .step(salaryDataRequest.step())
+                    .amount(salaryDataRequest.amount())
+                    .build();
+
+            var salaryDataToUpdate = SalaryData.builder()
+                    .id(salaryData.getId())
+                    .step(salaryDataRequest.step())
+                    .amount(salaryDataRequest.amount())
+                    .salaryGrade(salaryGrade)
+                    .build();
+
+            var updatedSalaryDataResponse = SalaryDataResponse.builder()
+                    .id(salaryData.getId())
+                    .step(salaryDataRequest.step())
+                    .amount(salaryDataRequest.amount())
+                    .build();
+
+            var diffResult = new HashMap<>(
+                    Map.of(
+                            "step", List.of(salaryData.getStep(), salaryDataRequest.step()),
+                            "amount", List.of(salaryData.getAmount(), salaryDataRequest.amount())
+                    )
+            );
+
+            try (MockedStatic<MergeUtil> mergeUtilMock = mockStatic(MergeUtil.class);
+                 MockedStatic<DiffUtil> diffUtilMock = mockStatic(DiffUtil.class)) {
+                mergeUtilMock.when(() -> MergeUtil.merge(salaryData, entityRequest))
+                        .thenReturn(salaryDataToUpdate);
+                diffUtilMock.when(() -> DiffUtil.diff(salaryData, salaryDataToUpdate))
+                        .thenReturn(diffResult);
+
+                when(salaryDataRepository.findById(salaryData.getId())).thenReturn(Optional.of(salaryData));
+                when(salaryDataMapper.toEntity(salaryDataRequest)).thenReturn(entityRequest);
+                when(salaryDataRepository.save(salaryDataToUpdate)).thenReturn(salaryDataToUpdate);
+                when(salaryDataMapper.toDto(salaryDataToUpdate, salaryGrade)).thenReturn(updatedSalaryDataResponse);
+
+                var salaryDataUpdateResult = salaryDataService.update(salaryData.getId(), salaryDataRequest);
+
+                assertNotNull(salaryDataUpdateResult);
+                assertEquals(updatedSalaryDataResponse, salaryDataUpdateResult);
+                assertEquals(salaryDataRequest.step(), salaryDataUpdateResult.step());
+                assertEquals(salaryDataRequest.amount(), salaryDataUpdateResult.amount());
+                verify(auditUtil, times(1)).audit(
+                        AuditAction.UPDATE,
+                        salaryData.getId(),
+                        Optional.of(redact(salaryData, REDACTED)),
+                        redact(salaryDataToUpdate, REDACTED),
+                        Optional.of(redact(diffResult, REDACTED)),
+                        ENTITY_NAME
+                );
+                verify(salaryDataRepository).findById(salaryData.getId());
+                verify(salaryDataRepository).save(salaryDataToUpdate);
+            }
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException if salary data does not exist")
+        void shouldHandleNullId() {
+            assertThrows(IllegalArgumentException.class, () -> salaryDataService.update(null, salaryDataRequestWithoutSalaryGradeId));
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException if id is empty")
+        void shouldThrowIllegalArgumentExceptionIfIdIsEmpty() {
+            assertThrows(IllegalArgumentException.class, () -> salaryDataService.update("", salaryDataRequestWithoutSalaryGradeId));
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException if request is null")
+        void shouldThrowIllegalArgumentExceptionIfRequestIsNull() {
+            assertThrows(IllegalArgumentException.class, () -> salaryDataService.update(salaryData.getId(), null));
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException if salary data to update does not exist")
+        void shouldThrowNotFoundExceptionIfSalaryDataToUpdateDoesNotExist() {
+            when(salaryDataRepository.findById(salaryData.getId())).thenReturn(Optional.empty());
+            assertThrows(NotFoundException.class, () -> salaryDataService.update(salaryData.getId(), salaryDataRequestWithoutSalaryGradeId));
+
+            verify(salaryDataRepository).findById(salaryData.getId());
+            verify(salaryDataRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Delete Salary Data Tests")
+    class DeleteSalaryDataTest {
+
+        @Test
+        @DisplayName("Should delete salary data successfully when exists")
+        void shouldDeleteSalaryDataSuccessfullyWhenExists() {
+            when(salaryDataRepository.findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId()))
+                    .thenReturn(Optional.of(salaryData));
+            when(salaryDataMapper.toDto(salaryData, salaryGrade)).thenReturn(salaryDataResponse);
+
+            doNothing().when(salaryDataRepository).deleteById(salaryData.getId());
+
+            var result = salaryDataService.delete(salaryData.getId(), salaryGrade.getId());
+
+            assertTrue(result);
+            verify(auditUtil, times(1))
+                    .audit(
+                            AuditAction.VIEW,
+                            salaryData.getId(),
+                            Optional.of(redact(salaryData, REDACTED)),
+                            Optional.empty(),
+                            Optional.empty(),
+                            ENTITY_NAME
+                    );
+            verify(auditUtil, times(1)).audit(
+                    AuditAction.DELETE,
+                    salaryData.getId(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    ENTITY_NAME
+            );
+            verify(salaryDataRepository).findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId());
+            verify(salaryDataRepository).deleteById(salaryData.getId());
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException if salary data does not exist")
+        void shouldThrowNotFoundExceptionIfSalaryDataDoesNotExist() {
+            when(salaryDataRepository.findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(NotFoundException.class, () -> salaryDataService.delete(salaryData.getId(), salaryGrade.getId()));
+
+            verify(salaryDataRepository).findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId());
+            verify(salaryDataRepository, never()).deleteById(any());
         }
     }
 

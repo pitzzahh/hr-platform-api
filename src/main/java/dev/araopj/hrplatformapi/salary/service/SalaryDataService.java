@@ -3,7 +3,6 @@ package dev.araopj.hrplatformapi.salary.service;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -74,11 +73,11 @@ public interface SalaryDataService {
      * @param id                the unique ID of the salary data record to update
      * @param salaryDataRequest the {@link SalaryDataRequest.WithoutSalaryGradeId} containing updated salary data details
      * @return the updated {@link SalaryDataResponse} object
-     * @throws BadRequestException if the request is invalid (e.g., missing ID or invalid salary grade)
-     * @throws NotFoundException   if the salary data record or salary grade does not exist
+     * @throws IllegalArgumentException if the request is invalid (e.g., missing ID or invalid salary grade)
+     * @throws NotFoundException        if the salary data record or salary grade does not exist
      */
     SalaryDataResponse update(String id, SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest)
-            throws BadRequestException;
+            throws IllegalArgumentException;
 
     /**
      * Deletes a salary data record by its ID and associated salary grade ID.

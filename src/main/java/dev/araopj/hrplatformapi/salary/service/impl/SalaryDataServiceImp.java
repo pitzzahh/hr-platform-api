@@ -10,9 +10,9 @@ import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public Optional<SalaryDataResponse> findById(String id) {
-        if(id == null || id.isEmpty()) {
+        if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
         auditUtil.audit(
@@ -70,24 +70,19 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public Optional<SalaryDataResponse> findByIdAndSalaryGradeId(String id, String salaryGradeId) {
-        var optionalSalaryData = salaryDataRepository.findByIdAndSalaryGradeId(id, salaryGradeId);
-        if (optionalSalaryData.isEmpty()) {
-            log.warn("{} not found with id {} and salaryGradeId {}", ENTITY_NAME, id, salaryGradeId);
-            throw new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId");
-        }
+        var salaryData = salaryDataRepository.findByIdAndSalaryGradeId(id, salaryGradeId)
+                .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId"));
 
         auditUtil.audit(
                 VIEW,
                 id,
-                Optional.of(redact(optionalSalaryData.get(), REDACTED)),
+                Optional.of(redact(salaryData, REDACTED)),
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
         );
 
-        return Optional.of(optionalSalaryData
-                .map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()))
-                .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId")));
+        return Optional.of(salaryDataMapper.toDto(salaryData, salaryData.getSalaryGrade()));
     }
 
     @Override
@@ -136,15 +131,20 @@ public class SalaryDataServiceImp implements SalaryDataService {
     @Override
     public SalaryDataResponse update(
             String id,
-            SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest
-    ) throws BadRequestException {
+            @Valid SalaryDataRequest.WithoutSalaryGradeId salaryDataRequest
+    ) throws IllegalArgumentException {
 
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("SalaryData ID must be provided as path");
+            throw new IllegalArgumentException("SalaryData ID must be provided as path");
+        }
+
+        if (salaryDataRequest == null) {
+            throw new IllegalArgumentException("salaryDataRequest cannot be null");
         }
 
         final var ORIGINAL_SALARY_DATA = salaryDataRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, SALARY_DATA));
+
         var SALARY_DATA = MergeUtil.merge(ORIGINAL_SALARY_DATA,
                 salaryDataMapper.toEntity(salaryDataRequest)
         );
@@ -163,20 +163,12 @@ public class SalaryDataServiceImp implements SalaryDataService {
 
     @Override
     public boolean delete(String id, String salaryGradeId) {
-        var data = findByIdAndSalaryGradeId(id, salaryGradeId);
-        if (data.isEmpty()) {
-            log.warn("Salary data with id {} and salaryGradeId {} not found", id, salaryGradeId);
-            return false;
-        }
-        if (!salaryDataRepository.existsById(id)) {
-            log.warn("Salary data with id {} not found for deletion", id);
-            return false;
-        }
+        findByIdAndSalaryGradeId(id, salaryGradeId).orElseThrow();
         salaryDataRepository.deleteById(id);
         auditUtil.audit(
                 DELETE,
                 id,
-                Optional.of(redact(data, REDACTED)),
+                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 ENTITY_NAME
