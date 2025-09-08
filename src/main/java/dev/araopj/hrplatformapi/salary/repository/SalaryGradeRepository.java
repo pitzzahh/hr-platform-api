@@ -15,7 +15,7 @@ public interface SalaryGradeRepository extends JpaRepository<SalaryGrade, String
 
     Optional<SalaryGrade> findBySalaryGradeAndEffectiveDate(int salaryGrade, LocalDate localDate);
 
-    @Query("SELECT sg FROM SalaryGrade sg LEFT JOIN FETCH sg.salaryData")
+    @Query("SELECT DISTINCT sg FROM SalaryGrade sg LEFT JOIN FETCH sg.salaryData")
     Page<SalaryGrade> findAllWithSalaryData(Pageable pageable);
 
     @Query("SELECT sg FROM SalaryGrade sg LEFT JOIN FETCH sg.salaryData WHERE sg.id = ?1")
