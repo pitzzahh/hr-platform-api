@@ -12,7 +12,6 @@ import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
-import dev.araopj.hrplatformapi.utils.formatter.StringFormatter;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
@@ -135,11 +134,7 @@ public class EmployeeServiceImp implements EmployeeService {
                         employee.getEmployeeNumber(),
                         employee.getEmail(),
                         employee.getTaxPayerIdentificationNumber(),
-                        StringFormatter.formatEmployeeName(
-                                employee.getFirstName(),
-                                employee.getMiddleName(),
-                                employee.getLastName()
-                        )
+                        employee.fullName()
                 ));
             });
         }
