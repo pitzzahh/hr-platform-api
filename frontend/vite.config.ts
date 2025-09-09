@@ -5,6 +5,16 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
+    server: {
+        proxy: {
+            // Forward /api/v1/* calls to Spring Boot backend
+            '/api/v1': {
+                target: 'http://localhost:8080',
+                changeOrigin: true,
+                secure: false,
+            }
+        }
+    },
     test: {
         expect: { requireAssertions: true },
         projects: [
