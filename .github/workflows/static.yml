@@ -37,12 +37,18 @@ jobs:
       - name: Create env
         run: |
           echo "VITE_API_BASE=${{ secrets.VITE_API_BASE }}" >> .env
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install
+      - name: Build static content
+        run: bun build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Upload the contents of the static directory to GitHub Pages
           path: 'src/main/resources/static'
       - name: Deploy to GitHub Pages
         id: deployment
