@@ -88,6 +88,8 @@
 </script>
 
 <script lang="ts">
+    import {formatCurrency, formatDate, formatDateTime} from "$lib/utils/format";
+
     $effect.pre(() => {
         poller.start();
         return () => poller.stop();
@@ -122,7 +124,7 @@
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                                 />
                             </svg>
-                            Last Updated: {new Date(poller.response.timestamp).toLocaleString()}
+                            Last Updated: {formatDateTime(new Date(poller.response.timestamp))}
                         </div>
                     {/if}
                     <div class="flex items-center gap-2">
@@ -169,7 +171,7 @@
                                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                         />
                                     </svg>
-                                    Effective: {new Date(response.effectiveDate).toLocaleDateString()}
+                                    Effective: {formatDate(response.effectiveDate)}
                                 </div>
                             </div>
                         </div>
@@ -223,17 +225,13 @@
                                                     </div>
                                                     <div>
                                                         <p class="font-semibold text-gray-900 text-lg">
-                                                            ${salary.amount.toLocaleString('PHP', {
-                                                            minimumFractionDigits: 2,
-                                                            maximumFractionDigits: 2,
-                                                            style: "currency"
-                                                        })}
+                                                            {formatCurrency(salary.amount)}
                                                         </p>
                                                         <p class="text-sm text-gray-600">Step {salary.step}</p>
                                                     </div>
                                                 </div>
                                                 <div class="text-sm text-gray-500">
-                                                    Created: {new Date(salary.createdAt).toLocaleDateString()}
+                                                    Created: {formatDate((salary.createdAt))}
                                                 </div>
                                             </div>
                                         </div>
