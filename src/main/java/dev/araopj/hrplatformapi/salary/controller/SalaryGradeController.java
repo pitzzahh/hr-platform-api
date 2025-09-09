@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,19 +87,25 @@ public class SalaryGradeController {
             @Valid
             @RequestParam(defaultValue = "false", required = false)
             @Parameter(description = "Include associated salary data in the response", example = "false")
-            boolean includeSalaryData
+            boolean includeSalaryData,
+            @Parameter(description = "Sorting criteria in the format: property,(asc|desc). Default is salaryGrade,asc", example = "salaryGrade,asc")
+            @RequestParam(defaultValue = "salaryGrade,asc") String sort
     ) {
-        log.debug("Fetching all salary grades with includeSalaryData: {}", includeSalaryData);
-        final var SALARY_GRADES_PAGE = salaryGradeService.findAll(PageRequest.of(page - 1, size), includeSalaryData);
+        log.debug("Fetching all salary grades with includeSalaryData: {}, sort: {}", includeSalaryData, sort);
+        var sortParams = sort.split(",");
+        var direction = Sort.Direction.fromString(sortParams[1]);
+        var sortBy = sortParams[0];
+        var pageable = PageRequest.of(page - 1, size, Sort.by(direction, sortBy));
+        final var salaryGradesPage = salaryGradeService.findAll(pageable, includeSalaryData);
 
         return ResponseEntity.ok(
                 StandardApiResponse.success(
-                        SALARY_GRADES_PAGE.getContent(),
+                        salaryGradesPage.getContent(),
                         PaginationMeta.builder()
-                                .page(SALARY_GRADES_PAGE.getNumber() + 1)
-                                .size(SALARY_GRADES_PAGE.getSize())
-                                .totalElements(SALARY_GRADES_PAGE.getTotalElements())
-                                .totalPages(SALARY_GRADES_PAGE.getTotalPages())
+                                .page(salaryGradesPage.getNumber() + 1)
+                                .size(salaryGradesPage.getSize())
+                                .totalElements(salaryGradesPage.getTotalElements())
+                                .totalPages(salaryGradesPage.getTotalPages())
                                 .build()
                 )
         );
