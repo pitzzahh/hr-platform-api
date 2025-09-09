@@ -50,7 +50,6 @@
         constructor(intervalMs: number = 1500) {
             this.intervalMs = intervalMs;
             this.apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:8080'; // Fallback to dev URL
-            console.log('API Base URL:', this.apiBase);
         }
 
         async fetchData() {
@@ -66,7 +65,6 @@
                         salaryData: [...grade.salaryData].sort((a, b) => a.step - b.step)
                     }))
                 };
-                console.log('Fetched data:', this.response);
             } catch (error) {
                 console.error('API fetch error:', error);
             }
