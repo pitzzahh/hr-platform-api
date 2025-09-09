@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: cd frontend && bun install
       - name: Build static content
-        run: cd frontend && bun build
+        run: cd frontend && bun run build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
