@@ -231,7 +231,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="text-sm text-gray-500">
-                                                    Created: {formatDate((salary.createdAt))}
+                                                    Created: {formatDateTime((salary.createdAt))}
                                                 </div>
                                             </div>
                                         </div>
