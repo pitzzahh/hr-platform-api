@@ -185,6 +185,24 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleIllegalArgument(IllegalArgumentException ex) {
+        log.warn("""
+                \nERROR: Illegal Argument
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: An illegal argument was provided to a method""", ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(StandardApiResponse.failure(
+                                auditUtil.audit(
+                                        ex,
+                                        ex.getMessage(),
+                                        Optional.empty())
+                        )
+                );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleGenericException(Exception ex) {
         log.error("""
