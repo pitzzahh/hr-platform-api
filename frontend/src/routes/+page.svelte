@@ -45,15 +45,19 @@
         size = $state<number>(10);
         private intervalId: number | null = null;
         private readonly intervalMs: number;
+        private readonly apiBase: string;
 
         constructor(intervalMs: number = 1500) {
             this.intervalMs = intervalMs;
+            this.apiBase = import.meta.env.MODE === 'development'
+                ? 'http://localhost:8080'
+                : import.meta.env.VITE_API_BASE || 'https://your-backend.com'; // Fallback to prod URL
         }
 
         async fetchData() {
             try {
                 const res = await fetch(
-                    `/api/v1/salary-grades?page=${this.page}&size=${this.size}&includeSalaryData=true`
+                    `${this.apiBase}/api/v1/salary-grades?page=${this.page}&size=${this.size}&includeSalaryData=true`
                 );
                 const apiResponse = (await res.json()) as ApiResponse;
                 this.response = {
