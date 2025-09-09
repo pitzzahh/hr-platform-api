@@ -49,9 +49,8 @@
 
         constructor(intervalMs: number = 1500) {
             this.intervalMs = intervalMs;
-            this.apiBase = import.meta.env.MODE === 'development'
-                ? 'http://localhost:8080'
-                : import.meta.env.VITE_API_BASE || 'https://your-backend.com'; // Fallback to prod URL
+            this.apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:8080'; // Fallback to dev URL
+            console.log('API Base URL:', this.apiBase);
         }
 
         async fetchData() {
