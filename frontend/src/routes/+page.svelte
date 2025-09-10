@@ -54,6 +54,7 @@
 
         async fetchData() {
             try {
+                console.log("Fetching data from API...");
                 const res = await fetch(
                     `${this.apiBase}/api/v1/salary-grades?page=${this.page}&size=${this.size}&includeSalaryData=true`
                 );
@@ -81,6 +82,7 @@
         }
 
         stop() {
+            console.log("Stopping poller", this.intervalId);
             if (this.intervalId) clearInterval(this.intervalId);
         }
     }
@@ -90,8 +92,10 @@
 
 <script lang="ts">
     import {formatCurrency, formatDate, formatDateTime} from "$lib/utils/format";
+    import {onMount} from "svelte";
 
-    $effect.pre(() => {
+    onMount(() => {
+        console.log("Mounting component, starting poller");
         poller.start();
         return () => poller.stop();
     });
@@ -283,6 +287,10 @@
                         Next
                     </button>
                 </div>
+                <button
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        onclick={() => poller.stop()}>STOP POLLING
+                </button>
             {/if}
 
             <!-- Footer Info -->
