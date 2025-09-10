@@ -289,6 +289,10 @@
                 </div>
                 <button
                         class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        onclick={() => poller.start()}>START POLLING
+                </button>
+                <button
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
                         onclick={() => poller.stop()}>STOP POLLING
                 </button>
             {/if}
