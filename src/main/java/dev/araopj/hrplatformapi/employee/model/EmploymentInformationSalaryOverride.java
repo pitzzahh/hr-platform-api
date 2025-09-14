@@ -21,7 +21,7 @@ public class EmploymentInformationSalaryOverride extends EntityTimestamp impleme
     private String id;
 
     @Column(nullable = false)
-    private Double salary;
+    private double salary;
 
     @Column(nullable = false)
     private LocalDate effectiveDate;
