@@ -5,11 +5,11 @@ import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
 import dev.araopj.hrplatformapi.employee.service.WorkplaceService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.mappers.WorkplaceMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -76,9 +76,9 @@ public class WorkplaceServiceImp implements WorkplaceService {
     public WorkplaceResponse update(
             String id,
             WorkplaceRequest workplaceRequest
-    ) throws BadRequestException {
+    ) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Workplace ID must be provided as path");
+            throw new InvalidRequestException("Workplace ID must be provided as path");
         }
         return WorkplaceMapper.toDto(workplaceRepository.save(
                 WorkplaceMapper.toEntity(workplaceRequest)
