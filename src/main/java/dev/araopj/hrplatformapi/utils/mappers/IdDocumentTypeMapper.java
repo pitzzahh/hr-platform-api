@@ -24,6 +24,18 @@ public class IdDocumentTypeMapper {
                 .build();
     }
 
+    public IdDocumentTypeRequest toDto(IdDocumentType idDocumentType) {
+        if (idDocumentType == null) {
+            throw new IllegalArgumentException("idDocumentType cannot be null");
+        }
+
+        return IdDocumentTypeRequest.builder()
+                .code(idDocumentType.getCode())
+                .name(idDocumentType.getName())
+                .description(idDocumentType.getDescription())
+                .build();
+    }
+
 
     public IdDocumentType toEntity(IdDocumentTypeRequest idDocumentTypeRequest) {
         if (idDocumentTypeRequest == null) {
