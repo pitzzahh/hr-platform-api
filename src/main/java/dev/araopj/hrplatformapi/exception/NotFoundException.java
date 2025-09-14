@@ -39,6 +39,7 @@ public class NotFoundException extends EntityNotFoundException {
         POSITION("POSITION", "Position"),
         AUDIT("AUDIT", "Audit"),
         USER("USER", "User"),
+        SALARY("SALARY", "Salary"),
         SALARY_DATA("SALARY_DATA", "Salary Data"),
         SALARY_GRADE("SALARY_GRADE", "Salary Grade"),
         ID_DOCUMENT_TYPE("ID_DOCUMENT_TYPE", "IdDocument Type"),

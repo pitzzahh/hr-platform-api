@@ -203,6 +203,28 @@ public class GlobalExceptionHandler {
                 );
     }
 
+
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleInvalidRequest(InvalidRequestException ex) {
+        log.warn("""
+                \nERROR: Invalid Request
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: Invalid request parameters or data""", ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(StandardApiResponse.failure(
+                        auditUtil.audit(
+                                ex,
+                                ex.getMessage(),
+                                Optional.of(ApiError.builder()
+                                        .message("Invalid request")
+                                        .details(List.of(ex.getMessage()))
+                                        .build())
+                        )
+                ));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardApiResponse<ApiError>> handleGenericException(Exception ex) {
         log.error("""
