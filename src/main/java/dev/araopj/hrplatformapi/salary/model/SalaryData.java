@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.io.Serializable;
 
+@Deprecated
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor

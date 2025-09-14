@@ -11,6 +11,18 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Entity representing a Salary Grade in the HR platform.
+ * <p>
+ * <b>IMPORTANT: DEPRECATED</b> To be moved to a microservice with {@link SalaryData}
+ * </p>
+ * This entity captures the details of salary grades, including legal basis,
+ * tranche, effective date, and associated salary data. It extends {@link EntityTimestamp}
+ * to include automatic timestamping for creation and updates.
+ *
+ * @deprecated This entity is deprecated and may be removed in future versions.
+ */
+@Deprecated
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor

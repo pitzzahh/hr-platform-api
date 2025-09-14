@@ -10,6 +10,19 @@ import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
+/**
+ * Entity representing an audit record in the HR platform.
+ * <p>
+ * <b>IMPORTANT: FOR REMOVAL</b> in favor of better auditing solutions like <b>Zipkin</b> or <b>OpenTelemetry</b>.
+ * </p>
+ * This entity captures audit information for actions performed on various entities,
+ * including the type of action, the entity affected, old and new data states, and
+ * metadata about who performed the action and when.
+ *
+ * @see AuditAction
+ * @see JsonNode
+ */
+@Deprecated
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor

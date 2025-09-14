@@ -7,6 +7,7 @@ import dev.araopj.hrplatformapi.salary.service.impl.SalaryGradeServiceImp;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,6 +42,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/salary-grades")
+@Hidden
 public class SalaryGradeController {
 
     private final SalaryGradeServiceImp salaryGradeService;

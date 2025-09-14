@@ -7,6 +7,7 @@ import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,6 +38,7 @@ import java.util.List;
         name = "Salary Data",
         description = "Endpoints for managing salary data associated with specific salary grades."
 )
+@Hidden
 public class SalaryDataController {
 
     private final SalaryDataService salaryDataService;
