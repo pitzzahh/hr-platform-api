@@ -59,4 +59,8 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     @OneToOne
     @JoinColumn(name = "workplace_id", nullable = false)
     private Workplace workplace;
+
+    @OneToOne
+    @JoinColumn(name = "salary_id", nullable = false)
+    private Salary salary;
 }
