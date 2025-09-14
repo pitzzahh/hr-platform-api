@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -28,16 +28,18 @@ public interface EmploymentInformationService {
      * @param employeeId the unique id of the employee
      * @param pageable   the pagination and sorting parameters
      * @return a {@link Page} containing {@link EmploymentInformationResponse} objects associated with the specified employee ID
+     * @throws InvalidRequestException if the provided employee ID is invalid
      */
-    Page<EmploymentInformationResponse> findByEmployeeId(String employeeId, Pageable pageable);
+    Page<EmploymentInformationResponse> findByEmployeeId(String employeeId, Pageable pageable) throws InvalidRequestException;
 
     /**
      * Retrieves an employment information record by its unique id.
      *
      * @param id the unique id of the employment information
      * @return an {@link Optional} containing the {@link EmploymentInformationResponse} if found, or empty if not found
+     * @throws InvalidRequestException if the provided id is invalid
      */
-    Optional<EmploymentInformationResponse> findById(String id);
+    Optional<EmploymentInformationResponse> findById(String id) throws InvalidRequestException;
 
     /**
      * Creates a new employment information record based on the provided request data.
@@ -45,8 +47,9 @@ public interface EmploymentInformationService {
      * @param id                           the unique id of the employee to associate with the employment information
      * @param employmentInformationRequest the request object containing employment information details
      * @return the created {@link EmploymentInformationResponse} object
+     * @throws InvalidRequestException if the provided id is invalid
      */
-    EmploymentInformationResponse create(String id, EmploymentInformationRequest employmentInformationRequest);
+    EmploymentInformationResponse create(String id, EmploymentInformationRequest employmentInformationRequest) throws InvalidRequestException;
 
     /**
      * Updates an existing employment information record with the provided request data.
@@ -54,8 +57,9 @@ public interface EmploymentInformationService {
      * @param id                           the unique id of the employment information to update
      * @param employmentInformationRequest the request object containing updated employment information details
      * @return the updated {@link EmploymentInformationResponse} object
+     * @throws InvalidRequestException if the provided id is invalid or the employment information cannot be updated
      */
-    EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws BadRequestException;
+    EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws InvalidRequestException;
 
     /**
      * Deletes an employment information record by its unique id.

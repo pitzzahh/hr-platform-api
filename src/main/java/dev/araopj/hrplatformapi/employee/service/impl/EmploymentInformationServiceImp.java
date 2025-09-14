@@ -7,6 +7,7 @@ import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationReposit
 import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.formatter.DateFormatter;
@@ -14,7 +15,6 @@ import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,6 +58,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
     @Override
     public Page<EmploymentInformationResponse> findByEmployeeId(String employeeId, Pageable pageable) {
+        if (employeeId == null || employeeId.isEmpty()) {
+            throw new InvalidRequestException("Employee ID must be provided");
+        }
         employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException(employeeId, EMPLOYEE));
 
@@ -73,6 +76,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
     @Override
     public Optional<EmploymentInformationResponse> findById(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new InvalidRequestException("EmploymentInformation ID must be provided");
+        }
         return Optional.ofNullable(employmentInformationRepository.findById(id)
                 .map(employmentInformation -> EmploymentInformationMapper.toDto(
                                 employmentInformation,
@@ -127,9 +133,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     }
 
     @Override
-    public EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws BadRequestException {
+    public EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("EmploymentInformation ID must be provided as path");
+            throw new InvalidRequestException("Employee ID must be provided as path");
         }
 
         final var ORIGINAL_EMPLOYMENT_INFORMATION = employmentInformationRepository.findById(id)
