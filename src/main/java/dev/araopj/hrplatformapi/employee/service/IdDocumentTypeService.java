@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentTypeResponse;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +29,9 @@ public interface IdDocumentTypeService {
      *
      * @param id the ID of the idDocument type to retrieve.
      * @return an {@link Optional} containing the {@link IdDocumentTypeResponse} if found, or empty if not found.
+     * @throws InvalidRequestException if the provided id is invalid.
      */
-    Optional<IdDocumentTypeResponse> findById(String id);
+    Optional<IdDocumentTypeResponse> findById(String id) throws InvalidRequestException;
 
     /**
      * Creates a new idDocument type.
@@ -46,9 +47,9 @@ public interface IdDocumentTypeService {
      * @param id                    the ID of the idDocument type to update.
      * @param idDocumentTypeRequest the {@link IdDocumentTypeRequest} containing the updated details.
      * @return the updated {@link IdDocumentTypeResponse}.
-     * @throws BadRequestException if the provided ID is invalid or if the update fails.
+     * @throws dev.araopj.hrplatformapi.exception.InvalidRequestException if the provided ID is invalid.
      */
-    IdDocumentTypeResponse update(String id, IdDocumentTypeRequest idDocumentTypeRequest) throws BadRequestException;
+    IdDocumentTypeResponse update(String id, IdDocumentTypeRequest idDocumentTypeRequest) throws InvalidRequestException;
 
     /**
      * Deletes an idDocument type by its ID.

@@ -6,11 +6,11 @@ import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
 import dev.araopj.hrplatformapi.employee.repository.IdDocumentRepository;
 import dev.araopj.hrplatformapi.employee.repository.IdDocumentTypeRepository;
 import dev.araopj.hrplatformapi.employee.service.IdDocumentTypeService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.mappers.IdDocumentTypeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,6 +41,7 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
 
     @Override
     public Optional<IdDocumentTypeResponse> findById(String id) {
+        validateIdPath(id);
         return Optional.ofNullable(idDocumentTypeRepository.findById(id)
                 .map(e -> IdDocumentTypeMapper.toDto(e, true))
                 .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT_TYPE)));
@@ -61,10 +62,8 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
     }
 
     @Override
-    public IdDocumentTypeResponse update(String id, IdDocumentTypeRequest idDocumentTypeRequest) throws BadRequestException {
-        if (id == null || id.isEmpty()) {
-            throw new BadRequestException("IdDocumentType ID must be provided as path");
-        }
+    public IdDocumentTypeResponse update(String id, IdDocumentTypeRequest idDocumentTypeRequest) throws InvalidRequestException {
+        validateIdPath(id);
 
         return IdDocumentTypeMapper.toDto(idDocumentTypeRepository.save(
                 IdDocumentTypeMapper.toEntity(idDocumentTypeRequest)
@@ -76,5 +75,11 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
         findById(id).orElseThrow();
         idDocumentTypeRepository.deleteById(id);
         return !idDocumentTypeRepository.existsById(id);
+    }
+
+    private static void validateIdPath(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new InvalidRequestException("IdDocumentType ID must be provided as path");
+        }
     }
 }

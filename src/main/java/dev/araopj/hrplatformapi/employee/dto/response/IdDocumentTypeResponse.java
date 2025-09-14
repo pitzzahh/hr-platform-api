@@ -3,6 +3,7 @@ package dev.araopj.hrplatformapi.employee.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 import java.time.Instant;
 

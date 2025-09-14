@@ -21,19 +21,5 @@ public record IdDocumentTypeRequest(
         @NotBlank(message = "identifierId is required")
         String identifierId
 ) {
-    @Builder
-    public record WithoutIdentifierId(
-            @NotBlank(message = "Code is required")
-            @NotNull(message = "code cannot be null")
-            String code,
-            @NotBlank(message = "name is required")
-            @NotNull(message = "name cannot be null")
-            String name,
-            @NotBlank(message = "description is required")
-            String description,
-            @NotNull(message = "category cannot be null")
-            @NotBlank(message = "category is required")
-            String category
-    ) {
-    }
+
 }
