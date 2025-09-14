@@ -5,6 +5,7 @@ import dev.araopj.hrplatformapi.employee.dto.response.PositionResponse;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
 import dev.araopj.hrplatformapi.employee.service.PositionService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
@@ -13,7 +14,6 @@ import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.mappers.PositionMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
+import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.POSITION;
 import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
@@ -90,7 +91,7 @@ public class PositionServiceImp implements PositionService {
 
         final var POSITION_TO_SAVE = positionMapper.toEntity(positionRequest,
                 employmentInformationRepository.findById(EMPLOYMENT_INFORMATION_ID)
-                        .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_ID, POSITION))
+                        .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_ID, EMPLOYMENT_INFORMATION))
         );
 
         auditUtil.audit(
@@ -106,9 +107,9 @@ public class PositionServiceImp implements PositionService {
     }
 
     @Override
-    public PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws BadRequestException {
+    public PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Position ID must be provided as path");
+            throw new InvalidRequestException("Position ID must be provided as path");
         }
 
         final var ORIGINAL_POSITION_DATA = positionRepository.findById(id)

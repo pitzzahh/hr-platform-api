@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.employee.service;
 import dev.araopj.hrplatformapi.employee.dto.request.PositionRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.PositionResponse;
 import dev.araopj.hrplatformapi.employee.model.Position;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -46,7 +46,7 @@ public interface PositionService {
      * @param positionRequest the request object containing updated position details
      * @return the updated {@link PositionResponse} object
      */
-    PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws BadRequestException;
+    PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws InvalidRequestException;
 
     /**
      * Deletes a position by its unique id.
