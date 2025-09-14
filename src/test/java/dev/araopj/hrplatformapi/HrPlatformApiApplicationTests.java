@@ -1,8 +1,6 @@
 package dev.araopj.hrplatformapi;
 
-import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
-import dev.araopj.hrplatformapi.salary.service.SalaryGradeService;
-import dev.araopj.hrplatformapi.salary.service.impl.SalaryGradeServiceImp;
+import dev.araopj.hrplatformapi.employee.service.SalaryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +22,7 @@ class HrPlatformApiApplicationTests {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private SalaryGradeService salaryGradeService;
-
-    @Autowired
-    private SalaryGradeRepository salaryGradeRepository;
+    private SalaryService salaryService;
 
     @Autowired
     private Environment environment;
@@ -35,14 +30,13 @@ class HrPlatformApiApplicationTests {
     @Test
     @DisplayName("Application context loads successfully")
     void contextLoads() {
-        assertNotNull(salaryGradeService, "SalaryGradeService bean should be loaded");
-        assertNotNull(salaryGradeRepository, "SalaryGradeRepository bean should be loaded");
+        assertNotNull(salaryService, "SalaryService bean should be loaded");
     }
 
     @Test
-    @DisplayName("SalaryGradeService bean is of correct type")
-    void testSalaryGradeServiceBean() {
-        assertInstanceOf(SalaryGradeServiceImp.class, salaryGradeService, "SalaryGradeService should be instance of SalaryGradeServiceImp");
+    @DisplayName("SalaryService bean is of correct type")
+    void testSalaryServiceBean() {
+        assertInstanceOf(SalaryService.class, salaryService, "SalaryService should be instance of SalaryServiceImp");
     }
 
     @Test
@@ -71,8 +65,8 @@ class HrPlatformApiApplicationTests {
 
     @Test
     @DisplayName("REST endpoint for salary grades returns expected response")
-    void testSalaryGradeEndpoint() {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/salary-grades", String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "Salary grades endpoint should return 200 OK");
+    void testSalaryEndpoint() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/salaries", String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Salary endpoint should return 200 OK");
     }
 }

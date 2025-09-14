@@ -46,12 +46,6 @@ public class EmploymentInformation extends EntityTimestamp implements Serializab
     @JoinColumn(name = "employment_information_salary_override_id")
     private EmploymentInformationSalaryOverride employmentInformationSalaryOverride;
 
-    @Column(nullable = false)
-    private int step;
-
-    @Column
-    private int anticipatedStep;
-
     @OneToOne
     @JoinColumn(name = "position_id", nullable = false)
     private Position position;

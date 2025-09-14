@@ -24,8 +24,6 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformationResponse.employmentStatus())
                 .sourceOfFund(employmentInformationResponse.sourceOfFund())
                 .remarks(employmentInformationResponse.remarks())
-                .step(employmentInformationResponse.step())
-                .anticipatedStep(employmentInformationResponse.anticipatedStep())
                 .build();
     }
 
@@ -44,8 +42,6 @@ public class EmploymentInformationMapper {
                 .sourceOfFund(employmentInformationRequest.sourceOfFund())
                 .remarks(employmentInformationRequest.remarks())
                 .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
-                .step(employmentInformationRequest.step())
-                .anticipatedStep(employmentInformationRequest.anticipatedStep())
                 .build();
     }
 
@@ -68,8 +64,6 @@ public class EmploymentInformationMapper {
                 .sourceOfFund(employmentInformationRequest.sourceOfFund())
                 .remarks(employmentInformationRequest.remarks())
                 .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
-                .step(employmentInformationRequest.step())
-                .anticipatedStep(employmentInformationRequest.anticipatedStep())
                 .position(position)
                 .workplace(workplace)
                 .build();

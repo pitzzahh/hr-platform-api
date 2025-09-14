@@ -92,8 +92,7 @@ src/main/resources/application.yml
 | Positions                              | `/api/v1/positions`                                     | GET, POST, PUT, DELETE | Manage employee positions                             |
 | Workplaces                             | `/api/v1/workplaces`                                    | GET, POST, PUT, DELETE | Manage employee workplaces                            |
 | Employment Information Salary Override | `/api/v1/employment-information-salary-overrides`       | GET, POST, PUT, DELETE | Manage salary overrides for employment information    |
-| Salary Grade                           | `/api/v1/salary-grades`                                 | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)                |
-| Salary Data                            | `/api/v1/salary-data`                                   | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)               |
+| Salary                                 | `/api/v1/salaries`                                      | GET, POST, PUT, DELETE | Manage salary                                         |
 | User                                   | `/api/v1/users`                                         | GET, POST, PUT, DELETE | Manage users, roles, and permissions                  |
 | Roles                                  | `/api/v1/roles`                                         | POST                   | User login and token generation                       |
 | Permission                             | `/api/v1/permissions`                                   | POST                   | Manage user permissions                               |
