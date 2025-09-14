@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +29,9 @@ public interface IdDocumentService {
      *
      * @param id the ID of the IdDocument to retrieve.
      * @return an {@link Optional} containing the {@link IdDocumentResponse} if found, or empty if not found.
+     * @throws InvalidRequestException when the IdDocument id is not provided as path
      */
-    Optional<IdDocumentResponse> findById(String id) throws BadRequestException;
+    Optional<IdDocumentResponse> findById(String id) throws InvalidRequestException;
 
     /**
      * Creates a new IdDocument.
@@ -46,8 +47,9 @@ public interface IdDocumentService {
      * @param id      the ID of the IdDocument to update.
      * @param request the {@link IdDocumentRequest} containing the updated details of the IdDocument.
      * @return the updated {@link IdDocumentResponse}.
+     * @throws InvalidRequestException when the update request is invalid
      */
-    IdDocumentResponse update(String id, IdDocumentRequest request) throws BadRequestException;
+    IdDocumentResponse update(String id, IdDocumentRequest request) throws InvalidRequestException;
 
     /**
      * Deletes an IdDocument by its ID.
@@ -55,6 +57,6 @@ public interface IdDocumentService {
      * @param id the ID of the IdDocument to delete.
      * @return true if the IdDocument was successfully deleted, false otherwise.
      */
-    boolean delete(String id) throws BadRequestException;
+    boolean delete(String id);
 
 }

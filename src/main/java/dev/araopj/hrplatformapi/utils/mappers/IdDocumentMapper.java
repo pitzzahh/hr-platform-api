@@ -5,7 +5,6 @@ import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
 import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

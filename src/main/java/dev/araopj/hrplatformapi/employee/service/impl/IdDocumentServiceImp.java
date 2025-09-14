@@ -4,12 +4,12 @@ import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentResponse;
 import dev.araopj.hrplatformapi.employee.repository.IdDocumentRepository;
 import dev.araopj.hrplatformapi.employee.service.IdDocumentService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,9 +33,9 @@ public class IdDocumentServiceImp implements IdDocumentService {
     }
 
     @Override
-    public Optional<IdDocumentResponse> findById(String id) throws BadRequestException {
+    public Optional<IdDocumentResponse> findById(String id) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("id must be provided as path");
+            throw new InvalidRequestException("IdDocument id must be provided as path");
         }
         return idDocumentRepository
                 .findById(id)
@@ -55,9 +55,9 @@ public class IdDocumentServiceImp implements IdDocumentService {
     }
 
     @Override
-    public IdDocumentResponse update(String id, IdDocumentRequest request) throws BadRequestException {
+    public IdDocumentResponse update(String id, IdDocumentRequest request) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("id must be provided as path");
+            throw new InvalidRequestException("IdDocument id must be provided as path");
         }
 
         final var EXISTING_IDENTIFIER = idDocumentRepository.findById(id)
@@ -69,7 +69,7 @@ public class IdDocumentServiceImp implements IdDocumentService {
     }
 
     @Override
-    public boolean delete(String id) throws BadRequestException {
+    public boolean delete(String id) {
         findById(id).orElseThrow();
         idDocumentRepository.deleteById(id);
         return !idDocumentRepository.existsById(id);
