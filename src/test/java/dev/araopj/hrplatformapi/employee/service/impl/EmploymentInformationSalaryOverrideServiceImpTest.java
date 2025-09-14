@@ -11,7 +11,10 @@ import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -75,23 +78,18 @@ class EmploymentInformationSalaryOverrideServiceImpTest {
     class CreateSalaryOverrideTest {
 
         @Test
-        @Disabled
         @DisplayName("Should create salary override successfully when valid request")
         void shouldCreateSalaryOverrideSuccessfullyWhenValidRequest() {
             try (var mapperMock = mockStatic(EmploymentInformationSalaryOverrideMapper.class)) {
-                var salaryOverrideToSave = EmploymentInformationSalaryOverride.builder()
-                        .salary(salaryOverrideRequest.salary())
-                        .effectiveDate(salaryOverrideRequest.effectiveDate())
-                        .employmentInformation(employmentInformation)
-                        .build();
-
                 when(employmentInformationSalaryOverrideRepository.findBySalaryAndEffectiveDateAndEmploymentInformationId(
-                        salaryOverrideRequest.salary(), salaryOverrideRequest.effectiveDate(), salaryOverrideRequest.employmentInformationId()))
+                        eq(salaryOverrideRequest.salary()), eq(salaryOverrideRequest.effectiveDate()), eq(salaryOverrideRequest.employmentInformationId())))
                         .thenReturn(Optional.empty());
                 when(employmentInformationRepository.findById(salaryOverrideRequest.employmentInformationId()))
                         .thenReturn(Optional.of(employmentInformation));
-                when(employmentInformationSalaryOverrideRepository.save(salaryOverrideToSave)).thenReturn(salaryOverride);
-                mapperMock.when(() -> EmploymentInformationSalaryOverrideMapper.toDto(salaryOverride)).thenReturn(salaryOverrideResponse);
+                when(employmentInformationSalaryOverrideRepository.save(any(EmploymentInformationSalaryOverride.class)))
+                        .thenReturn(salaryOverride);
+                mapperMock.when(() -> EmploymentInformationSalaryOverrideMapper.toDto(salaryOverride))
+                        .thenReturn(salaryOverrideResponse);
 
                 var result = employmentInformationSalaryOverrideServiceImp.create(salaryOverrideRequest);
 
@@ -104,7 +102,7 @@ class EmploymentInformationSalaryOverrideServiceImpTest {
                 verify(employmentInformationSalaryOverrideRepository).findBySalaryAndEffectiveDateAndEmploymentInformationId(
                         salaryOverrideRequest.salary(), salaryOverrideRequest.effectiveDate(), salaryOverrideRequest.employmentInformationId());
                 verify(employmentInformationRepository).findById(salaryOverrideRequest.employmentInformationId());
-                verify(employmentInformationSalaryOverrideRepository).save(salaryOverrideToSave);
+                verify(employmentInformationSalaryOverrideRepository).save(any(EmploymentInformationSalaryOverride.class));
             }
         }
 
