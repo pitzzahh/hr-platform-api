@@ -2,7 +2,9 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.SalaryRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.SalaryResponse;
-import dev.araopj.hrplatformapi.employee.model.*;
+import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
+import dev.araopj.hrplatformapi.employee.model.EmploymentStatus;
+import dev.araopj.hrplatformapi.employee.model.Salary;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.SalaryRepository;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
@@ -37,10 +39,6 @@ class SalaryServiceImpTest {
     private SalaryServiceImp salaryServiceImp;
 
     private EmploymentInformation employmentInformation;
-    private Employee employee;
-    private Position position;
-    private Workplace workplace;
-
     private Salary salary;
     private SalaryResponse salaryResponse;
     private SalaryRequest salaryRequest;
@@ -48,26 +46,6 @@ class SalaryServiceImpTest {
 
     @BeforeEach
     void setup() {
-        employee = Employee.builder()
-                .id("emp-1")
-                .firstName("John")
-                .lastName("Doe")
-                .email("john@doe.com")
-                .build();
-
-        position = Position.builder()
-                .id("position-1")
-                .code("ITO")
-                .description("IT Officer")
-                .build();
-
-        workplace = Workplace.builder()
-                .id("workplace-1")
-                .name("Head Office")
-                .code("HO")
-                .shortName("Head Office")
-                .build();
-
         salary = Salary
                 .builder()
                 .id("salary-1")
@@ -92,9 +70,6 @@ class SalaryServiceImpTest {
         employmentInformation = EmploymentInformation
                 .builder()
                 .id("emp-info-1")
-                .employee(employee)
-                .position(position)
-                .workplace(workplace)
                 .employmentStatus(EmploymentStatus.PERMANENT)
                 .startDate(LocalDate.of(2020, 1, 1))
                 .endDate(LocalDate.of(2020, 1, 2))
