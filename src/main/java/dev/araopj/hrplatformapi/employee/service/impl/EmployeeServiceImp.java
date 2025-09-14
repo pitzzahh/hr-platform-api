@@ -2,16 +2,12 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
-import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
 import dev.araopj.hrplatformapi.employee.service.EmployeeService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
@@ -28,9 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYEE;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 @Slf4j
 @Service
@@ -42,9 +36,6 @@ public class EmployeeServiceImp implements EmployeeService {
     private final EmploymentInformationMapper employmentInformationMapper;
     private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
     private final IdDocumentMapper idDocumentMapper;
-    private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("employeeNumber", "itemNumber", "lastName", "email", "phoneNumber", "taxPayerIdentificationNumber", "bankAccountNumber", "userId", "idDocumentResponses");
-    private final String ENTITY_NAME = EmployeeResponse.class.getName();
 
     @Override
     public Page<EmployeeResponse> findAll(Pageable pageable, boolean includeIdDocuments, boolean includeEmploymentInformation) {
@@ -55,20 +46,6 @@ public class EmployeeServiceImp implements EmployeeService {
                         includeEmploymentInformation ?
                                 employeeRepository.findAllWithEmploymentInformation(pageable) :
                                 employeeRepository.findAll(pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(PAGINATED_DATA.getTotalElements())
-                        .size(PAGINATED_DATA.getSize())
-                        .page(PAGINATED_DATA.getNumber() + 1)
-                        .totalPages(PAGINATED_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return PAGINATED_DATA
                 .map(e -> employeeMapper.toDto(
                         e,
@@ -82,10 +59,6 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
         return Optional.ofNullable(employeeRepository.findById(id)
                 .map(e -> employeeMapper.toDto(
                         e,
@@ -100,10 +73,6 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) {
-        auditUtil.audit(
-                userId,
-                ENTITY_NAME
-        );
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
                 .map(employee -> employeeMapper.toDto(
                                 employee,
@@ -152,15 +121,6 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var SAVED_EMPLOYEES = employeeRepository.saveAll(EMPLOYEE_TO_SAVE);
 
-        auditUtil.audit(
-                CREATE,
-                SAVED_EMPLOYEES.stream().map(Employee::getId).collect(Collectors.joining(", ")),
-                Optional.empty(),
-                redact(SAVED_EMPLOYEES, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return SAVED_EMPLOYEES.stream()
                 .map(employee -> employeeMapper.toDto(
                         employee,
@@ -192,15 +152,6 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var UPDATED_EMPLOYEE = employeeRepository.save(EMPLOYEE_DATA);
 
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(UPDATED_EMPLOYEE, REDACTED)),
-                redact(EMPLOYEE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(UPDATED_EMPLOYEE, EMPLOYEE_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
         return employeeMapper.toDto(
                 UPDATED_EMPLOYEE,
                 false,
@@ -214,16 +165,8 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public boolean delete(String id) {
         findById(id, false, false).orElseThrow();
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
         employeeRepository.deleteById(id);
-        return true;
+        return !employeeRepository.existsById(id);
     }
 
     private Set<IdDocument> getIdDocumentRequests(EmployeeRequest employeeRequest) {

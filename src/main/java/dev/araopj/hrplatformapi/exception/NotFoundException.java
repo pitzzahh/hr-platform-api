@@ -37,7 +37,6 @@ public class NotFoundException extends EntityNotFoundException {
         EMPLOYMENT_INFORMATION("EMPLOYMENT_INFORMATION", "Employment Information"),
         EMPLOYMENT_INFORMATION_SALARY_OVERRIDE("EMPLOYMENT_INFORMATION_SALARY_OVERRIDE", "Employment Information Salary Override"),
         POSITION("POSITION", "Position"),
-        AUDIT("AUDIT", "Audit"),
         USER("USER", "User"),
         SALARY("SALARY", "Salary"),
         SALARY_DATA("SALARY_DATA", "Salary Data"),

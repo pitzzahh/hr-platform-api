@@ -7,9 +7,7 @@ import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationReposit
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationSalaryOverrideService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.CommonValidation;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,27 +15,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION_SALARY_OVERRIDE;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
  * Service class for managing EmploymentInformationSalaryOverride entities.
  * <p>
  * This service provides methods to create, read, update, and delete EmploymentInformationSalaryOverride records.
- * It also integrates with the AuditUtil to log actions performed on these records.
  *
  * @see EmploymentInformationSalaryOverride
  * @see EmploymentInformationSalaryOverrideRepository
  * @see CommonValidation
- * @see AuditUtil
  */
 @Slf4j
 @Service
@@ -47,25 +38,10 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
     private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
     private final EmploymentInformationRepository employmentInformationRepository;
     private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
-    private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("effectiveDate", "employmentInformationResponses");
-    private final String ENTITY_NAME = EmploymentInformationSalaryOverrideResponse.class.getName();
 
     @Override
     public List<EmploymentInformationSalaryOverrideResponse> findAll() {
         var EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA = employmentInformationSalaryOverrideRepository.findAll();
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(Map.of(
-                        "timestamp", Instant.now().toString(),
-                        "entity", ENTITY_NAME,
-                        "count", EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA.size()
-                )),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA
                 .stream()
@@ -75,10 +51,6 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
     @Override
     public Optional<EmploymentInformationSalaryOverrideResponse> findById(String id) {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
         return Optional.of(employmentInformationSalaryOverrideRepository.findById(id)
                 .map(employmentInformationSalaryOverrideMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE)));
@@ -114,15 +86,6 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
                 )
                 .build();
 
-        auditUtil.audit(
-                CREATE,
-                EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE.getId(),
-                Optional.empty(),
-                redact(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return employmentInformationSalaryOverrideMapper.toDto(employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE));
     }
 
@@ -145,15 +108,6 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
                 employmentInformationSalaryOverrideMapper.toEntity(employmentInformationSalaryOverrideRequest)
         );
 
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(ORIGINAL_EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA, REDACTED)),
-                redact(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
         return employmentInformationSalaryOverrideMapper.toDto(
                 employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA)
         );
@@ -161,16 +115,8 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
     @Override
     public boolean delete(String id) {
-        var data = findById(id);
+        findById(id).orElseThrow();
         employmentInformationSalaryOverrideRepository.deleteById(id);
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.of(redact(data, REDACTED)),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-        return true;
+        return !employmentInformationSalaryOverrideRepository.existsById(id);
     }
 }

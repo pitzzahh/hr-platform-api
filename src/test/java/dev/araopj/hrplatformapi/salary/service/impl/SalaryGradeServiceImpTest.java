@@ -1,6 +1,5 @@
 package dev.araopj.hrplatformapi.salary.service.impl;
 
-import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryGradeRequest;
@@ -8,7 +7,6 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryGradeResponse;
 import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryGradeMapper;
 import org.apache.coyote.BadRequestException;
@@ -43,9 +41,6 @@ class SalaryGradeServiceImpTest {
 
     @Mock
     private SalaryDataMapper salaryDataMapper;
-
-    @Mock
-    private AuditUtil auditUtil;
 
     @InjectMocks
     private SalaryGradeServiceImp salaryGradeService;
@@ -98,7 +93,6 @@ class SalaryGradeServiceImpTest {
 
             assertNotNull(salaryGradeResponses);
             assertEquals(1, salaryGradeResponses.size());
-            verify(auditUtil, times(1)).audit(eq(AuditAction.CREATE), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -124,7 +118,6 @@ class SalaryGradeServiceImpTest {
 
             assertNotNull(result);
             assertEquals(1, result.size());
-            verify(auditUtil, times(1)).audit(eq(AuditAction.CREATE), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -175,7 +168,6 @@ class SalaryGradeServiceImpTest {
             assertEquals("1", result.get(0).id());
             assertEquals("2", result.get(1).id());
             verify(salaryGradeRepository, times(1)).saveAll(anyList());
-            verify(auditUtil, times(2)).audit(eq(AuditAction.CREATE), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -186,7 +178,6 @@ class SalaryGradeServiceImpTest {
             assertNotNull(result);
             assertTrue(result.isEmpty());
             verify(salaryGradeRepository, never()).saveAll(anyList());
-            verify(auditUtil, never()).audit(any(), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -221,7 +212,6 @@ class SalaryGradeServiceImpTest {
 
             assertNotNull(salaryGradeResponses);
             assertEquals(1, salaryGradeResponses.getContent().size());
-            verify(auditUtil, times(1)).audit(eq(AuditAction.VIEW), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -235,7 +225,6 @@ class SalaryGradeServiceImpTest {
 
             assertNotNull(salaryGradeResponses);
             assertEquals(1, salaryGradeResponses.getContent().size());
-            verify(auditUtil, times(1)).audit(eq(AuditAction.VIEW), any(), any(), any(), any(), any());
         }
     }
 
@@ -253,7 +242,6 @@ class SalaryGradeServiceImpTest {
 
             assertTrue(optionalSalaryGradeResponse.isPresent());
             assertEquals("1", optionalSalaryGradeResponse.get().id());
-            verify(auditUtil, times(1)).audit(eq("1"), any());
         }
 
         @Test
@@ -269,14 +257,11 @@ class SalaryGradeServiceImpTest {
         }
 
         @Test
-        @DisplayName("Should return empty for non-existent ID")
-        void shouldReturnEmptyForNonExistentId() {
+        @DisplayName("Should throw NotFoundException when non-existing ID")
+        void shouldThrowNotFoundExceptionWhenNonExistingId() {
             when(salaryGradeRepository.findById("1")).thenReturn(Optional.empty());
 
-            var optionalSalaryGradeResponse = salaryGradeService.findById("1", false);
-
-            assertTrue(optionalSalaryGradeResponse.isEmpty());
-            verify(auditUtil, times(1)).audit(eq("1"), any());
+            assertThrows(NotFoundException.class, () -> salaryGradeService.findById("1", false));
         }
     }
 
@@ -296,7 +281,6 @@ class SalaryGradeServiceImpTest {
 
             assertNotNull(updateResponse);
             assertEquals("1", updateResponse.id());
-            verify(auditUtil, times(1)).audit(eq(AuditAction.UPDATE), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -328,7 +312,6 @@ class SalaryGradeServiceImpTest {
 
             assertTrue(isDeleted);
             verify(salaryGradeRepository, times(1)).deleteById("1");
-            verify(auditUtil, times(1)).audit(eq(AuditAction.DELETE), any(), any(), any(), any(), any());
         }
 
         @Test

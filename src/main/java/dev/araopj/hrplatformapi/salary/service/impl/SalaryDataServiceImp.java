@@ -6,8 +6,6 @@ import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
 import dev.araopj.hrplatformapi.salary.service.SalaryDataService;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
 import jakarta.validation.Valid;
@@ -18,12 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SALARY_DATA;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.SALARY_GRADE;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 @RequiredArgsConstructor
 @Service
@@ -33,24 +28,10 @@ public class SalaryDataServiceImp implements SalaryDataService {
     private final SalaryGradeRepository salaryGradeRepository;
     private final SalaryDataRepository salaryDataRepository;
     private final SalaryDataMapper salaryDataMapper;
-    private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("id", "salaryGrade");
-    private final String ENTITY_NAME = SalaryDataResponse.class.getName();
 
     @Override
     public Page<SalaryDataResponse> findAll(Pageable pageable) {
-        final var SALARY_DATA_RESPONSE = salaryDataRepository.findAll(pageable).map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()));
-
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(redact(SALARY_DATA_RESPONSE.getContent(), REDACTED)), // Audit List<SalaryDataResponse>
-                Optional.empty(),
-                Optional.empty(),
-                "Page<%s>".formatted(ENTITY_NAME)
-        );
-
-        return SALARY_DATA_RESPONSE;
+        return salaryDataRepository.findAll(pageable).map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()));
     }
 
     @Override
@@ -58,10 +39,6 @@ public class SalaryDataServiceImp implements SalaryDataService {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
         return Optional.of(salaryDataRepository.findById(id)
                 .map(e -> salaryDataMapper.toDto(e, e.getSalaryGrade()))
                 .orElseThrow(() -> new NotFoundException(id, SALARY_DATA)));
@@ -72,15 +49,6 @@ public class SalaryDataServiceImp implements SalaryDataService {
     public Optional<SalaryDataResponse> findByIdAndSalaryGradeId(String id, String salaryGradeId) {
         var salaryData = salaryDataRepository.findByIdAndSalaryGradeId(id, salaryGradeId)
                 .orElseThrow(() -> new NotFoundException(id, salaryGradeId, SALARY_DATA, "salaryGradeId"));
-
-        auditUtil.audit(
-                VIEW,
-                id,
-                Optional.of(redact(salaryData, REDACTED)),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return Optional.of(salaryDataMapper.toDto(salaryData, salaryData.getSalaryGrade()));
     }
@@ -116,15 +84,6 @@ public class SalaryDataServiceImp implements SalaryDataService {
                 salaryGradeRepository.findById(SALARY_GRADE_ID)
                         .orElseThrow(() -> new NotFoundException(SALARY_GRADE_ID, SALARY_GRADE))
         );
-
-        auditUtil.audit(
-                CREATE,
-                SALARY_DATA_TO_SAVE.getId(),
-                Optional.empty(),
-                redact(SALARY_DATA_TO_SAVE, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
         return salaryDataMapper.toDto(salaryDataRepository.save(SALARY_DATA_TO_SAVE), SALARY_DATA_TO_SAVE.getSalaryGrade());
     }
 
@@ -148,16 +107,6 @@ public class SalaryDataServiceImp implements SalaryDataService {
         var SALARY_DATA = MergeUtil.merge(ORIGINAL_SALARY_DATA,
                 salaryDataMapper.toEntity(salaryDataRequest)
         );
-
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(ORIGINAL_SALARY_DATA, REDACTED)),
-                redact(SALARY_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_SALARY_DATA, SALARY_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
         return salaryDataMapper.toDto(salaryDataRepository.save(SALARY_DATA), SALARY_DATA.getSalaryGrade());
     }
 
@@ -165,14 +114,6 @@ public class SalaryDataServiceImp implements SalaryDataService {
     public boolean delete(String id, String salaryGradeId) {
         findByIdAndSalaryGradeId(id, salaryGradeId).orElseThrow();
         salaryDataRepository.deleteById(id);
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-        return true;
+        return !salaryDataRepository.existsById(id);
     }
 }

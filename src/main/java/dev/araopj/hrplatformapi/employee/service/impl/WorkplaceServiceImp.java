@@ -6,10 +6,6 @@ import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationReposit
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
 import dev.araopj.hrplatformapi.employee.service.WorkplaceService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
-import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.mappers.WorkplaceMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.WORKPLACE;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
  * Implementation of {@link WorkplaceService} for managing workplace-related operations.
@@ -37,40 +30,17 @@ public class WorkplaceServiceImp implements WorkplaceService {
 
     private final EmploymentInformationRepository employmentInformationRepository;
     private final WorkplaceRepository workplaceRepository;
-
     private final WorkplaceMapper workplaceMapper;
-
-    private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("id", "employmentInformationResponses");
-    private final String ENTITY_NAME = WorkplaceResponse.class.getName();
 
     @Override
     public Page<WorkplaceResponse> findAll(Pageable pageable) {
         final var WORKPLACE_DATA = workplaceRepository.findAll(pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(WORKPLACE_DATA.getTotalElements())
-                        .size(WORKPLACE_DATA.getSize())
-                        .page(WORKPLACE_DATA.getNumber() + 1)
-                        .totalPages(WORKPLACE_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return WORKPLACE_DATA
                 .map(e -> workplaceMapper.toDto(e, false));
     }
 
     @Override
     public Optional<WorkplaceResponse> findById(String id) throws NotFoundException {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
         return Optional.ofNullable(workplaceRepository.findById(id)
                 .map(e -> workplaceMapper.toDto(e, false))
                 .orElseThrow(() -> new NotFoundException(id, WORKPLACE)));
@@ -100,15 +70,6 @@ public class WorkplaceServiceImp implements WorkplaceService {
 
         log.debug("Workplace to save [{}]", WORKPLACE_TO_SAVE);
 
-        auditUtil.audit(
-                CREATE,
-                WORKPLACE_TO_SAVE.getId(),
-                Optional.empty(),
-                redact(WORKPLACE_TO_SAVE, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return workplaceMapper.toDto(workplaceRepository.save(WORKPLACE_TO_SAVE), false);
     }
 
@@ -120,22 +81,6 @@ public class WorkplaceServiceImp implements WorkplaceService {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("Workplace ID must be provided as path");
         }
-
-        final var ORIGINAL_WORKPLACE_DATA = findById(id).orElseThrow();
-
-        var WORKPLACE_DATA = MergeUtil.merge(ORIGINAL_WORKPLACE_DATA,
-                workplaceMapper.toEntity(workplaceRequest)
-        );
-
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(ORIGINAL_WORKPLACE_DATA, REDACTED)),
-                redact(WORKPLACE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_WORKPLACE_DATA, WORKPLACE_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
         return workplaceMapper.toDto(workplaceRepository.save(
                 workplaceMapper.toEntity(workplaceRequest)
         ), false);
@@ -146,15 +91,7 @@ public class WorkplaceServiceImp implements WorkplaceService {
     public boolean delete(String id) throws NotFoundException {
         findById(id).orElseThrow();
         workplaceRepository.deleteById(id);
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-        return true;
+        return !workplaceRepository.existsById(id);
     }
 
 }

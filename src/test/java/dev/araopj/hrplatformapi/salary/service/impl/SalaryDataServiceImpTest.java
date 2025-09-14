@@ -1,6 +1,5 @@
 package dev.araopj.hrplatformapi.salary.service.impl;
 
-import dev.araopj.hrplatformapi.audit.model.AuditAction;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.salary.dto.request.SalaryDataRequest;
 import dev.araopj.hrplatformapi.salary.dto.response.SalaryDataResponse;
@@ -8,7 +7,6 @@ import dev.araopj.hrplatformapi.salary.model.SalaryData;
 import dev.araopj.hrplatformapi.salary.model.SalaryGrade;
 import dev.araopj.hrplatformapi.salary.repository.SalaryDataRepository;
 import dev.araopj.hrplatformapi.salary.repository.SalaryGradeRepository;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.SalaryDataMapper;
@@ -27,7 +25,6 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.*;
 
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,8 +38,6 @@ class SalaryDataServiceImpTest {
     private SalaryDataRepository salaryDataRepository;
     @Mock
     private SalaryDataMapper salaryDataMapper;
-    @Mock
-    private AuditUtil auditUtil;
     @InjectMocks
     private SalaryDataServiceImp salaryDataService;
 
@@ -116,13 +111,6 @@ class SalaryDataServiceImpTest {
             assertEquals(salaryData.getId(), salaryDataResponse.id());
             assertEquals(salaryData.getStep(), salaryDataResponse.step());
             assertEquals(salaryData.getAmount(), salaryDataResponse.amount());
-            verify(auditUtil, times(1)).audit(AuditAction.CREATE,
-                    salaryData.getId(),
-                    Optional.empty(),
-                    redact(salaryData, REDACTED),
-                    Optional.empty(),
-                    ENTITY_NAME
-            );
         }
 
         @Test
@@ -181,15 +169,6 @@ class SalaryDataServiceImpTest {
             assertNotNull(result);
             assertTrue(result.isPresent());
             assertEquals(salaryDataResponse, result.get());
-            verify(auditUtil, times(1))
-                    .audit(
-                            AuditAction.VIEW,
-                            salaryData.getId(),
-                            Optional.of(redact(salaryData, REDACTED)),
-                            Optional.empty(),
-                            Optional.empty(),
-                            ENTITY_NAME
-                    );
         }
 
         @Test
@@ -213,14 +192,6 @@ class SalaryDataServiceImpTest {
             assertNotNull(salaryDataResponsePage);
             assertEquals(1, salaryDataResponsePage.getContent().size());
             assertEquals(salaryDataResponse, salaryDataResponsePage.getContent().getFirst());
-            verify(auditUtil, times(1)).audit(
-                    AuditAction.VIEW,
-                    "[]",
-                    Optional.of(redact(salaryDataResponsePage.getContent(), REDACTED)),
-                    Optional.empty(),
-                    Optional.empty(),
-                    "Page<%s>".formatted(ENTITY_NAME)
-            );
         }
     }
 
@@ -240,11 +211,6 @@ class SalaryDataServiceImpTest {
             assertNotNull(result);
             assertTrue(result.isPresent());
             assertEquals(salaryDataResponse, result.get());
-            verify(auditUtil, times(1))
-                    .audit(
-                            salaryData.getId(),
-                            ENTITY_NAME
-                    );
         }
 
         @Test
@@ -274,12 +240,6 @@ class SalaryDataServiceImpTest {
             when(salaryDataRepository.findById("non-existent-id")).thenReturn(Optional.empty());
 
             assertThrows(NotFoundException.class, () -> salaryDataService.findById("non-existent-id"));
-
-            verify(auditUtil, times(1))
-                    .audit(
-                            "non-existent-id",
-                            ENTITY_NAME
-                    );
         }
     }
 
@@ -340,14 +300,6 @@ class SalaryDataServiceImpTest {
                 assertEquals(updatedSalaryDataResponse, salaryDataUpdateResult);
                 assertEquals(salaryDataRequest.step(), salaryDataUpdateResult.step());
                 assertEquals(salaryDataRequest.amount(), salaryDataUpdateResult.amount());
-                verify(auditUtil, times(1)).audit(
-                        AuditAction.UPDATE,
-                        salaryData.getId(),
-                        Optional.of(redact(salaryData, REDACTED)),
-                        redact(salaryDataToUpdate, REDACTED),
-                        Optional.of(redact(diffResult, REDACTED)),
-                        ENTITY_NAME
-                );
                 verify(salaryDataRepository).findById(salaryData.getId());
                 verify(salaryDataRepository).save(salaryDataToUpdate);
             }
@@ -398,23 +350,6 @@ class SalaryDataServiceImpTest {
             var result = salaryDataService.delete(salaryData.getId(), salaryGrade.getId());
 
             assertTrue(result);
-            verify(auditUtil, times(1))
-                    .audit(
-                            AuditAction.VIEW,
-                            salaryData.getId(),
-                            Optional.of(redact(salaryData, REDACTED)),
-                            Optional.empty(),
-                            Optional.empty(),
-                            ENTITY_NAME
-                    );
-            verify(auditUtil, times(1)).audit(
-                    AuditAction.DELETE,
-                    salaryData.getId(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    ENTITY_NAME
-            );
             verify(salaryDataRepository).findByIdAndSalaryGradeId(salaryData.getId(), salaryGrade.getId());
             verify(salaryDataRepository).deleteById(salaryData.getId());
         }

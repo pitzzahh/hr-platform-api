@@ -15,7 +15,6 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 * 👤 **Employee Management** — CRUD operations, employment history, positions, civil status, ID documents.
 * 💰 **Salary Management** — Salary data, salary grade, and salary overrides.
-* 📜 **Audit Logging** — Track key user and system actions.
 * 🔐 **Authentication & Authorization** — User accounts, roles, API-Key authentication, and fine-grained permissions.
 * ⚡ **Robust Infrastructure** — Exception handling, pagination, mapping utilities, and more.
 
@@ -25,15 +24,6 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ```
 ~/hrplatformapi
-├───audit
-│   ├───controller
-│   ├───dto
-│   │   ├───request
-│   │   └───response
-│   ├───model
-│   ├───repository
-│   └───service
-│       └───impl
 ├───config
 ├───employee
 │   ├───controller
@@ -104,7 +94,6 @@ src/main/resources/application.yml
 | Employment Information Salary Override | `/api/v1/employment-information-salary-overrides`       | GET, POST, PUT, DELETE | Manage salary overrides for employment information    |
 | Salary Grade                           | `/api/v1/salary-grades`                                 | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)                |
 | Salary Data                            | `/api/v1/salary-data`                                   | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)               |
-| Audit                                  | `/api/v1/audit`                                         | GET                    | View audit logs                                       |
 | User                                   | `/api/v1/users`                                         | GET, POST, PUT, DELETE | Manage users, roles, and permissions                  |
 | Roles                                  | `/api/v1/roles`                                         | POST                   | User login and token generation                       |
 | Permission                             | `/api/v1/permissions`                                   | POST                   | Manage user permissions                               |

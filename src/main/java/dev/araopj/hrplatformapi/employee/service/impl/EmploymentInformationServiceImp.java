@@ -8,10 +8,7 @@ import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
 import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationService;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.formatter.DateFormatter;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
@@ -25,11 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.*;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
  * Implementation of the {@link EmploymentInformationService} interface.
@@ -54,28 +48,11 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     private final IdDocumentMapper idDocumentMapper;
     private final EmploymentInformationMapper employmentInformationMapper;
     private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
-
-    private final AuditUtil auditUtil;
     private final DateFormatter dateFormatter;
-    private final Set<String> REDACTED = Set.of("employeeResponse", "employmentInformationSalaryOverrideResponse", "positionResponse", "workplaceResponse");
-    private final String ENTITY_NAME = EmploymentInformationResponse.class.getName();
 
     @Override
     public Page<EmploymentInformationResponse> findAll(Pageable pageable) {
         final var PAGINATED_DATA = employmentInformationRepository.findAll(pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(PAGINATED_DATA.getTotalElements())
-                        .size(PAGINATED_DATA.getSize())
-                        .page(PAGINATED_DATA.getNumber() + 1)
-                        .totalPages(PAGINATED_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return PAGINATED_DATA
                 .map(employmentInformation -> employmentInformationMapper.toDto(
@@ -94,19 +71,6 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 .orElseThrow(() -> new NotFoundException(employeeId, EMPLOYEE));
 
         final var PAGINATED_DATA = employmentInformationRepository.findByEmployeeId(employeeId, pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(PAGINATED_DATA.getTotalElements())
-                        .size(PAGINATED_DATA.getSize())
-                        .page(PAGINATED_DATA.getNumber() + 1)
-                        .totalPages(PAGINATED_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return PAGINATED_DATA
                 .map(employmentInformation -> employmentInformationMapper.toDto(
@@ -121,10 +85,6 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
     @Override
     public Optional<EmploymentInformationResponse> findById(String id) {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
         return Optional.ofNullable(employmentInformationRepository.findById(id)
                 .map(employmentInformation -> employmentInformationMapper.toDto(
                                 employmentInformation,
@@ -175,15 +135,6 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 EXISTING_WORKPLACE
         );
 
-        auditUtil.audit(
-                CREATE,
-                WORKPLACE_TO_SAVE.getId(),
-                Optional.empty(),
-                redact(WORKPLACE_TO_SAVE, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return employmentInformationMapper.toDto(
                 employmentInformationRepository.save(WORKPLACE_TO_SAVE),
                 false,
@@ -208,15 +159,6 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 )
         );
 
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(ORIGINAL_EMPLOYMENT_INFORMATION, REDACTED)),
-                redact(WORKPLACE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_EMPLOYMENT_INFORMATION, WORKPLACE_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
         return employmentInformationMapper.toDto(
                 employmentInformationRepository.save(WORKPLACE_DATA),
                 false,
@@ -230,15 +172,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     @Override
     public boolean delete(String id) {
         findById(id).orElseThrow();
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
         employmentInformationRepository.deleteById(id);
-        return true;
+        return !employeeRepository.existsById(id);
     }
 }

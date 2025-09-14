@@ -7,10 +7,7 @@ import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
 import dev.araopj.hrplatformapi.employee.service.PositionService;
 import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.mappers.PositionMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYMENT_INFORMATION;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.POSITION;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 /**
  * Implementation of {@link PositionService} for managing position-related operations.
@@ -38,26 +32,10 @@ public class PositionServiceImp implements PositionService {
     private final EmploymentInformationRepository employmentInformationRepository;
     private final PositionRepository positionRepository;
     private final PositionMapper positionMapper;
-    private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("id", "employmentInformationResponses");
-    private final String ENTITY_NAME = PositionResponse.class.getName();
 
     @Override
     public Page<PositionResponse> findAll(Pageable pageable) {
         final var POSITION_DATA = positionRepository.findAll(pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(POSITION_DATA.getTotalElements())
-                        .size(POSITION_DATA.getSize())
-                        .page(POSITION_DATA.getNumber() + 1)
-                        .totalPages(POSITION_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return POSITION_DATA
                 .map(positionMapper::toDto);
@@ -65,10 +43,6 @@ public class PositionServiceImp implements PositionService {
 
     @Override
     public Optional<PositionResponse> findById(String id) {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
         return Optional.ofNullable(positionRepository.findById(id)
                 .map(positionMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, POSITION)));
@@ -94,15 +68,6 @@ public class PositionServiceImp implements PositionService {
                         .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_ID, EMPLOYMENT_INFORMATION))
         );
 
-        auditUtil.audit(
-                CREATE,
-                POSITION_TO_SAVE.getId(),
-                Optional.empty(),
-                redact(POSITION_TO_SAVE, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return positionMapper.toDto(positionRepository.save(POSITION_TO_SAVE));
     }
 
@@ -118,41 +83,13 @@ public class PositionServiceImp implements PositionService {
                 positionMapper.toEntity(positionRequest)
         );
 
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(ORIGINAL_POSITION_DATA, REDACTED)),
-                redact(POSITION_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_POSITION_DATA, POSITION_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
         return positionMapper.toDto(positionRepository.save(POSITION_DATA));
     }
 
     @Override
     public boolean delete(String id) {
-        var data = findById(id);
-        if (data.isEmpty()) {
-            log.warn("Position with id [{}] not found for deletion", id);
-            return false;
-        }
-
-        if (!positionRepository.existsById(id)) {
-            log.warn("Position with id [{}] not found for deletion", id);
-            return false;
-        }
-
+        findById(id).orElseThrow();
         positionRepository.deleteById(id);
-
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.of(redact(data, REDACTED)),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-        return true;
+        return !positionRepository.existsById(id);
     }
 }
