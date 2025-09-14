@@ -31,20 +31,19 @@ public class PositionServiceImp implements PositionService {
 
     private final EmploymentInformationRepository employmentInformationRepository;
     private final PositionRepository positionRepository;
-    private final PositionMapper positionMapper;
 
     @Override
     public Page<PositionResponse> findAll(Pageable pageable) {
         final var POSITION_DATA = positionRepository.findAll(pageable);
 
         return POSITION_DATA
-                .map(positionMapper::toDto);
+                .map(PositionMapper::toDto);
     }
 
     @Override
     public Optional<PositionResponse> findById(String id) {
         return Optional.ofNullable(positionRepository.findById(id)
-                .map(positionMapper::toDto)
+                .map(PositionMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, POSITION)));
     }
 
@@ -63,16 +62,16 @@ public class PositionServiceImp implements PositionService {
             ));
         });
 
-        final var POSITION_TO_SAVE = positionMapper.toEntity(positionRequest,
+        final var POSITION_TO_SAVE = PositionMapper.toEntity(positionRequest,
                 employmentInformationRepository.findById(EMPLOYMENT_INFORMATION_ID)
                         .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_ID, EMPLOYMENT_INFORMATION))
         );
 
-        return positionMapper.toDto(positionRepository.save(POSITION_TO_SAVE));
+        return PositionMapper.toDto(positionRepository.save(POSITION_TO_SAVE));
     }
 
     @Override
-    public PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws InvalidRequestException {
+    public PositionResponse update(String id, PositionRequest positionRequest) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
             throw new InvalidRequestException("Position ID must be provided as path");
         }
@@ -80,10 +79,10 @@ public class PositionServiceImp implements PositionService {
         final var ORIGINAL_POSITION_DATA = positionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, POSITION));
         var POSITION_DATA = MergeUtil.merge(ORIGINAL_POSITION_DATA,
-                positionMapper.toEntity(positionRequest)
+                PositionMapper.toEntity(positionRequest)
         );
 
-        return positionMapper.toDto(positionRepository.save(POSITION_DATA));
+        return PositionMapper.toDto(positionRepository.save(POSITION_DATA));
     }
 
     @Override

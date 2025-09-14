@@ -46,7 +46,7 @@ public interface PositionService {
      * @param positionRequest the request object containing updated position details
      * @return the updated {@link PositionResponse} object
      */
-    PositionResponse update(String id, PositionRequest.WithoutEmploymentInformationId positionRequest) throws InvalidRequestException;
+    PositionResponse update(String id, PositionRequest positionRequest) throws InvalidRequestException;
 
     /**
      * Deletes a position by its unique id.

@@ -257,7 +257,7 @@ public class PositionController {
             @Parameter(description = "ID of the position to update", required = true)
             @PathVariable @NotNull String id,
             @Parameter(description = "Updated position details", required = true)
-            @RequestBody @Valid PositionRequest.WithoutEmploymentInformationId positionRequest
+            @RequestBody @Valid PositionRequest positionRequest
     ) throws BadRequestException {
         log.info("Request to update position with id [{}]", id);
         return ResponseEntity.ok(StandardApiResponse.success(positionService.update(id, positionRequest)));
