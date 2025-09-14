@@ -46,7 +46,7 @@ public interface WorkplaceService {
      * @return the updated {@link WorkplaceResponse} object
      * @throws BadRequestException if the provided ID is invalid or the workplace cannot be updated
      */
-    WorkplaceResponse update(String id, WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest) throws BadRequestException;
+    WorkplaceResponse update(String id, WorkplaceRequest workplaceRequest) throws BadRequestException;
 
     /**
      * Deletes a workplace by its unique identifier.

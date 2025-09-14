@@ -4,9 +4,9 @@ import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.Workplace;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
+@UtilityClass
 public class WorkplaceMapper {
     public Workplace toEntity(WorkplaceRequest workplaceRequest, EmploymentInformation employmentInformation) {
         if (workplaceRequest == null) {
@@ -22,18 +22,6 @@ public class WorkplaceMapper {
     }
 
     public Workplace toEntity(WorkplaceRequest workplaceRequest) {
-        if (workplaceRequest == null) {
-            throw new IllegalArgumentException("workplaceRequest cannot be null");
-        }
-
-        return Workplace.builder()
-                .code(workplaceRequest.code())
-                .name(workplaceRequest.name())
-                .shortName(workplaceRequest.shortName())
-                .build();
-    }
-
-    public Workplace toEntity(WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest) {
         if (workplaceRequest == null) {
             throw new IllegalArgumentException("workplaceRequest cannot be null");
         }
