@@ -73,24 +73,6 @@ public class PositionMapper {
                 .build();
     }
 
-    /**
-     * Converts a PositionRequest.WithoutEmploymentInformationId DTO to a Position entity.
-     *
-     * @param positionRequest the PositionRequest.WithoutEmploymentInformationId DTO
-     * @return the corresponding Position entity
-     * @throws IllegalArgumentException if positionRequest is null
-     */
-    public Position toEntity(PositionRequest.WithoutEmploymentInformationId positionRequest) {
-        if (positionRequest == null) {
-            throw new IllegalArgumentException("positionRequest cannot be null");
-        }
-
-        return Position.builder()
-                .code(positionRequest.code())
-                .description(positionRequest.description())
-                .build();
-    }
-
     public Position toEntity(PositionResponse positionResponse) {
         if (positionResponse == null) {
             throw new IllegalArgumentException("positionResponse cannot be null");
