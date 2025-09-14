@@ -2,6 +2,7 @@ package dev.araopj.hrplatformapi.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -19,6 +20,7 @@ import lombok.Getter;
  * @see EntityNotFoundException
  * @since 0.0.1
  */
+@EqualsAndHashCode(callSuper = false)
 public class NotFoundException extends EntityNotFoundException {
     public NotFoundException(String id, EntityType entityType) {
         super("%s record with ID %s not found.".formatted(entityType.getDescription(), id));
