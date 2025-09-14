@@ -32,10 +32,6 @@ import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EM
 public class EmployeeServiceImp implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final EmployeeMapper employeeMapper;
-    private final EmploymentInformationMapper employmentInformationMapper;
-    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
-    private final IdDocumentMapper idDocumentMapper;
 
     @Override
     public Page<EmployeeResponse> findAll(Pageable pageable, boolean includeIdDocuments, boolean includeEmploymentInformation) {
@@ -47,26 +43,20 @@ public class EmployeeServiceImp implements EmployeeService {
                                 employeeRepository.findAllWithEmploymentInformation(pageable) :
                                 employeeRepository.findAll(pageable);
         return PAGINATED_DATA
-                .map(e -> employeeMapper.toDto(
+                .map(e -> EmployeeMapper.toDto(
                         e,
                         includeIdDocuments,
-                        includeEmploymentInformation,
-                        idDocumentMapper,
-                        employmentInformationMapper,
-                        employmentInformationSalaryOverrideMapper
+                        includeEmploymentInformation
                 ));
     }
 
     @Override
     public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) {
         return Optional.ofNullable(employeeRepository.findById(id)
-                .map(e -> employeeMapper.toDto(
+                .map(e -> EmployeeMapper.toDto(
                         e,
                         includeIdDocuments,
-                        includeEmploymentInformation,
-                        idDocumentMapper,
-                        employmentInformationMapper,
-                        employmentInformationSalaryOverrideMapper
+                        includeEmploymentInformation
                 ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE)));
     }
@@ -74,13 +64,10 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) {
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
-                .map(employee -> employeeMapper.toDto(
+                .map(employee -> EmployeeMapper.toDto(
                                 employee,
                                 includeIdDocuments,
-                                includeEmploymentInformation,
-                                idDocumentMapper,
-                                employmentInformationMapper,
-                                employmentInformationSalaryOverrideMapper
+                                includeEmploymentInformation
                         )
                 ).orElseThrow(() -> new NotFoundException(userId, EMPLOYEE)));
     }
@@ -110,7 +97,7 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var EMPLOYEE_TO_SAVE = employeeRequests
                 .stream()
-                .map(employeeRequest -> employeeMapper.toEntity(
+                .map(employeeRequest -> EmployeeMapper.toEntity(
                         employeeRequest,
                         getEmploymentInformationRequests(employeeRequest),
                         getIdDocumentRequests(employeeRequest)
@@ -122,13 +109,10 @@ public class EmployeeServiceImp implements EmployeeService {
         final var SAVED_EMPLOYEES = employeeRepository.saveAll(EMPLOYEE_TO_SAVE);
 
         return SAVED_EMPLOYEES.stream()
-                .map(employee -> employeeMapper.toDto(
+                .map(employee -> EmployeeMapper.toDto(
                         employee,
                         false,
-                        false,
-                        idDocumentMapper,
-                        employmentInformationMapper,
-                        employmentInformationSalaryOverrideMapper
+                        false
                 )).toList();
 
     }
@@ -143,7 +127,7 @@ public class EmployeeServiceImp implements EmployeeService {
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE));
 
         var EMPLOYEE_DATA = MergeUtil.merge(ORIGINAL_EMPLOYEE,
-                employeeMapper.toEntity(
+                EmployeeMapper.toEntity(
                         employeeRequest,
                         getEmploymentInformationRequests(employeeRequest),
                         getIdDocumentRequests(employeeRequest)
@@ -152,13 +136,10 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var UPDATED_EMPLOYEE = employeeRepository.save(EMPLOYEE_DATA);
 
-        return employeeMapper.toDto(
+        return EmployeeMapper.toDto(
                 UPDATED_EMPLOYEE,
                 false,
-                false,
-                idDocumentMapper,
-                employmentInformationMapper,
-                employmentInformationSalaryOverrideMapper
+                false
         );
     }
 
@@ -173,7 +154,7 @@ public class EmployeeServiceImp implements EmployeeService {
         return employeeRequest.idDocumentRequests() != null ?
                 employeeRequest.idDocumentRequests()
                         .stream()
-                        .map(idDocumentMapper::toEntity)
+                        .map(IdDocumentMapper::toEntity)
                         .collect(Collectors.toSet()) : null;
     }
 
@@ -181,9 +162,9 @@ public class EmployeeServiceImp implements EmployeeService {
         return employeeRequest.employmentInformationRequests() != null ?
                 employeeRequest.employmentInformationRequests()
                         .stream()
-                        .map(e -> employmentInformationMapper.toEntity(
+                        .map(e -> EmploymentInformationMapper.toEntity(
                                         e,
-                                        employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
+                                        EmploymentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
                                 )
                         )
                         .collect(Collectors.toSet()) : null;

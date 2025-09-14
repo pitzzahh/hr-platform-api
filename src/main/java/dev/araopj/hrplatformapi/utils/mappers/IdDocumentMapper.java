@@ -6,13 +6,10 @@ import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
-@RequiredArgsConstructor
+@UtilityClass
 public class IdDocumentMapper {
-
-    private final IdDocumentTypeMapper idDocumentTypeMapper;
 
     public IdDocument toEntity(IdDocumentRequest dto) {
         if (dto == null) {
@@ -21,7 +18,7 @@ public class IdDocumentMapper {
 
         return IdDocument.builder()
                 .identifierNumber(dto.identifierNumber())
-                .idDocumentType(idDocumentTypeMapper.toEntity(dto.idDocumentTypeRequest()))
+                .idDocumentType(IdDocumentTypeMapper.toEntity(dto.idDocumentTypeRequest()))
                 .issuedDate(dto.issuedDate())
                 .issuedPlace(dto.issuedPlace())
                 .build();
@@ -49,7 +46,7 @@ public class IdDocumentMapper {
         return IdDocumentResponse.builder()
                 .id(idDocument.getId())
                 .identifierNumber(idDocument.getIdentifierNumber())
-                .type(idDocumentTypeMapper.toDto(idDocument.getIdDocumentType(), false))
+                .type(IdDocumentTypeMapper.toDto(idDocument.getIdDocumentType(), false))
                 .issuedDate(idDocument.getIssuedDate())
                 .issuedPlace(idDocument.getIssuedPlace())
                 .employee(includeEmployee ? idDocument.getEmployee() : null)

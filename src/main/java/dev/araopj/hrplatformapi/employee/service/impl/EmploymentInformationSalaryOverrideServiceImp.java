@@ -6,13 +6,13 @@ import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverri
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
 import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationSalaryOverrideRepository;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationSalaryOverrideService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.CommonValidation;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +37,6 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
     private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
     private final EmploymentInformationRepository employmentInformationRepository;
-    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
 
     @Override
     public List<EmploymentInformationSalaryOverrideResponse> findAll() {
@@ -45,14 +44,14 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
         return EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA
                 .stream()
-                .map(employmentInformationSalaryOverrideMapper::toDto)
+                .map(EmploymentInformationSalaryOverrideMapper::toDto)
                 .toList();
     }
 
     @Override
     public Optional<EmploymentInformationSalaryOverrideResponse> findById(String id) {
         return Optional.of(employmentInformationSalaryOverrideRepository.findById(id)
-                .map(employmentInformationSalaryOverrideMapper::toDto)
+                .map(EmploymentInformationSalaryOverrideMapper::toDto)
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE)));
     }
 
@@ -86,17 +85,17 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
                 )
                 .build();
 
-        return employmentInformationSalaryOverrideMapper.toDto(employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE));
+        return EmploymentInformationSalaryOverrideMapper.toDto(employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_TO_SAVE));
     }
 
     @Override
     public EmploymentInformationSalaryOverrideResponse update(
             String id,
-            EmploymentInformationSalaryOverrideRequest.WithoutEmploymentInformationId employmentInformationSalaryOverrideRequest
-    ) throws BadRequestException {
+            EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest
+    ) throws InvalidRequestException {
 
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("EmploymentInformationSalaryOverride ID must be provided as path");
+            throw new InvalidRequestException("EmploymentInformationSalaryOverride ID must be provided as path");
         }
 
         final var ORIGINAL_EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA = employmentInformationSalaryOverrideRepository
@@ -105,10 +104,10 @@ public class EmploymentInformationSalaryOverrideServiceImp implements Employment
 
         var EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA = MergeUtil.merge(
                 ORIGINAL_EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA,
-                employmentInformationSalaryOverrideMapper.toEntity(employmentInformationSalaryOverrideRequest)
+                EmploymentInformationSalaryOverrideMapper.toEntity(employmentInformationSalaryOverrideRequest)
         );
 
-        return employmentInformationSalaryOverrideMapper.toDto(
+        return EmploymentInformationSalaryOverrideMapper.toDto(
                 employmentInformationSalaryOverrideRepository.save(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_DATA)
         );
     }

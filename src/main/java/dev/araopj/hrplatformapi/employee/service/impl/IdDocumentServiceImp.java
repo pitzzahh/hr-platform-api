@@ -23,13 +23,12 @@ import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.ID
 public class IdDocumentServiceImp implements IdDocumentService {
 
     private final IdDocumentRepository idDocumentRepository;
-    private final IdDocumentMapper idDocumentMapper;
 
     @Override
     public List<IdDocumentResponse> findAll() {
         var ID_DOCUMENTS = idDocumentRepository.findAll();
         return ID_DOCUMENTS.stream()
-                .map(entity -> idDocumentMapper.toDto(entity, true))
+                .map(entity -> IdDocumentMapper.toDto(entity, true))
                 .toList();
     }
 
@@ -40,7 +39,7 @@ public class IdDocumentServiceImp implements IdDocumentService {
         }
         return idDocumentRepository
                 .findById(id)
-                .map(e -> idDocumentMapper.toDto(e, true))
+                .map(e -> IdDocumentMapper.toDto(e, true))
                 .map(Optional::of)
                 .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
     }
@@ -51,7 +50,7 @@ public class IdDocumentServiceImp implements IdDocumentService {
                 .ifPresent(existing -> {
                     throw new IllegalArgumentException("IdDocument with identifierNumber [%s] already exists".formatted(request.identifierNumber()));
                 });
-        return idDocumentMapper.toDto(idDocumentRepository.save(idDocumentMapper.toEntity(request)), false);
+        return IdDocumentMapper.toDto(idDocumentRepository.save(IdDocumentMapper.toEntity(request)), false);
 
     }
 
@@ -64,9 +63,9 @@ public class IdDocumentServiceImp implements IdDocumentService {
         final var EXISTING_IDENTIFIER = idDocumentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT));
 
-        final var UPDATED_IDENTIFIER = idDocumentRepository.save(MergeUtil.merge(EXISTING_IDENTIFIER, idDocumentMapper.toEntity(request)));
+        final var UPDATED_IDENTIFIER = idDocumentRepository.save(MergeUtil.merge(EXISTING_IDENTIFIER, IdDocumentMapper.toEntity(request)));
 
-        return idDocumentMapper.toDto(UPDATED_IDENTIFIER, false);
+        return IdDocumentMapper.toDto(UPDATED_IDENTIFIER, false);
     }
 
     @Override

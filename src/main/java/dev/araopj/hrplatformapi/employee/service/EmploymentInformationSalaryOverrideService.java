@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +41,9 @@ public interface EmploymentInformationSalaryOverrideService {
      * @param id                                         the ID of the Employment Information Salary Override to be updated
      * @param employmentInformationSalaryOverrideRequest the request object containing the updated details of the Employment Information Salary Override
      * @return the updated EmploymentInformationSalaryOverrideResponse
+     * @throws InvalidRequestException if the request is invalid
      */
-    EmploymentInformationSalaryOverrideResponse update(String id, EmploymentInformationSalaryOverrideRequest.WithoutEmploymentInformationId employmentInformationSalaryOverrideRequest) throws BadRequestException;
+    EmploymentInformationSalaryOverrideResponse update(String id, EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest) throws InvalidRequestException;
 
     /**
      * Deletes an Employment Information Salary Override by its ID.

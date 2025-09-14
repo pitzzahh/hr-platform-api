@@ -18,13 +18,4 @@ public record EmploymentInformationSalaryOverrideRequest(
         String employmentInformationId
 ) {
 
-    @Builder
-    public record WithoutEmploymentInformationId(
-            @NotNull(message = "Salary cannot be null")
-            @Min(value = 1, message = "Salary must be at least 1")
-            double salary,
-            @NotNull(message = "Effective date cannot be null")
-            LocalDate effectiveDate
-    ) {
-    }
 }

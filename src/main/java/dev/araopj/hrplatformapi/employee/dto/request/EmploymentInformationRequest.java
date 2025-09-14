@@ -22,7 +22,7 @@ public record EmploymentInformationRequest(
         @NotBlank
         String sourceOfFund,
         String remarks,
-        EmploymentInformationSalaryOverrideRequest.WithoutEmploymentInformationId employmentInformationSalaryOverrideRequest,
+        EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest,
         @Size(min = 1, max = 8, message = "step must be between 1 and 8")
         int step,
         @Size(min = 1, max = 8, message = "anticipatedStep must be between 1 and 8")

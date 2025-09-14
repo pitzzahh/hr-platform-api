@@ -4,11 +4,9 @@ import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationReques
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
 import dev.araopj.hrplatformapi.employee.model.*;
 import jakarta.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
-@RequiredArgsConstructor
+@UtilityClass
 public class EmploymentInformationMapper {
 
     public EmploymentInformation toEntity(
@@ -71,10 +69,7 @@ public class EmploymentInformationMapper {
 
     public EmploymentInformationResponse toDto(
             EmploymentInformation employmentInformation,
-            boolean includeEmployee,
-            EmployeeMapper employeeMapper,
-            IdDocumentMapper idDocumentMapper,
-            EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper
+            boolean includeEmployee
     ) {
         if (employmentInformation == null) {
             throw new IllegalArgumentException("employmentInformationResponses cannot be null");
@@ -84,13 +79,10 @@ public class EmploymentInformationMapper {
 
         return EmploymentInformationResponse.builder()
                 .id(employmentInformation.getId())
-                .employeeResponse(includeEmployee ? employeeMapper.toDto(
+                .employeeResponse(includeEmployee ? EmployeeMapper.toDto(
                         EMPLOYEE,
                         true,
-                        false,
-                        idDocumentMapper,
-                        this,
-                        employmentInformationSalaryOverrideMapper
+                        false
                 ) : null)
                 .startDate(employmentInformation.getStartDate())
                 .endDate(employmentInformation.getEndDate())
@@ -99,7 +91,7 @@ public class EmploymentInformationMapper {
                 .remarks(employmentInformation.getRemarks())
                 .employmentInformationSalaryOverrideResponse(
                         employmentInformation.getEmploymentInformationSalaryOverride() != null ?
-                                employmentInformationSalaryOverrideMapper.toDto(employmentInformation.getEmploymentInformationSalaryOverride()) : null
+                                EmploymentInformationSalaryOverrideMapper.toDto(employmentInformation.getEmploymentInformationSalaryOverride()) : null
                 )
                 .build();
     }

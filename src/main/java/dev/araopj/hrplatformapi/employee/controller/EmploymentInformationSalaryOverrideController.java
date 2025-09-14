@@ -232,7 +232,7 @@ public class EmploymentInformationSalaryOverrideController {
             @Parameter(description = "ID of the salary override to update", required = true)
             @PathVariable @NotNull String id,
             @Parameter(description = "Updated salary override details", required = true)
-            @RequestBody @Valid EmploymentInformationSalaryOverrideRequest.WithoutEmploymentInformationId employmentInformationSalaryOverrideRequest
+            @RequestBody @Valid EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest
     ) throws BadRequestException {
         log.info("Request to update salary override with id [{}]", id);
         return ResponseEntity.ok(StandardApiResponse.success(

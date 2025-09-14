@@ -3,9 +3,9 @@ package dev.araopj.hrplatformapi.utils.mappers;
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationSalaryOverrideRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationSalaryOverrideResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformationSalaryOverride;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
+@UtilityClass
 public class EmploymentInformationSalaryOverrideMapper {
     public EmploymentInformationSalaryOverrideResponse toDto(EmploymentInformationSalaryOverride override) {
         return EmploymentInformationSalaryOverrideResponse.builder()
@@ -17,7 +17,7 @@ public class EmploymentInformationSalaryOverrideMapper {
                 .build();
     }
 
-    public EmploymentInformationSalaryOverride toEntity(EmploymentInformationSalaryOverrideRequest.WithoutEmploymentInformationId employmentInformationSalaryOverrideRequest) {
+    public EmploymentInformationSalaryOverride toEntity(EmploymentInformationSalaryOverrideRequest employmentInformationSalaryOverrideRequest) {
         return EmploymentInformationSalaryOverride.builder()
                 .salary(employmentInformationSalaryOverrideRequest.salary())
                 .effectiveDate(employmentInformationSalaryOverrideRequest.effectiveDate())

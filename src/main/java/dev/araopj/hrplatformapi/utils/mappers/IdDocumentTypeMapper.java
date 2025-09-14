@@ -3,9 +3,9 @@ package dev.araopj.hrplatformapi.utils.mappers;
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentTypeResponse;
 import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
+@UtilityClass
 public class IdDocumentTypeMapper {
 
     public IdDocumentTypeResponse toDto(IdDocumentType idDocumentType, boolean includeIdDocument) {

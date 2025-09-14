@@ -30,20 +30,19 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
 
     private final IdDocumentTypeRepository idDocumentTypeRepository;
     private final IdDocumentRepository idDocumentRepository;
-    private final IdDocumentTypeMapper idDocumentTypeMapper;
 
     @Override
     public List<IdDocumentTypeResponse> findAll() {
         final var DATA = idDocumentTypeRepository.findAll();
         return DATA.stream()
-                .map(e -> idDocumentTypeMapper.toDto(e, true))
+                .map(e -> IdDocumentTypeMapper.toDto(e, true))
                 .toList();
     }
 
     @Override
     public Optional<IdDocumentTypeResponse> findById(String id) {
         return Optional.ofNullable(idDocumentTypeRepository.findById(id)
-                .map(e -> idDocumentTypeMapper.toDto(e, true))
+                .map(e -> IdDocumentTypeMapper.toDto(e, true))
                 .orElseThrow(() -> new NotFoundException(id, ID_DOCUMENT_TYPE)));
     }
 
@@ -56,9 +55,9 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
                 .orElseThrow(() -> new NotFoundException(identifierId, ID_DOCUMENT));
 
         final var SAVED_DATA = idDocumentTypeRepository.save(
-                idDocumentTypeMapper.toEntity(idDocumentTypeRequest)
+                IdDocumentTypeMapper.toEntity(idDocumentTypeRequest)
         );
-        return idDocumentTypeMapper.toDto(SAVED_DATA, false);
+        return IdDocumentTypeMapper.toDto(SAVED_DATA, false);
     }
 
     @Override
@@ -67,8 +66,8 @@ public class IdDocumentTypeServiceImp implements IdDocumentTypeService {
             throw new BadRequestException("IdDocumentType ID must be provided as path");
         }
 
-        return idDocumentTypeMapper.toDto(idDocumentTypeRepository.save(
-                idDocumentTypeMapper.toEntity(idDocumentTypeRequest)
+        return IdDocumentTypeMapper.toDto(idDocumentTypeRepository.save(
+                IdDocumentTypeMapper.toEntity(idDocumentTypeRequest)
         ), false);
     }
 
