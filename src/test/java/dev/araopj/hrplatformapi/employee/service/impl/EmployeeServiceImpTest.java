@@ -273,16 +273,16 @@ class EmployeeServiceImpTest {
             try (var mapperMock = mockStatic(EmployeeMapper.class)) {
                 var employeeRequests = List.of(employeeRequest);
                 when(employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
-                        employeeRequest.employeeNumber(),
-                        employeeRequest.email(),
-                        employeeRequest.taxPayerIdentificationNumber(),
-                        employeeRequest.firstName(),
-                        employeeRequest.lastName(),
-                        employeeRequest.firstName(),
-                        employeeRequest.middleName(),
-                        employeeRequest.lastName()))
+                        eq(employeeRequest.employeeNumber()),
+                        eq(employeeRequest.email()),
+                        eq(employeeRequest.taxPayerIdentificationNumber()),
+                        eq(employeeRequest.firstName()),
+                        eq(employeeRequest.lastName()),
+                        eq(employeeRequest.firstName()),
+                        eq(employeeRequest.middleName()),
+                        eq(employeeRequest.lastName())))
                         .thenReturn(Optional.empty());
-                mapperMock.when(() -> EmployeeMapper.toEntity(employeeRequest, isNull(), isNull()))
+                mapperMock.when(() -> EmployeeMapper.toEntity(eq(employeeRequest), isNull(), isNull()))
                         .thenReturn(employee);
                 when(employeeRepository.saveAll(anyList())).thenReturn(List.of(employee));
                 mapperMock.when(() -> EmployeeMapper.toDto(employee, false, false))
@@ -311,14 +311,14 @@ class EmployeeServiceImpTest {
         void shouldThrowInvalidRequestExceptionWhenEmployeeAlreadyExists() {
             var employeeRequests = List.of(employeeRequest);
             when(employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
-                    employeeRequest.employeeNumber(),
-                    employeeRequest.email(),
-                    employeeRequest.taxPayerIdentificationNumber(),
-                    employeeRequest.firstName(),
-                    employeeRequest.lastName(),
-                    employeeRequest.firstName(),
-                    employeeRequest.middleName(),
-                    employeeRequest.lastName()))
+                    eq(employeeRequest.employeeNumber()),
+                    eq(employeeRequest.email()),
+                    eq(employeeRequest.taxPayerIdentificationNumber()),
+                    eq(employeeRequest.firstName()),
+                    eq(employeeRequest.lastName()),
+                    eq(employeeRequest.firstName()),
+                    eq(employeeRequest.middleName()),
+                    eq(employeeRequest.lastName())))
                     .thenReturn(Optional.of(employee));
 
             var exception = assertThrows(InvalidRequestException.class,
@@ -409,7 +409,7 @@ class EmployeeServiceImpTest {
                         .build();
 
                 when(employeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
-                mapperMock.when(() -> EmployeeMapper.toEntity(updatedRequest, isNull(), isNull()))
+                mapperMock.when(() -> EmployeeMapper.toEntity(eq(updatedRequest), isNull(), isNull()))
                         .thenReturn(updatedEmployee);
                 mergeUtilMock.when(() -> MergeUtil.merge(employee, updatedEmployee))
                         .thenReturn(updatedEmployee);
