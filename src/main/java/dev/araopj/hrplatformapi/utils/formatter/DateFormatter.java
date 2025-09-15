@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.utils.formatter;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,8 +41,7 @@ import java.util.Map;
  *
  * @see DateTimeFormatter
  */
-@Component
-@RequiredArgsConstructor
+@UtilityClass
 public class DateFormatter {
     private final Map<String, DateTimeFormatter> FORMATTERS = new HashMap<>(
             Map.of(

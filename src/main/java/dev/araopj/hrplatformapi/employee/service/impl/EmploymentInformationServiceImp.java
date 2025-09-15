@@ -23,15 +23,6 @@ import java.util.Optional;
 
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.*;
 
-/**
- * Implementation of the {@link EmploymentInformationService} interface.
- * This service provides methods for managing employment information records,
- * including retrieval, creation, updating, and deletion operations.
- *
- * @see EmploymentInformationService
- * @see EmploymentInformationResponse
- * @see EmploymentInformationRequest
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,18 +33,15 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     private final PositionRepository positionRepository;
     private final WorkplaceRepository workplaceRepository;
 
-    private final DateFormatter dateFormatter;
-
     @Override
     public Page<EmploymentInformationResponse> findAll(Pageable pageable) {
         final var PAGINATED_DATA = employmentInformationRepository.findAll(pageable);
 
         return PAGINATED_DATA
                 .map(employmentInformation -> EmploymentInformationMapper.toDto(
-                                employmentInformation,
-                                false
-                        )
-                );
+                        employmentInformation,
+                        false
+                ));
     }
 
     @Override
@@ -68,10 +56,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
         return PAGINATED_DATA
                 .map(employmentInformation -> EmploymentInformationMapper.toDto(
-                                employmentInformation,
-                                false
-                        )
-                );
+                        employmentInformation,
+                        false
+                ));
     }
 
     @Override
@@ -81,10 +68,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         }
         return Optional.ofNullable(employmentInformationRepository.findById(id)
                 .map(employmentInformation -> EmploymentInformationMapper.toDto(
-                                employmentInformation,
-                                false
-                        )
-                )
+                        employmentInformation,
+                        false
+                ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION)));
     }
 
@@ -106,11 +92,10 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 employmentInformationRequest.endDate(),
                 employmentInformationRequest.remarks(),
                 EMPLOYEE_ID
-
         ).ifPresent(workplace -> {
             throw new InvalidRequestException("Workplace with start date [%s], end date [%s], and remarks [%s] already exists for Employee with id [%s]".formatted(
-                    dateFormatter.format(workplace.getStartDate(), "long"),
-                    dateFormatter.format(workplace.getEndDate(), "long"),
+                    DateFormatter.format(workplace.getStartDate(), "long"),
+                    DateFormatter.format(workplace.getEndDate(), "long"),
                     workplace.getRemarks(),
                     EMPLOYEE_ID
             ));
@@ -151,13 +136,12 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 employmentInformationRepository.save(WORKPLACE_DATA),
                 false
         );
-
     }
 
     @Override
     public boolean delete(String id) {
         findById(id).orElseThrow();
         employmentInformationRepository.deleteById(id);
-        return !employeeRepository.existsById(id);
+        return !employmentInformationRepository.existsById(id);
     }
 }
