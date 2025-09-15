@@ -3,7 +3,7 @@ package dev.araopj.hrplatformapi.employee.service;
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
 import dev.araopj.hrplatformapi.exception.InvalidRequestException;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -60,16 +60,20 @@ public interface EmployeeService {
      *
      * @param id The employee ID.
      * @return An optional containing the employee response, or empty if not found.
+     * @throws InvalidRequestException if the ID is null or empty.
+     * @throws NotFoundException       if no employee is found with the given ID.
      */
-    Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation);
+    Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) throws InvalidRequestException, NotFoundException;
 
     /**
      * Retrieves an employee by their user ID.
      *
      * @param userId The user ID associated with the employee.
      * @return An optional containing the employee response, or empty if not found.
+     * @throws InvalidRequestException if the userId is null or empty.
+     * @throws NotFoundException       if no employee is found with the given userId.
      */
-    Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation);
+    Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) throws InvalidRequestException, NotFoundException;
 
     /**
      * Creates new employee records.
@@ -86,8 +90,10 @@ public interface EmployeeService {
      * @param id              The employee ID.
      * @param employeeRequest The updated employee data.
      * @return The updated employee response.
+     * @throws InvalidRequestException if the request data is invalid.
+     * @throws NotFoundException       if the employee with the given ID does not exist.
      */
-    EmployeeResponse update(String id, EmployeeRequest employeeRequest) throws BadRequestException;
+    EmployeeResponse update(String id, EmployeeRequest employeeRequest) throws InvalidRequestException, NotFoundException;
 
     /**
      * Deletes an employee by their ID.

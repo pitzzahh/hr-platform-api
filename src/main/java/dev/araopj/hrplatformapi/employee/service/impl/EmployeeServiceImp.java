@@ -15,7 +15,6 @@ import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrid
 import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,11 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) {
+    public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) throws InvalidRequestException, NotFoundException {
+        if (id == null || id.isEmpty()) {
+            throw new InvalidRequestException("Employee ID must be provided as path");
+        }
+
         return Optional.ofNullable(employeeRepository.findById(id)
                 .map(e -> EmployeeMapper.toDto(
                         e,
@@ -63,7 +66,11 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) {
+    public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) throws InvalidRequestException, NotFoundException {
+        if (userId == null || userId.isEmpty()) {
+            throw new InvalidRequestException("User ID must be provided as path");
+        }
+
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
                 .map(employee -> EmployeeMapper.toDto(
                                 employee,
@@ -119,9 +126,9 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public EmployeeResponse update(String id, EmployeeRequest employeeRequest) throws BadRequestException {
+    public EmployeeResponse update(String id, EmployeeRequest employeeRequest) throws InvalidRequestException, NotFoundException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Employee ID must be provided as path");
+            throw new InvalidRequestException("Employee ID must be provided as path");
         }
 
         final var ORIGINAL_EMPLOYEE = employeeRepository.findById(id)
