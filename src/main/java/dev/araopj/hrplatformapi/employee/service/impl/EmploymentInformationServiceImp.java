@@ -89,7 +89,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     }
 
     @Override
-    public EmploymentInformationResponse create(String id, EmploymentInformationRequest employmentInformationRequest) {
+    public EmploymentInformationResponse create(String id, EmploymentInformationRequest employmentInformationRequest) throws InvalidRequestException, NotFoundException {
         final var EMPLOYEE_ID = employmentInformationRequest.employeeId();
         final var POSITION_ID = employmentInformationRequest.positionId();
         final var WORKPLACE_ID = employmentInformationRequest.workplaceId();
@@ -108,7 +108,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 EMPLOYEE_ID
 
         ).ifPresent(workplace -> {
-            throw new IllegalArgumentException("Workplace with start date [%s], end date [%s], and remarks [%s] already exists for Employee with id [%s]".formatted(
+            throw new InvalidRequestException("Workplace with start date [%s], end date [%s], and remarks [%s] already exists for Employee with id [%s]".formatted(
                     dateFormatter.format(workplace.getStartDate(), "long"),
                     dateFormatter.format(workplace.getEndDate(), "long"),
                     workplace.getRemarks(),
