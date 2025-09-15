@@ -6,6 +6,7 @@ import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
 import dev.araopj.hrplatformapi.employee.service.EmployeeService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
@@ -73,7 +74,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> create(List<EmployeeRequest> employeeRequests) {
+    public List<EmployeeResponse> create(List<EmployeeRequest> employeeRequests) throws InvalidRequestException {
 
         for (EmployeeRequest request : employeeRequests) {
             employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
@@ -86,7 +87,7 @@ public class EmployeeServiceImp implements EmployeeService {
                     request.middleName(),
                     request.lastName()
             ).ifPresent(employee -> {
-                throw new IllegalArgumentException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s]already exists".formatted(
+                throw new InvalidRequestException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s] already exists".formatted(
                         employee.getEmployeeNumber(),
                         employee.getEmail(),
                         employee.getTaxPayerIdentificationNumber(),

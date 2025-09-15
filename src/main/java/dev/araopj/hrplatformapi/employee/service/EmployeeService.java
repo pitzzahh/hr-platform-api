@@ -2,6 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -75,8 +76,9 @@ public interface EmployeeService {
      *
      * @param employeeRequest The employee data to create.
      * @return A list of created employee responses.
+     * @throws InvalidRequestException if the request data is invalid.
      */
-    List<EmployeeResponse> create(List<EmployeeRequest> employeeRequest);
+    List<EmployeeResponse> create(List<EmployeeRequest> employeeRequest) throws InvalidRequestException;
 
     /**
      * Updates an existing employee record.
