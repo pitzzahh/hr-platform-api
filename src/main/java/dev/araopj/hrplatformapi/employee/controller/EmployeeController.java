@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,6 @@ public class EmployeeController {
      * @param includeIdDocuments           Whether to include ID documents in the response.
      * @param includeEmploymentInformation Whether to include employment information in the response.
      * @return A ResponseEntity containing a StandardApiResponse with a list of EmployeeResponse and pagination metadata.
-     * @throws BadRequestException If invalid pagination parameters are provided.
      */
     @Operation(
             summary = "Get all employees",
