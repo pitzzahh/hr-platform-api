@@ -3,16 +3,12 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
 import dev.araopj.hrplatformapi.employee.model.*;
-import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
-import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
-import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
-import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
+import dev.araopj.hrplatformapi.employee.repository.*;
 import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.formatter.DateFormatter;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
-import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,9 +41,12 @@ class EmploymentInformationServiceImpTest {
     private PositionRepository positionRepository;
     @Mock
     private WorkplaceRepository workplaceRepository;
+    @Mock
+    private EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
     @InjectMocks
     private EmploymentInformationServiceImp employmentInformationServiceImp;
 
+    private EmploymentInformationSalaryOverride salaryOverride;
     private Employee employee;
     private Position position;
     private Workplace workplace;
@@ -75,6 +74,10 @@ class EmploymentInformationServiceImpTest {
                 .id("sal-1")
                 .build();
 
+        salaryOverride = EmploymentInformationSalaryOverride.builder()
+                .id("sal-override-1")
+                .build();
+
         employmentInformation = EmploymentInformation.builder()
                 .id("emp-info-1")
                 .employee(employee)
@@ -83,7 +86,7 @@ class EmploymentInformationServiceImpTest {
                 .employmentStatus(EmploymentStatus.PERMANENT)
                 .sourceOfFund("Fund")
                 .remarks("Remark")
-                .employmentInformationSalaryOverride(null)
+                .employmentInformationSalaryOverride(salaryOverride)
                 .position(position)
                 .workplace(workplace)
                 .salary(salary)
@@ -111,11 +114,9 @@ class EmploymentInformationServiceImpTest {
                 .employmentStatus(EmploymentStatus.PERMANENT)
                 .sourceOfFund("Fund")
                 .remarks("Remark")
-                .employmentInformationSalaryOverrideRequest(null)
-                .step(1)
-                .anticipatedStep(1)
                 .positionId("pos-1")
                 .workplaceId("work-1")
+                .employmentInformationSalaryOverrideId("sal-override-1")
                 .build();
 
         pageable = PageRequest.of(0, 10);
@@ -135,6 +136,8 @@ class EmploymentInformationServiceImpTest {
                         .thenReturn(Optional.of(position));
                 when(workplaceRepository.findById(employmentInformationRequest.workplaceId()))
                         .thenReturn(Optional.of(workplace));
+                when(employmentInformationSalaryOverrideRepository.findById(employmentInformationRequest.employmentInformationSalaryOverrideId()))
+                        .thenReturn(Optional.of(salaryOverride));
                 when(employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         eq(employmentInformationRequest.startDate()),
                         eq(employmentInformationRequest.endDate()),
@@ -142,7 +145,7 @@ class EmploymentInformationServiceImpTest {
                         eq(employmentInformationRequest.employeeId())))
                         .thenReturn(Optional.empty());
                 mapperMock.when(() -> EmploymentInformationMapper.toEntity(
-                                eq(employmentInformationRequest), eq(employee), isNull(), eq(position), eq(workplace)))
+                                eq(employmentInformationRequest), eq(employee), eq(salaryOverride), eq(position), eq(workplace)))
                         .thenReturn(employmentInformation);
                 when(employmentInformationRepository.save(any(EmploymentInformation.class)))
                         .thenReturn(employmentInformation);
@@ -165,6 +168,7 @@ class EmploymentInformationServiceImpTest {
                 verify(employeeRepository).findById(employmentInformationRequest.employeeId());
                 verify(positionRepository).findById(employmentInformationRequest.positionId());
                 verify(workplaceRepository).findById(employmentInformationRequest.workplaceId());
+                verify(employmentInformationSalaryOverrideRepository).findById(employmentInformationRequest.employmentInformationSalaryOverrideId());
                 verify(employmentInformationRepository).findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         employmentInformationRequest.startDate(),
                         employmentInformationRequest.endDate(),
@@ -238,6 +242,8 @@ class EmploymentInformationServiceImpTest {
                         .thenReturn(Optional.of(position));
                 when(workplaceRepository.findById(employmentInformationRequest.workplaceId()))
                         .thenReturn(Optional.of(workplace));
+                when(employmentInformationSalaryOverrideRepository.findById(employmentInformationRequest.employmentInformationSalaryOverrideId()))
+                        .thenReturn(Optional.of(salaryOverride));
                 when(employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         eq(employmentInformationRequest.startDate()),
                         eq(employmentInformationRequest.endDate()),
@@ -257,6 +263,7 @@ class EmploymentInformationServiceImpTest {
                 verify(employeeRepository).findById(employmentInformationRequest.employeeId());
                 verify(positionRepository).findById(employmentInformationRequest.positionId());
                 verify(workplaceRepository).findById(employmentInformationRequest.workplaceId());
+                verify(employmentInformationSalaryOverrideRepository).findById(employmentInformationRequest.employmentInformationSalaryOverrideId());
                 verify(employmentInformationRepository).findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         employmentInformationRequest.startDate(),
                         employmentInformationRequest.endDate(),
@@ -414,7 +421,6 @@ class EmploymentInformationServiceImpTest {
         @DisplayName("Should update EmploymentInformation successfully when valid request")
         void shouldUpdateEmploymentInformationSuccessfullyWhenValidRequest() {
             try (var mapperMock = mockStatic(EmploymentInformationMapper.class);
-                 var salaryOverrideMapperMock = mockStatic(EmploymentInformationSalaryOverrideMapper.class);
                  var mergeUtilMock = mockStatic(MergeUtil.class)) {
                 var updatedRequest = EmploymentInformationRequest.builder()
                         .employeeId("emp-1")
@@ -423,9 +429,6 @@ class EmploymentInformationServiceImpTest {
                         .employmentStatus(EmploymentStatus.CONTRACTUAL)
                         .sourceOfFund("New Fund")
                         .remarks("New Remark")
-                        .employmentInformationSalaryOverrideRequest(null)
-                        .step(2)
-                        .anticipatedStep(2)
                         .positionId("pos-1")
                         .workplaceId("work-1")
                         .build();
@@ -459,9 +462,7 @@ class EmploymentInformationServiceImpTest {
 
                 when(employmentInformationRepository.findById(employmentInformation.getId()))
                         .thenReturn(Optional.of(employmentInformation));
-                salaryOverrideMapperMock.when(() -> EmploymentInformationSalaryOverrideMapper.toEntity(updatedRequest.employmentInformationSalaryOverrideRequest()))
-                        .thenReturn(null);
-                mapperMock.when(() -> EmploymentInformationMapper.toEntity(eq(updatedRequest), isNull()))
+                mapperMock.when(() -> EmploymentInformationMapper.toEntity(updatedRequest))
                         .thenReturn(updatedEmploymentInformation);
                 mergeUtilMock.when(() -> MergeUtil.merge(employmentInformation, updatedEmploymentInformation))
                         .thenReturn(updatedEmploymentInformation);
