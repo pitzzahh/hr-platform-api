@@ -22,7 +22,6 @@ public record EmploymentInformationRequest(
         @NotBlank(message = "sourceOfFund cannot be blank")
         String sourceOfFund,
         String remarks,
-        String employmentInformationSalaryOverrideId,
         @NotNull(message = "positionId cannot be null")
         @NotBlank(message = "positionId cannot be blank")
         String positionId,

@@ -14,11 +14,11 @@ public record EmploymentInformationResponse(
         EmploymentStatus employmentStatus,
         String sourceOfFund,
         String remarks,
-        EmploymentInformationSalaryOverrideResponse employmentInformationSalaryOverrideResponse,
         int step,
         int anticipatedStep,
         PositionResponse positionResponse,
-        WorkplaceResponse workplaceResponse
+        WorkplaceResponse workplaceResponse,
+        SalaryResponse salaryResponse
 
 ) {
 }

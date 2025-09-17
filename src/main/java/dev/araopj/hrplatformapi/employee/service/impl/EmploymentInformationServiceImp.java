@@ -28,7 +28,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     private final EmployeeRepository employeeRepository;
     private final PositionRepository positionRepository;
     private final WorkplaceRepository workplaceRepository;
-    private final EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
+    private final SalaryRepository salaryRepository;
 
     @Override
     public Page<EmploymentInformationResponse> findAll(Pageable pageable) {
@@ -76,7 +76,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
         final var EMPLOYEE_ID = employmentInformationRequest.employeeId();
         final var POSITION_ID = employmentInformationRequest.positionId();
         final var WORKPLACE_ID = employmentInformationRequest.workplaceId();
-        final var EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_ID = employmentInformationRequest.employmentInformationSalaryOverrideId();
+        final var EXISTING_SALARY_ID = employmentInformationRequest.salaryId();
 
         final var EXISTING_EMPLOYEE = employeeRepository.findById(EMPLOYEE_ID)
                 .orElseThrow(() -> new NotFoundException(EMPLOYEE_ID, EMPLOYEE));
@@ -84,8 +84,9 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 .orElseThrow(() -> new NotFoundException(POSITION_ID, POSITION));
         final var EXISTING_WORKPLACE = workplaceRepository.findById(WORKPLACE_ID)
                 .orElseThrow(() -> new NotFoundException(WORKPLACE_ID, WORKPLACE));
-        final var EXISTING_SALARY_OVERRIDE = employmentInformationSalaryOverrideRepository.findById(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_ID)
-                .orElseThrow(() -> new NotFoundException(EMPLOYMENT_INFORMATION_SALARY_OVERRIDE_ID, EMPLOYMENT_INFORMATION_SALARY_OVERRIDE));
+        final var EXISTING_SALARY = salaryRepository.findById(EXISTING_SALARY_ID)
+                .orElseThrow(() -> new NotFoundException(EXISTING_SALARY_ID, SALARY));
+
 
         employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                 employmentInformationRequest.startDate(),
@@ -103,7 +104,7 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
 
         final var WORKPLACE_TO_SAVE = EmploymentInformationMapper.toEntity(employmentInformationRequest,
                 EXISTING_EMPLOYEE,
-                EXISTING_SALARY_OVERRIDE,
+                EXISTING_SALARY,
                 EXISTING_POSITION,
                 EXISTING_WORKPLACE
         );

@@ -43,7 +43,7 @@ public class EmploymentInformationMapper {
 
     public EmploymentInformation toEntity(
             EmploymentInformationRequest employmentInformationRequest,
-            @Nullable EmploymentInformationSalaryOverride employmentInformationSalaryOverride
+            @Nullable Salary salary
     ) {
         if (employmentInformationRequest == null) {
             throw new IllegalArgumentException("employmentInformationRequest cannot be null");
@@ -55,14 +55,14 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformationRequest.employmentStatus())
                 .sourceOfFund(employmentInformationRequest.sourceOfFund())
                 .remarks(employmentInformationRequest.remarks())
-                .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
+                .salary(salary)
                 .build();
     }
 
     public EmploymentInformation toEntity(
             EmploymentInformationRequest employmentInformationRequest,
             Employee employee,
-            @Nullable EmploymentInformationSalaryOverride employmentInformationSalaryOverride,
+            Salary salary,
             Position position,
             Workplace workplace
     ) {
@@ -77,7 +77,7 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformationRequest.employmentStatus())
                 .sourceOfFund(employmentInformationRequest.sourceOfFund())
                 .remarks(employmentInformationRequest.remarks())
-                .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
+                .salary(salary)
                 .position(position)
                 .workplace(workplace)
                 .build();
@@ -105,9 +105,9 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformation.getEmploymentStatus())
                 .sourceOfFund(employmentInformation.getSourceOfFund())
                 .remarks(employmentInformation.getRemarks())
-                .employmentInformationSalaryOverrideResponse(
-                        employmentInformation.getEmploymentInformationSalaryOverride() != null ?
-                                EmploymentInformationSalaryOverrideMapper.toDto(employmentInformation.getEmploymentInformationSalaryOverride()) : null
+                .salaryResponse(
+                        employmentInformation.getSalary() != null ?
+                                SalaryMapper.toDto(employmentInformation.getSalary()) : null
                 )
                 .build();
     }
