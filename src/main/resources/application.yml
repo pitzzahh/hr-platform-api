@@ -15,12 +15,12 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 scalar:
   theme: elysiajs
-  url: http://localhost:8080/v3/api-docs
+  url: /api-docs
   enabled: true
   path: /docs
   hide-models: true
   layout: classic
 
 springdoc:
-  swagger-ui:
-    enabled: false
+  api-docs:
+    path: /api-docs
