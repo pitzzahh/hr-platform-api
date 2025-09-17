@@ -11,7 +11,6 @@ import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
-import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -167,14 +166,11 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     private Set<EmploymentInformation> getEmploymentInformationRequests(EmployeeRequest employeeRequest) {
+
         return employeeRequest.employmentInformationRequests() != null ?
                 employeeRequest.employmentInformationRequests()
                         .stream()
-                        .map(e -> EmploymentInformationMapper.toEntity(
-                                        e,
-                                        EmploymentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
-                                )
-                        )
+                        .map(EmploymentInformationMapper::toEntity)
                         .collect(Collectors.toSet()) : null;
     }
 }
