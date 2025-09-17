@@ -42,11 +42,10 @@ class EmploymentInformationServiceImpTest {
     @Mock
     private WorkplaceRepository workplaceRepository;
     @Mock
-    private EmploymentInformationSalaryOverrideRepository employmentInformationSalaryOverrideRepository;
+    private SalaryRepository salaryRepository;
     @InjectMocks
     private EmploymentInformationServiceImp employmentInformationServiceImp;
 
-    private EmploymentInformationSalaryOverride salaryOverride;
     private Employee employee;
     private Position position;
     private Workplace workplace;
@@ -74,10 +73,6 @@ class EmploymentInformationServiceImpTest {
                 .id("sal-1")
                 .build();
 
-        salaryOverride = EmploymentInformationSalaryOverride.builder()
-                .id("sal-override-1")
-                .build();
-
         employmentInformation = EmploymentInformation.builder()
                 .id("emp-info-1")
                 .employee(employee)
@@ -86,7 +81,6 @@ class EmploymentInformationServiceImpTest {
                 .employmentStatus(EmploymentStatus.PERMANENT)
                 .sourceOfFund("Fund")
                 .remarks("Remark")
-                .employmentInformationSalaryOverride(salaryOverride)
                 .position(position)
                 .workplace(workplace)
                 .salary(salary)
@@ -100,7 +94,6 @@ class EmploymentInformationServiceImpTest {
                 .employmentStatus(EmploymentStatus.PERMANENT)
                 .sourceOfFund("Fund")
                 .remarks("Remark")
-                .employmentInformationSalaryOverrideResponse(null)
                 .step(1)
                 .anticipatedStep(1)
                 .positionResponse(null)
@@ -116,7 +109,7 @@ class EmploymentInformationServiceImpTest {
                 .remarks("Remark")
                 .positionId("pos-1")
                 .workplaceId("work-1")
-                .employmentInformationSalaryOverrideId("sal-override-1")
+                .salaryId("sal-1")
                 .build();
 
         pageable = PageRequest.of(0, 10);
@@ -136,8 +129,8 @@ class EmploymentInformationServiceImpTest {
                         .thenReturn(Optional.of(position));
                 when(workplaceRepository.findById(employmentInformationRequest.workplaceId()))
                         .thenReturn(Optional.of(workplace));
-                when(employmentInformationSalaryOverrideRepository.findById(employmentInformationRequest.employmentInformationSalaryOverrideId()))
-                        .thenReturn(Optional.of(salaryOverride));
+                when(salaryRepository.findById(employmentInformationRequest.salaryId()))
+                        .thenReturn(Optional.of(salary));
                 when(employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         eq(employmentInformationRequest.startDate()),
                         eq(employmentInformationRequest.endDate()),
@@ -145,7 +138,7 @@ class EmploymentInformationServiceImpTest {
                         eq(employmentInformationRequest.employeeId())))
                         .thenReturn(Optional.empty());
                 mapperMock.when(() -> EmploymentInformationMapper.toEntity(
-                                eq(employmentInformationRequest), eq(employee), eq(salaryOverride), eq(position), eq(workplace)))
+                                eq(employmentInformationRequest), eq(employee), eq(salary), eq(position), eq(workplace)))
                         .thenReturn(employmentInformation);
                 when(employmentInformationRepository.save(any(EmploymentInformation.class)))
                         .thenReturn(employmentInformation);
@@ -168,7 +161,7 @@ class EmploymentInformationServiceImpTest {
                 verify(employeeRepository).findById(employmentInformationRequest.employeeId());
                 verify(positionRepository).findById(employmentInformationRequest.positionId());
                 verify(workplaceRepository).findById(employmentInformationRequest.workplaceId());
-                verify(employmentInformationSalaryOverrideRepository).findById(employmentInformationRequest.employmentInformationSalaryOverrideId());
+                verify(salaryRepository).findById(employmentInformationRequest.salaryId());
                 verify(employmentInformationRepository).findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         employmentInformationRequest.startDate(),
                         employmentInformationRequest.endDate(),
@@ -190,7 +183,7 @@ class EmploymentInformationServiceImpTest {
                     exception.getMessage());
 
             verify(employeeRepository).findById(employmentInformationRequest.employeeId());
-            verifyNoInteractions(positionRepository, workplaceRepository, employmentInformationRepository);
+            verifyNoInteractions(positionRepository, workplaceRepository, salaryRepository, employmentInformationRepository);
         }
 
         @Test
@@ -208,7 +201,7 @@ class EmploymentInformationServiceImpTest {
 
             verify(employeeRepository).findById(employmentInformationRequest.employeeId());
             verify(positionRepository).findById(employmentInformationRequest.positionId());
-            verifyNoInteractions(workplaceRepository, employmentInformationRepository);
+            verifyNoInteractions(workplaceRepository, salaryRepository, employmentInformationRepository);
         }
 
         @Test
@@ -229,6 +222,30 @@ class EmploymentInformationServiceImpTest {
             verify(employeeRepository).findById(employmentInformationRequest.employeeId());
             verify(positionRepository).findById(employmentInformationRequest.positionId());
             verify(workplaceRepository).findById(employmentInformationRequest.workplaceId());
+            verifyNoInteractions(salaryRepository, employmentInformationRepository);
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException when Salary not found")
+        void shouldThrowNotFoundExceptionWhenSalaryNotFound() {
+            when(employeeRepository.findById(employmentInformationRequest.employeeId()))
+                    .thenReturn(Optional.of(employee));
+            when(positionRepository.findById(employmentInformationRequest.positionId()))
+                    .thenReturn(Optional.of(position));
+            when(workplaceRepository.findById(employmentInformationRequest.workplaceId()))
+                    .thenReturn(Optional.of(workplace));
+            when(salaryRepository.findById(employmentInformationRequest.salaryId()))
+                    .thenReturn(Optional.empty());
+
+            var exception = assertThrows(NotFoundException.class,
+                    () -> employmentInformationServiceImp.create("emp-info-1", employmentInformationRequest));
+            assertEquals(new NotFoundException(employmentInformationRequest.salaryId(), SALARY).getMessage(),
+                    exception.getMessage());
+
+            verify(employeeRepository).findById(employmentInformationRequest.employeeId());
+            verify(positionRepository).findById(employmentInformationRequest.positionId());
+            verify(workplaceRepository).findById(employmentInformationRequest.workplaceId());
+            verify(salaryRepository).findById(employmentInformationRequest.salaryId());
             verifyNoInteractions(employmentInformationRepository);
         }
 
@@ -242,8 +259,8 @@ class EmploymentInformationServiceImpTest {
                         .thenReturn(Optional.of(position));
                 when(workplaceRepository.findById(employmentInformationRequest.workplaceId()))
                         .thenReturn(Optional.of(workplace));
-                when(employmentInformationSalaryOverrideRepository.findById(employmentInformationRequest.employmentInformationSalaryOverrideId()))
-                        .thenReturn(Optional.of(salaryOverride));
+                when(salaryRepository.findById(employmentInformationRequest.salaryId()))
+                        .thenReturn(Optional.of(salary));
                 when(employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         eq(employmentInformationRequest.startDate()),
                         eq(employmentInformationRequest.endDate()),
@@ -263,7 +280,7 @@ class EmploymentInformationServiceImpTest {
                 verify(employeeRepository).findById(employmentInformationRequest.employeeId());
                 verify(positionRepository).findById(employmentInformationRequest.positionId());
                 verify(workplaceRepository).findById(employmentInformationRequest.workplaceId());
-                verify(employmentInformationSalaryOverrideRepository).findById(employmentInformationRequest.employmentInformationSalaryOverrideId());
+                verify(salaryRepository).findById(employmentInformationRequest.salaryId());
                 verify(employmentInformationRepository).findByStartDateAndEndDateAndRemarksAndEmployeeId(
                         employmentInformationRequest.startDate(),
                         employmentInformationRequest.endDate(),
@@ -282,10 +299,10 @@ class EmploymentInformationServiceImpTest {
         @DisplayName("Should find all EmploymentInformation")
         void shouldFindAllEmploymentInformation() {
             try (var mapperMock = mockStatic(EmploymentInformationMapper.class)) {
-                var employmentInformation = List.of(EmploymentInformationServiceImpTest.this.employmentInformation);
-                var page = new PageImpl<>(employmentInformation, pageable, employmentInformation.size());
+                var employmentInformationList = List.of(employmentInformation);
+                var page = new PageImpl<>(employmentInformationList, pageable, employmentInformationList.size());
                 when(employmentInformationRepository.findAll(pageable)).thenReturn(page);
-                mapperMock.when(() -> EmploymentInformationMapper.toDto(EmploymentInformationServiceImpTest.this.employmentInformation, false))
+                mapperMock.when(() -> EmploymentInformationMapper.toDto(employmentInformation, false))
                         .thenReturn(employmentInformationResponse);
 
                 var result = employmentInformationServiceImp.findAll(pageable);
@@ -314,11 +331,11 @@ class EmploymentInformationServiceImpTest {
         @DisplayName("Should find EmploymentInformation by employee ID")
         void shouldFindEmploymentInformationByEmployeeId() {
             try (var mapperMock = mockStatic(EmploymentInformationMapper.class)) {
-                var employmentInformation = List.of(EmploymentInformationServiceImpTest.this.employmentInformation);
-                var page = new PageImpl<>(employmentInformation, pageable, employmentInformation.size());
+                var employmentInformationList = List.of(employmentInformation);
+                var page = new PageImpl<>(employmentInformationList, pageable, employmentInformationList.size());
                 when(employeeRepository.findById("emp-1")).thenReturn(Optional.of(employee));
                 when(employmentInformationRepository.findByEmployeeId("emp-1", pageable)).thenReturn(page);
-                mapperMock.when(() -> EmploymentInformationMapper.toDto(EmploymentInformationServiceImpTest.this.employmentInformation, false))
+                mapperMock.when(() -> EmploymentInformationMapper.toDto(employmentInformation, false))
                         .thenReturn(employmentInformationResponse);
 
                 var result = employmentInformationServiceImp.findByEmployeeId("emp-1", pageable);
@@ -431,6 +448,7 @@ class EmploymentInformationServiceImpTest {
                         .remarks("New Remark")
                         .positionId("pos-1")
                         .workplaceId("work-1")
+                        .salaryId("sal-1")
                         .build();
                 var updatedEmploymentInformation = EmploymentInformation.builder()
                         .id("emp-info-1")
@@ -440,7 +458,6 @@ class EmploymentInformationServiceImpTest {
                         .employmentStatus(updatedRequest.employmentStatus())
                         .sourceOfFund(updatedRequest.sourceOfFund())
                         .remarks(updatedRequest.remarks())
-                        .employmentInformationSalaryOverride(null)
                         .position(position)
                         .workplace(workplace)
                         .salary(salary)
@@ -453,7 +470,6 @@ class EmploymentInformationServiceImpTest {
                         .employmentStatus(updatedRequest.employmentStatus())
                         .sourceOfFund(updatedRequest.sourceOfFund())
                         .remarks(updatedRequest.remarks())
-                        .employmentInformationSalaryOverrideResponse(null)
                         .step(2)
                         .anticipatedStep(2)
                         .positionResponse(null)
