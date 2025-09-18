@@ -147,7 +147,7 @@ class SalaryServiceImpTest {
 
             var exception = assertThrows(NotFoundException.class,
                     () -> salaryServiceImp.create(salaryRequest));
-            assertEquals(new NotFoundException(employmentInformation.getId(), EMPLOYMENT_INFORMATION).getMessage(),
+            assertEquals(new NotFoundException(salaryRequest.employmentInformationId(), EMPLOYMENT_INFORMATION).getMessage(),
                     exception.getMessage());
 
             verify(salaryRepository).findByAmountAndCurrencyAndEmploymentInformationId(
