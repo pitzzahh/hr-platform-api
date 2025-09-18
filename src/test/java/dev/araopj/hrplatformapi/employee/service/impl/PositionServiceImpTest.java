@@ -140,7 +140,7 @@ class PositionServiceImpTest {
 
             NotFoundException exception = assertThrows(NotFoundException.class,
                     () -> positionServiceImp.create(positionRequest));
-            assertEquals(new NotFoundException(employmentInformation.getId(), EMPLOYMENT_INFORMATION).getMessage(),
+            assertEquals(new NotFoundException(positionRequest.employmentInformationId(), EMPLOYMENT_INFORMATION).getMessage(),
                     exception.getMessage());
 
             verify(positionRepository).findByCodeAndEmploymentInformationId(
