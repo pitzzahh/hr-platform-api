@@ -23,12 +23,12 @@ jobs:
           fetch-depth: 0 # Required for Qodana pull request analysis
           ref: ${{ github.event.pull_request.head.sha }} # Ensure correct PR head
 
-      # Set up JDK 21
-      - name: Set up JDK 21
+      # Set up JDK 25
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: '25'
+          distribution: 'graalvm'
 
       # Cache Maven dependencies
       - name: Cache Maven packages
