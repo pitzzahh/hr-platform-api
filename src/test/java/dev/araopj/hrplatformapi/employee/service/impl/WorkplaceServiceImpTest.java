@@ -143,7 +143,7 @@ class WorkplaceServiceImpTest {
 
             NotFoundException exception = assertThrows(NotFoundException.class,
                     () -> workplaceServiceImp.create(workplaceRequest));
-            assertEquals(new NotFoundException(employmentInformation.getId(), EMPLOYMENT_INFORMATION).getMessage(),
+            assertEquals(new NotFoundException(workplaceRequest.employmentInformationId(), EMPLOYMENT_INFORMATION).getMessage(),
                     exception.getMessage());
 
             verify(workplaceRepository).findByCodeAndNameAndEmploymentInformationId(
