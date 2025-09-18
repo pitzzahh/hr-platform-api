@@ -4,11 +4,9 @@ import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationReques
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
 import dev.araopj.hrplatformapi.employee.model.*;
 import jakarta.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
-@RequiredArgsConstructor
+@UtilityClass
 public class EmploymentInformationMapper {
 
     public EmploymentInformation toEntity(
@@ -24,14 +22,11 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformationResponse.employmentStatus())
                 .sourceOfFund(employmentInformationResponse.sourceOfFund())
                 .remarks(employmentInformationResponse.remarks())
-                .step(employmentInformationResponse.step())
-                .anticipatedStep(employmentInformationResponse.anticipatedStep())
                 .build();
     }
 
     public EmploymentInformation toEntity(
-            EmploymentInformationRequest employmentInformationRequest,
-            @Nullable EmploymentInformationSalaryOverride employmentInformationSalaryOverride
+            EmploymentInformationRequest employmentInformationRequest
     ) {
         if (employmentInformationRequest == null) {
             throw new IllegalArgumentException("employmentInformationRequest cannot be null");
@@ -43,16 +38,31 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformationRequest.employmentStatus())
                 .sourceOfFund(employmentInformationRequest.sourceOfFund())
                 .remarks(employmentInformationRequest.remarks())
-                .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
-                .step(employmentInformationRequest.step())
-                .anticipatedStep(employmentInformationRequest.anticipatedStep())
+                .build();
+    }
+
+    public EmploymentInformation toEntity(
+            EmploymentInformationRequest employmentInformationRequest,
+            @Nullable Salary salary
+    ) {
+        if (employmentInformationRequest == null) {
+            throw new IllegalArgumentException("employmentInformationRequest cannot be null");
+        }
+
+        return EmploymentInformation.builder()
+                .startDate(employmentInformationRequest.startDate())
+                .endDate(employmentInformationRequest.endDate())
+                .employmentStatus(employmentInformationRequest.employmentStatus())
+                .sourceOfFund(employmentInformationRequest.sourceOfFund())
+                .remarks(employmentInformationRequest.remarks())
+                .salary(salary)
                 .build();
     }
 
     public EmploymentInformation toEntity(
             EmploymentInformationRequest employmentInformationRequest,
             Employee employee,
-            @Nullable EmploymentInformationSalaryOverride employmentInformationSalaryOverride,
+            Salary salary,
             Position position,
             Workplace workplace
     ) {
@@ -67,9 +77,7 @@ public class EmploymentInformationMapper {
                 .employmentStatus(employmentInformationRequest.employmentStatus())
                 .sourceOfFund(employmentInformationRequest.sourceOfFund())
                 .remarks(employmentInformationRequest.remarks())
-                .employmentInformationSalaryOverride(employmentInformationSalaryOverride)
-                .step(employmentInformationRequest.step())
-                .anticipatedStep(employmentInformationRequest.anticipatedStep())
+                .salary(salary)
                 .position(position)
                 .workplace(workplace)
                 .build();
@@ -77,10 +85,7 @@ public class EmploymentInformationMapper {
 
     public EmploymentInformationResponse toDto(
             EmploymentInformation employmentInformation,
-            boolean includeEmployee,
-            EmployeeMapper employeeMapper,
-            IdDocumentMapper idDocumentMapper,
-            EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper
+            boolean includeEmployee
     ) {
         if (employmentInformation == null) {
             throw new IllegalArgumentException("employmentInformationResponses cannot be null");
@@ -90,22 +95,19 @@ public class EmploymentInformationMapper {
 
         return EmploymentInformationResponse.builder()
                 .id(employmentInformation.getId())
-                .employeeResponse(includeEmployee ? employeeMapper.toDto(
+                .employeeResponse(includeEmployee ? EmployeeMapper.toDto(
                         EMPLOYEE,
                         true,
-                        false,
-                        idDocumentMapper,
-                        this,
-                        employmentInformationSalaryOverrideMapper
+                        false
                 ) : null)
                 .startDate(employmentInformation.getStartDate())
                 .endDate(employmentInformation.getEndDate())
                 .employmentStatus(employmentInformation.getEmploymentStatus())
                 .sourceOfFund(employmentInformation.getSourceOfFund())
                 .remarks(employmentInformation.getRemarks())
-                .employmentInformationSalaryOverrideResponse(
-                        employmentInformation.getEmploymentInformationSalaryOverride() != null ?
-                                employmentInformationSalaryOverrideMapper.toDto(employmentInformation.getEmploymentInformationSalaryOverride()) : null
+                .salaryResponse(
+                        employmentInformation.getSalary() != null ?
+                                SalaryMapper.toDto(employmentInformation.getSalary()) : null
                 )
                 .build();
     }

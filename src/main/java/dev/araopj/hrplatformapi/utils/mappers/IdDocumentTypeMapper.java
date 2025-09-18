@@ -3,9 +3,9 @@ package dev.araopj.hrplatformapi.utils.mappers;
 import dev.araopj.hrplatformapi.employee.dto.request.IdDocumentTypeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.IdDocumentTypeResponse;
 import dev.araopj.hrplatformapi.employee.model.IdDocumentType;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
+@UtilityClass
 public class IdDocumentTypeMapper {
 
     public IdDocumentTypeResponse toDto(IdDocumentType idDocumentType, boolean includeIdDocument) {
@@ -21,6 +21,18 @@ public class IdDocumentTypeMapper {
                 .createdAt(idDocumentType.getCreatedAt())
                 .updatedAt(idDocumentType.getUpdatedAt())
                 .idDocument(includeIdDocument ? idDocumentType.getIdDocument() : null)
+                .build();
+    }
+
+    public IdDocumentTypeRequest toDto(IdDocumentType idDocumentType) {
+        if (idDocumentType == null) {
+            throw new IllegalArgumentException("idDocumentType cannot be null");
+        }
+
+        return IdDocumentTypeRequest.builder()
+                .code(idDocumentType.getCode())
+                .name(idDocumentType.getName())
+                .description(idDocumentType.getDescription())
                 .build();
     }
 

@@ -18,6 +18,11 @@ target/
 *.iws
 *.iml
 *.ipr
+src/main/resources/static/index.html
+src/main/resources/static/robots.txt
+src/main/resources/static/_app/*
+
+
 
 ### NetBeans ###
 /nbproject/private/

@@ -2,24 +2,18 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
-import dev.araopj.hrplatformapi.employee.model.Employee;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.IdDocument;
 import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
 import dev.araopj.hrplatformapi.employee.service.EmployeeService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
-import dev.araopj.hrplatformapi.utils.formatter.StringFormatter;
 import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
-import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
 import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,9 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.EMPLOYEE;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
 @Slf4j
 @Service
@@ -39,13 +31,6 @@ import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 public class EmployeeServiceImp implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final EmployeeMapper employeeMapper;
-    private final EmploymentInformationMapper employmentInformationMapper;
-    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
-    private final IdDocumentMapper idDocumentMapper;
-    private final AuditUtil auditUtil;
-    private final Set<String> REDACTED = Set.of("employeeNumber", "itemNumber", "lastName", "email", "phoneNumber", "taxPayerIdentificationNumber", "bankAccountNumber", "userId", "idDocumentResponses");
-    private final String ENTITY_NAME = EmployeeResponse.class.getName();
 
     @Override
     public Page<EmployeeResponse> findAll(Pageable pageable, boolean includeIdDocuments, boolean includeEmploymentInformation) {
@@ -56,69 +41,46 @@ public class EmployeeServiceImp implements EmployeeService {
                         includeEmploymentInformation ?
                                 employeeRepository.findAllWithEmploymentInformation(pageable) :
                                 employeeRepository.findAll(pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(PAGINATED_DATA.getTotalElements())
-                        .size(PAGINATED_DATA.getSize())
-                        .page(PAGINATED_DATA.getNumber() + 1)
-                        .totalPages(PAGINATED_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return PAGINATED_DATA
-                .map(e -> employeeMapper.toDto(
+                .map(e -> EmployeeMapper.toDto(
                         e,
                         includeIdDocuments,
-                        includeEmploymentInformation,
-                        idDocumentMapper,
-                        employmentInformationMapper,
-                        employmentInformationSalaryOverrideMapper
+                        includeEmploymentInformation
                 ));
     }
 
     @Override
-    public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
+    public Optional<EmployeeResponse> findById(String id, boolean includeIdDocuments, boolean includeEmploymentInformation) throws InvalidRequestException, NotFoundException {
+        if (id == null || id.isEmpty()) {
+            throw new InvalidRequestException("Employee ID must be provided as path");
+        }
+
         return Optional.ofNullable(employeeRepository.findById(id)
-                .map(e -> employeeMapper.toDto(
+                .map(e -> EmployeeMapper.toDto(
                         e,
                         includeIdDocuments,
-                        includeEmploymentInformation,
-                        idDocumentMapper,
-                        employmentInformationMapper,
-                        employmentInformationSalaryOverrideMapper
+                        includeEmploymentInformation
                 ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE)));
     }
 
     @Override
-    public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) {
-        auditUtil.audit(
-                userId,
-                ENTITY_NAME
-        );
+    public Optional<EmployeeResponse> findByUserId(String userId, boolean includeIdDocuments, boolean includeEmploymentInformation) throws InvalidRequestException, NotFoundException {
+        if (userId == null || userId.isEmpty()) {
+            throw new InvalidRequestException("User ID must be provided as path");
+        }
+
         return Optional.ofNullable(employeeRepository.findByUserId(userId)
-                .map(employee -> employeeMapper.toDto(
+                .map(employee -> EmployeeMapper.toDto(
                                 employee,
                                 includeIdDocuments,
-                                includeEmploymentInformation,
-                                idDocumentMapper,
-                                employmentInformationMapper,
-                                employmentInformationSalaryOverrideMapper
+                                includeEmploymentInformation
                         )
                 ).orElseThrow(() -> new NotFoundException(userId, EMPLOYEE)));
     }
 
     @Override
-    public List<EmployeeResponse> create(List<EmployeeRequest> employeeRequests) {
+    public List<EmployeeResponse> create(List<EmployeeRequest> employeeRequests) throws InvalidRequestException {
 
         for (EmployeeRequest request : employeeRequests) {
             employeeRepository.findByEmployeeNumberOrEmailOrTaxPayerIdentificationNumberOrFirstNameAndLastNameOrFirstNameAndMiddleNameAndLastName(
@@ -131,22 +93,18 @@ public class EmployeeServiceImp implements EmployeeService {
                     request.middleName(),
                     request.lastName()
             ).ifPresent(employee -> {
-                throw new IllegalArgumentException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s]already exists".formatted(
+                throw new InvalidRequestException("Employee with employee number [%s] or email [%s] or tax payer identification number [%s] or name [%s] already exists".formatted(
                         employee.getEmployeeNumber(),
                         employee.getEmail(),
                         employee.getTaxPayerIdentificationNumber(),
-                        StringFormatter.formatEmployeeName(
-                                employee.getFirstName(),
-                                employee.getMiddleName(),
-                                employee.getLastName()
-                        )
+                        employee.fullName()
                 ));
             });
         }
 
         final var EMPLOYEE_TO_SAVE = employeeRequests
                 .stream()
-                .map(employeeRequest -> employeeMapper.toEntity(
+                .map(employeeRequest -> EmployeeMapper.toEntity(
                         employeeRequest,
                         getEmploymentInformationRequests(employeeRequest),
                         getIdDocumentRequests(employeeRequest)
@@ -157,38 +115,26 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var SAVED_EMPLOYEES = employeeRepository.saveAll(EMPLOYEE_TO_SAVE);
 
-        auditUtil.audit(
-                CREATE,
-                SAVED_EMPLOYEES.stream().map(Employee::getId).collect(Collectors.joining(", ")),
-                Optional.empty(),
-                redact(SAVED_EMPLOYEES, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
         return SAVED_EMPLOYEES.stream()
-                .map(employee -> employeeMapper.toDto(
+                .map(employee -> EmployeeMapper.toDto(
                         employee,
                         false,
-                        false,
-                        idDocumentMapper,
-                        employmentInformationMapper,
-                        employmentInformationSalaryOverrideMapper
+                        false
                 )).toList();
 
     }
 
     @Override
-    public EmployeeResponse update(String id, EmployeeRequest employeeRequest) throws BadRequestException {
+    public EmployeeResponse update(String id, EmployeeRequest employeeRequest) throws InvalidRequestException, NotFoundException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Employee ID must be provided as path");
+            throw new InvalidRequestException("Employee ID must be provided as path");
         }
 
         final var ORIGINAL_EMPLOYEE = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYEE));
 
         var EMPLOYEE_DATA = MergeUtil.merge(ORIGINAL_EMPLOYEE,
-                employeeMapper.toEntity(
+                EmployeeMapper.toEntity(
                         employeeRequest,
                         getEmploymentInformationRequests(employeeRequest),
                         getIdDocumentRequests(employeeRequest)
@@ -197,57 +143,34 @@ public class EmployeeServiceImp implements EmployeeService {
 
         final var UPDATED_EMPLOYEE = employeeRepository.save(EMPLOYEE_DATA);
 
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(UPDATED_EMPLOYEE, REDACTED)),
-                redact(EMPLOYEE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(UPDATED_EMPLOYEE, EMPLOYEE_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
-        return employeeMapper.toDto(
+        return EmployeeMapper.toDto(
                 UPDATED_EMPLOYEE,
                 false,
-                false,
-                idDocumentMapper,
-                employmentInformationMapper,
-                employmentInformationSalaryOverrideMapper
+                false
         );
     }
 
     @Override
     public boolean delete(String id) {
         findById(id, false, false).orElseThrow();
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
         employeeRepository.deleteById(id);
-        return true;
+        return !employeeRepository.existsById(id);
     }
 
     private Set<IdDocument> getIdDocumentRequests(EmployeeRequest employeeRequest) {
         return employeeRequest.idDocumentRequests() != null ?
                 employeeRequest.idDocumentRequests()
                         .stream()
-                        .map(idDocumentMapper::toEntity)
+                        .map(IdDocumentMapper::toEntity)
                         .collect(Collectors.toSet()) : null;
     }
 
     private Set<EmploymentInformation> getEmploymentInformationRequests(EmployeeRequest employeeRequest) {
+
         return employeeRequest.employmentInformationRequests() != null ?
                 employeeRequest.employmentInformationRequests()
                         .stream()
-                        .map(e -> employmentInformationMapper.toEntity(
-                                        e,
-                                        employmentInformationSalaryOverrideMapper.toEntity(e.employmentInformationSalaryOverrideRequest())
-                                )
-                        )
+                        .map(EmploymentInformationMapper::toEntity)
                         .collect(Collectors.toSet()) : null;
     }
 }

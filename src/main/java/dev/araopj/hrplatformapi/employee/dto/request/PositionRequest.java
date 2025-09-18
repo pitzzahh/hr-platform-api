@@ -16,14 +16,4 @@ public record PositionRequest(
         @NotBlank(message = "employmentInformationId cannot be blank")
         String employmentInformationId
 ) {
-    @Builder
-    public record WithoutEmploymentInformationId(
-            @NotNull(message = "code cannot be null")
-            @NotBlank(message = "code cannot be blank")
-            String code,
-            @NotNull(message = "description cannot be null")
-            @NotBlank(message = "description cannot be blank")
-            String description
-    ) {
-    }
 }

@@ -3,6 +3,7 @@ package dev.araopj.hrplatformapi.employee.controller;
 import dev.araopj.hrplatformapi.employee.dto.request.EmployeeRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmployeeResponse;
 import dev.araopj.hrplatformapi.employee.service.EmployeeService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
 import dev.araopj.hrplatformapi.utils.ApiError;
 import dev.araopj.hrplatformapi.utils.PaginationMeta;
@@ -17,7 +18,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,6 @@ public class EmployeeController {
      * @param includeIdDocuments           Whether to include ID documents in the response.
      * @param includeEmploymentInformation Whether to include employment information in the response.
      * @return A ResponseEntity containing a StandardApiResponse with a list of EmployeeResponse and pagination metadata.
-     * @throws BadRequestException If invalid pagination parameters are provided.
      */
     @Operation(
             summary = "Get all employees",
@@ -92,7 +91,7 @@ public class EmployeeController {
             @RequestParam(defaultValue = "false") boolean includeIdDocuments,
             @Parameter(description = "Include Employment Information in the response", example = "false")
             @RequestParam(defaultValue = "false") boolean includeEmploymentInformation
-    ) throws BadRequestException {
+    ) {
         log.debug("Fetching all employees with page: {} and size: {}", page, size);
         final var PAGE = employeeService.findAll(
                 PageRequest.of(page - 1, size),
@@ -119,7 +118,8 @@ public class EmployeeController {
      * @param includeIdDocuments           Whether to include ID documents in the response.
      * @param includeEmploymentInformation Whether to include employment information in the response.
      * @return A ResponseEntity containing a StandardApiResponse with the EmployeeResponse.
-     * @throws NotFoundException If the employee is not found.
+     * @throws InvalidRequestException If invalid data or ID is provided.
+     * @throws NotFoundException       If the employee is not found.
      */
     @Operation(
             summary = "Get employee by ID or its user ID",
@@ -164,7 +164,7 @@ public class EmployeeController {
             @RequestParam(defaultValue = "false") boolean includeIdDocuments,
             @Parameter(description = "Include Employment Information in the response", example = "false")
             @RequestParam(defaultValue = "false") boolean includeEmploymentInformation
-    ) {
+    ) throws InvalidRequestException, NotFoundException {
         log.debug("Fetching employee with id [{}] or user id [{}]", id, userId);
         var response = (id != null && !id.isEmpty() && userId != null && !userId.isEmpty())
                 ? employeeService.findById(id, includeIdDocuments, includeEmploymentInformation)
@@ -251,8 +251,8 @@ public class EmployeeController {
      * @param id              The ID of the employee to update.
      * @param employeeRequest The updated employee details.
      * @return A ResponseEntity containing a StandardApiResponse with the updated EmployeeResponse.
-     * @throws BadRequestException If invalid data or ID is provided.
-     * @throws NotFoundException   If the employee is not found.
+     * @throws InvalidRequestException If invalid data or ID is provided.
+     * @throws NotFoundException       If the employee is not found.
      */
     @Operation(
             summary = "Update employee",
@@ -298,7 +298,7 @@ public class EmployeeController {
             @PathVariable @NotNull String id,
             @Parameter(description = "Updated employee details", required = true)
             @RequestBody @Valid EmployeeRequest employeeRequest
-    ) throws BadRequestException {
+    ) throws InvalidRequestException, NotFoundException {
         log.info("Request to update employee with id [{}]", id);
         return ResponseEntity.ok(StandardApiResponse.success(employeeService.update(id, employeeRequest)));
     }

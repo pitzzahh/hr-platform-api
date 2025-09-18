@@ -1,7 +1,6 @@
 package dev.araopj.hrplatformapi.exception;
 
 import dev.araopj.hrplatformapi.utils.ApiError;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
 import dev.araopj.hrplatformapi.utils.StandardApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +20,12 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-
-    private final AuditUtil auditUtil;
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
@@ -52,22 +48,19 @@ public class GlobalExceptionHandler {
                   TYPE: MethodArgumentNotValidException
                   MESSAGE: {}
                   DETAILS: Validation errors occurred in request""", ex.getMessage());
+
+
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        auditUtil.audit(
-                                ex,
-                                "Validation failed",
-                                Optional.of(ApiError.builder()
-                                        .message("Validation failed")
-                                        .details(ex.getBindingResult()
-                                                .getFieldErrors()
-                                                .stream()
-                                                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                                                .toList())
-                                        .build()
-                                )
-                        )
+                        ApiError.builder()
+                                .message("Validation failed")
+                                .details(ex.getBindingResult()
+                                        .getFieldErrors()
+                                        .stream()
+                                        .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                                        .toList())
+                                .build()
                 ));
     }
 
@@ -93,15 +86,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        auditUtil.audit(
-                                ex,
-                                "Validation failed",
-                                Optional.of(ApiError.builder()
-                                        .message("Validation failed")
-                                        .details(details)
-                                        .build()
-                                )
-                        )
+                        ApiError.builder()
+                                .message("Validation failed")
+                                .details(details)
+                                .build()
                 ));
     }
 
@@ -115,17 +103,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                        auditUtil.audit(
-                                ex,
-                                "Constraint validation failed",
-                                Optional.of(ApiError.builder()
-                                        .message("Constraint validation failed")
-                                        .details(ex.getConstraintViolations()
-                                                .stream()
-                                                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                                                .toList())
-                                        .build())
-                        )
+                        ApiError.builder()
+                                .message("Constraint validation failed")
+                                .details(ex.getConstraintViolations()
+                                        .stream()
+                                        .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                                        .toList())
+                                .build()
                 ));
     }
 
@@ -141,10 +125,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                                auditUtil.audit(
-                                        ex,
-                                        errorMessage + " - " + detailedMessage,
-                                        Optional.empty())
+                                ApiError.builder()
+                                        .message(errorMessage + " - " + detailedMessage)
+                                        .details(List.of(ex.getMessage()))
+                                        .build()
                         )
                 );
     }
@@ -159,10 +143,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(StandardApiResponse.failure(
-                                auditUtil.audit(
-                                        ex,
-                                        ex.getMessage(),
-                                        Optional.empty())
+                                ApiError.builder()
+                                        .message(ex.getMessage())
+                                        .details(List.of(ex.getMessage()))
+                                        .build()
                         )
                 );
     }
@@ -177,12 +161,48 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(StandardApiResponse.failure(
-                                auditUtil.audit(
-                                        ex,
-                                        ex.getMessage(),
-                                        Optional.empty())
+                                ApiError.builder()
+                                        .message(ex.getMessage())
+                                        .details(List.of(ex.getMessage()))
+                                        .build()
                         )
                 );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleIllegalArgument(IllegalArgumentException ex) {
+        log.warn("""
+                \nERROR: Illegal Argument
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: An illegal argument was provided to a method""", ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(StandardApiResponse.failure(
+                                ApiError.builder()
+                                        .message(ex.getMessage())
+                                        .details(List.of(ex.getMessage()))
+                                        .build()
+                        )
+                );
+    }
+
+
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<StandardApiResponse<ApiError>> handleInvalidRequest(InvalidRequestException ex) {
+        log.warn("""
+                \nERROR: Invalid Request
+                  TYPE: {}
+                  MESSAGE: {}
+                  DETAILS: Invalid request parameters or data""", ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(StandardApiResponse.failure(
+                        ApiError.builder()
+                                .message("Invalid request")
+                                .details(List.of(ex.getMessage()))
+                                .build()
+                ));
     }
 
     @ExceptionHandler(Exception.class)
@@ -195,11 +215,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(StandardApiResponse.failure(
-                        auditUtil.audit(
-                                ex,
-                                ex.getMessage(),
-                                Optional.empty()
-                        )
+                        ApiError.builder()
+                                .message(ex.getMessage())
+                                .details(List.of(ex.getMessage()))
+                                .build()
                 ));
     }
 }

@@ -1,5 +1,11 @@
 # HR Platform API
 
+[![Tests](https://github.com/pitzzahh/hr-platform-api/actions/workflows/test.yml/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/test.yml)
+[![Qodana Code Quality](https://github.com/pitzzahh/hr-platform-api/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/qodana_code_quality.yml)
+[![CodeQL](https://github.com/pitzzahh/hr-platform-api/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/github-code-scanning/codeql)
+[![Automatic Dependency Submission](https://github.com/pitzzahh/hr-platform-api/actions/workflows/dependency-graph/auto-submission/badge.svg)](https://github.com/pitzzahh/hr-platform-api/actions/workflows/dependency-graph/auto-submission)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 A **SpringBoot RESTful API** for managing HR data such as employees, salaries, audits, and user roles/permissions.
 Designed with clean architecture, modular packages, and standardized API responses for smooth integration.
 
@@ -9,7 +15,6 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 * 👤 **Employee Management** — CRUD operations, employment history, positions, civil status, ID documents.
 * 💰 **Salary Management** — Salary data, salary grade, and salary overrides.
-* 📜 **Audit Logging** — Track key user and system actions.
 * 🔐 **Authentication & Authorization** — User accounts, roles, API-Key authentication, and fine-grained permissions.
 * ⚡ **Robust Infrastructure** — Exception handling, pagination, mapping utilities, and more.
 
@@ -19,15 +24,6 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ```
 ~/hrplatformapi
-├───audit
-│   ├───controller
-│   ├───dto
-│   │   ├───request
-│   │   └───response
-│   ├───model
-│   ├───repository
-│   └───service
-│       └───impl
 ├───config
 ├───employee
 │   ├───controller
@@ -64,7 +60,7 @@ Designed with clean architecture, modular packages, and standardized API respons
 
 ### Prerequisites
 
-* ☕ Java **17+**
+* ☕ Java **21+**
 * 🔧 Maven **3.6+**
 * 🗄️ Database (e.g. PostgreSQL/MySQL — configurable)
 
@@ -96,9 +92,7 @@ src/main/resources/application.yml
 | Positions                              | `/api/v1/positions`                                     | GET, POST, PUT, DELETE | Manage employee positions                             |
 | Workplaces                             | `/api/v1/workplaces`                                    | GET, POST, PUT, DELETE | Manage employee workplaces                            |
 | Employment Information Salary Override | `/api/v1/employment-information-salary-overrides`       | GET, POST, PUT, DELETE | Manage salary overrides for employment information    |
-| Salary Grade                           | `/api/v1/salary-grades`                                 | GET, POST, PUT, DELETE | Manage salary grade definitions (1–33)                |
-| Salary Data                            | `/api/v1/salary-data`                                   | GET, POST, PUT, DELETE | Manage salary step data (1–8 per grade)               |
-| Audit                                  | `/api/v1/audit`                                         | GET                    | View audit logs                                       |
+| Salary                                 | `/api/v1/salaries`                                      | GET, POST, PUT, DELETE | Manage salary                                         |
 | User                                   | `/api/v1/users`                                         | GET, POST, PUT, DELETE | Manage users, roles, and permissions                  |
 | Roles                                  | `/api/v1/roles`                                         | POST                   | User login and token generation                       |
 | Permission                             | `/api/v1/permissions`                                   | POST                   | Manage user permissions                               |

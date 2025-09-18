@@ -79,4 +79,17 @@ public class Employee extends EntityTimestamp implements Serializable {
     @JsonManagedReference
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private Set<EmploymentInformation> employmentInformation;
+
+    /**
+     * Returns the full name of the employee by concatenating first, middle, and last names.
+     * It trims leading/trailing spaces and replaces multiple spaces with a single space.
+     *
+     * @return A formatted full name string.
+     */
+    public String fullName() {
+        return String.join(" ",
+                        new String[]{this.firstName, this.middleName, this.lastName})
+                .trim()
+                .replaceAll("\\s+", " ");
+    }
 }

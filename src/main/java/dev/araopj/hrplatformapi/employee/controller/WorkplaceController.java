@@ -257,7 +257,7 @@ public class WorkplaceController {
             @Parameter(description = "ID of the workplace to update", required = true)
             @PathVariable @NotNull String id,
             @Parameter(description = "Updated workplace details", required = true)
-            @RequestBody @Valid WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest
+            @RequestBody @Valid WorkplaceRequest workplaceRequest
     ) throws BadRequestException {
         log.info("Request to update workplace with id [{}]", id);
         return ResponseEntity.ok(StandardApiResponse.success(workplaceService.update(id, workplaceRequest)));

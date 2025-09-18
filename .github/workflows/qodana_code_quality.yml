@@ -1,0 +1,86 @@
+name: Qodana Code Quality
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for Qodana pull request analysis
+          ref: ${{ github.event.pull_request.head.sha }} # Ensure correct PR head
+
+      # Set up JDK 25
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+
+      # Cache Maven dependencies
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      # Run Maven tests
+      - name: Run tests
+        run: mvn --batch-mode clean test
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+
+      # Upload Maven test results
+      - name: Upload Maven test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-test-results
+          path: target/surefire-reports/
+
+      # Cache Qodana dependencies
+      - name: Cache Qodana
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/work/_temp/qodana/caches
+          key: qodana-2025.2-${{ github.sha }}
+          restore-keys: qodana-2025.2-
+
+      # Run Qodana Scan
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2025.2
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_ENDPOINT: 'https://qodana.cloud'
+        with:
+          pr-mode: true
+          use-caches: true
+          post-pr-comment: true
+          use-annotations: true
+          upload-result: false
+          push-fixes: 'none'
+          args: --skip-pull # Avoid redundant image pulling
+          cache-dir: /home/runner/work/_temp/qodana/caches
+          results-dir: /home/runner/work/_temp/qodana/results
+
+      # Upload Qodana results (optional, for debugging)
+      - name: Upload Qodana results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qodana-results
+          path: /home/runner/work/_temp/qodana/results/

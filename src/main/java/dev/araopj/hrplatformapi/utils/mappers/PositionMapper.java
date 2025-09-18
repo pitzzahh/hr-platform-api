@@ -4,14 +4,14 @@ import dev.araopj.hrplatformapi.employee.dto.request.PositionRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.PositionResponse;
 import dev.araopj.hrplatformapi.employee.model.EmploymentInformation;
 import dev.araopj.hrplatformapi.employee.model.Position;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
 /**
  * Mapper class for converting between Position entities and DTOs.
  *
  * @see Position
  */
-@Component
+@UtilityClass
 public class PositionMapper {
 
     /**
@@ -35,6 +35,24 @@ public class PositionMapper {
     }
 
     /**
+     * Converts a PositionRequest DTO to a Position entity without EmploymentInformation.
+     *
+     * @param positionRequest the PositionRequest DTO
+     * @return the corresponding Position entity
+     * @throws IllegalArgumentException if positionRequest is null
+     */
+    public Position toEntity(PositionRequest positionRequest) {
+        if (positionRequest == null) {
+            throw new IllegalArgumentException("positionRequest cannot be null");
+        }
+
+        return Position.builder()
+                .code(positionRequest.code())
+                .description(positionRequest.description())
+                .build();
+    }
+
+    /**
      * Converts a Position entity to a PositionResponse DTO.
      *
      * @param position the Position entity
@@ -52,24 +70,6 @@ public class PositionMapper {
                 .description(position.getDescription())
                 .createdAt(position.getCreatedAt())
                 .updatedAt(position.getUpdatedAt())
-                .build();
-    }
-
-    /**
-     * Converts a PositionRequest.WithoutEmploymentInformationId DTO to a Position entity.
-     *
-     * @param positionRequest the PositionRequest.WithoutEmploymentInformationId DTO
-     * @return the corresponding Position entity
-     * @throws IllegalArgumentException if positionRequest is null
-     */
-    public Position toEntity(PositionRequest.WithoutEmploymentInformationId positionRequest) {
-        if (positionRequest == null) {
-            throw new IllegalArgumentException("positionRequest cannot be null");
-        }
-
-        return Position.builder()
-                .code(positionRequest.code())
-                .description(positionRequest.description())
                 .build();
     }
 

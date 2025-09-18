@@ -2,44 +2,23 @@ package dev.araopj.hrplatformapi.employee.service.impl;
 
 import dev.araopj.hrplatformapi.employee.dto.request.EmploymentInformationRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.EmploymentInformationResponse;
-import dev.araopj.hrplatformapi.employee.repository.EmployeeRepository;
-import dev.araopj.hrplatformapi.employee.repository.EmploymentInformationRepository;
-import dev.araopj.hrplatformapi.employee.repository.PositionRepository;
-import dev.araopj.hrplatformapi.employee.repository.WorkplaceRepository;
+import dev.araopj.hrplatformapi.employee.repository.*;
 import dev.araopj.hrplatformapi.employee.service.EmploymentInformationService;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import dev.araopj.hrplatformapi.exception.NotFoundException;
-import dev.araopj.hrplatformapi.utils.AuditUtil;
-import dev.araopj.hrplatformapi.utils.DiffUtil;
 import dev.araopj.hrplatformapi.utils.MergeUtil;
-import dev.araopj.hrplatformapi.utils.PaginationMeta;
 import dev.araopj.hrplatformapi.utils.formatter.DateFormatter;
-import dev.araopj.hrplatformapi.utils.mappers.EmployeeMapper;
 import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationMapper;
-import dev.araopj.hrplatformapi.utils.mappers.EmploymentInformationSalaryOverrideMapper;
-import dev.araopj.hrplatformapi.utils.mappers.IdDocumentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
-import static dev.araopj.hrplatformapi.audit.model.AuditAction.*;
 import static dev.araopj.hrplatformapi.exception.NotFoundException.EntityType.*;
-import static dev.araopj.hrplatformapi.utils.JsonRedactor.redact;
 
-/**
- * Implementation of the {@link EmploymentInformationService} interface.
- * This service provides methods for managing employment information records,
- * including retrieval, creation, updating, and deletion operations.
- *
- * @see EmploymentInformationService
- * @see EmploymentInformationResponse
- * @see EmploymentInformationRequest
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -49,99 +28,55 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
     private final EmployeeRepository employeeRepository;
     private final PositionRepository positionRepository;
     private final WorkplaceRepository workplaceRepository;
-
-    private final EmployeeMapper employeeMapper;
-    private final IdDocumentMapper idDocumentMapper;
-    private final EmploymentInformationMapper employmentInformationMapper;
-    private final EmploymentInformationSalaryOverrideMapper employmentInformationSalaryOverrideMapper;
-
-    private final AuditUtil auditUtil;
-    private final DateFormatter dateFormatter;
-    private final Set<String> REDACTED = Set.of("employeeResponse", "employmentInformationSalaryOverrideResponse", "positionResponse", "workplaceResponse");
-    private final String ENTITY_NAME = EmploymentInformationResponse.class.getName();
+    private final SalaryRepository salaryRepository;
 
     @Override
     public Page<EmploymentInformationResponse> findAll(Pageable pageable) {
         final var PAGINATED_DATA = employmentInformationRepository.findAll(pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(PAGINATED_DATA.getTotalElements())
-                        .size(PAGINATED_DATA.getSize())
-                        .page(PAGINATED_DATA.getNumber() + 1)
-                        .totalPages(PAGINATED_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return PAGINATED_DATA
-                .map(employmentInformation -> employmentInformationMapper.toDto(
-                                employmentInformation,
-                                false,
-                                employeeMapper,
-                                idDocumentMapper,
-                                employmentInformationSalaryOverrideMapper
-                        )
-                );
+                .map(employmentInformation -> EmploymentInformationMapper.toDto(
+                        employmentInformation,
+                        false
+                ));
     }
 
     @Override
     public Page<EmploymentInformationResponse> findByEmployeeId(String employeeId, Pageable pageable) {
+        if (employeeId == null || employeeId.isEmpty()) {
+            throw new InvalidRequestException("Employee ID must be provided");
+        }
         employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException(employeeId, EMPLOYEE));
 
         final var PAGINATED_DATA = employmentInformationRepository.findByEmployeeId(employeeId, pageable);
-        auditUtil.audit(
-                VIEW,
-                "[]",
-                Optional.of(PaginationMeta.builder()
-                        .totalElements(PAGINATED_DATA.getTotalElements())
-                        .size(PAGINATED_DATA.getSize())
-                        .page(PAGINATED_DATA.getNumber() + 1)
-                        .totalPages(PAGINATED_DATA.getTotalPages())
-                        .build()),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
 
         return PAGINATED_DATA
-                .map(employmentInformation -> employmentInformationMapper.toDto(
-                                employmentInformation,
-                                false,
-                                employeeMapper,
-                                idDocumentMapper,
-                                employmentInformationSalaryOverrideMapper
-                        )
-                );
+                .map(employmentInformation -> EmploymentInformationMapper.toDto(
+                        employmentInformation,
+                        false
+                ));
     }
 
     @Override
     public Optional<EmploymentInformationResponse> findById(String id) {
-        auditUtil.audit(
-                id,
-                ENTITY_NAME
-        );
+        if (id == null || id.isEmpty()) {
+            throw new InvalidRequestException("EmploymentInformation ID must be provided");
+        }
         return Optional.ofNullable(employmentInformationRepository.findById(id)
-                .map(employmentInformation -> employmentInformationMapper.toDto(
-                                employmentInformation,
-                                false,
-                                employeeMapper,
-                                idDocumentMapper,
-                                employmentInformationSalaryOverrideMapper
-                        )
-                )
+                .map(employmentInformation -> EmploymentInformationMapper.toDto(
+                        employmentInformation,
+                        false
+                ))
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION)));
     }
 
     @Override
-    public EmploymentInformationResponse create(String id, EmploymentInformationRequest employmentInformationRequest) {
+    public EmploymentInformationResponse create(String id, EmploymentInformationRequest employmentInformationRequest) throws InvalidRequestException, NotFoundException {
         final var EMPLOYEE_ID = employmentInformationRequest.employeeId();
         final var POSITION_ID = employmentInformationRequest.positionId();
         final var WORKPLACE_ID = employmentInformationRequest.workplaceId();
+        final var EXISTING_SALARY_ID = employmentInformationRequest.salaryId();
 
         final var EXISTING_EMPLOYEE = employeeRepository.findById(EMPLOYEE_ID)
                 .orElseThrow(() -> new NotFoundException(EMPLOYEE_ID, EMPLOYEE));
@@ -149,96 +84,60 @@ public class EmploymentInformationServiceImp implements EmploymentInformationSer
                 .orElseThrow(() -> new NotFoundException(POSITION_ID, POSITION));
         final var EXISTING_WORKPLACE = workplaceRepository.findById(WORKPLACE_ID)
                 .orElseThrow(() -> new NotFoundException(WORKPLACE_ID, WORKPLACE));
+        final var EXISTING_SALARY = salaryRepository.findById(EXISTING_SALARY_ID)
+                .orElseThrow(() -> new NotFoundException(EXISTING_SALARY_ID, SALARY));
+
 
         employmentInformationRepository.findByStartDateAndEndDateAndRemarksAndEmployeeId(
                 employmentInformationRequest.startDate(),
                 employmentInformationRequest.endDate(),
                 employmentInformationRequest.remarks(),
                 EMPLOYEE_ID
-
         ).ifPresent(workplace -> {
-            throw new IllegalArgumentException("Workplace with start date [%s], end date [%s], and remarks [%s] already exists for Employee with id [%s]".formatted(
-                    dateFormatter.format(workplace.getStartDate(), "long"),
-                    dateFormatter.format(workplace.getEndDate(), "long"),
+            throw new InvalidRequestException("Workplace with start date [%s], end date [%s], and remarks [%s] already exists for Employee with id [%s]".formatted(
+                    DateFormatter.format(workplace.getStartDate(), "long"),
+                    DateFormatter.format(workplace.getEndDate(), "long"),
                     workplace.getRemarks(),
                     EMPLOYEE_ID
             ));
         });
 
-        final var WORKPLACE_TO_SAVE = employmentInformationMapper.toEntity(employmentInformationRequest,
+        final var WORKPLACE_TO_SAVE = EmploymentInformationMapper.toEntity(employmentInformationRequest,
                 EXISTING_EMPLOYEE,
-                employmentInformationRequest.employmentInformationSalaryOverrideRequest() != null ?
-                        employmentInformationSalaryOverrideMapper.toEntity(
-                                employmentInformationRequest.employmentInformationSalaryOverrideRequest()
-                        ) : null,
+                EXISTING_SALARY,
                 EXISTING_POSITION,
                 EXISTING_WORKPLACE
         );
 
-        auditUtil.audit(
-                CREATE,
-                WORKPLACE_TO_SAVE.getId(),
-                Optional.empty(),
-                redact(WORKPLACE_TO_SAVE, REDACTED),
-                Optional.empty(),
-                ENTITY_NAME
-        );
-
-        return employmentInformationMapper.toDto(
+        return EmploymentInformationMapper.toDto(
                 employmentInformationRepository.save(WORKPLACE_TO_SAVE),
-                false,
-                employeeMapper,
-                idDocumentMapper,
-                employmentInformationSalaryOverrideMapper
+                false
         );
     }
 
     @Override
-    public EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws BadRequestException {
+    public EmploymentInformationResponse update(String id, EmploymentInformationRequest employmentInformationRequest) throws InvalidRequestException {
         if (id == null || id.isEmpty()) {
-            throw new BadRequestException("EmploymentInformation ID must be provided as path");
+            throw new InvalidRequestException("Employee ID must be provided as path");
         }
 
         final var ORIGINAL_EMPLOYMENT_INFORMATION = employmentInformationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id, EMPLOYMENT_INFORMATION));
 
         var WORKPLACE_DATA = MergeUtil.merge(ORIGINAL_EMPLOYMENT_INFORMATION,
-                employmentInformationMapper.toEntity(employmentInformationRequest,
-                        employmentInformationSalaryOverrideMapper.toEntity(employmentInformationRequest.employmentInformationSalaryOverrideRequest())
-                )
+                EmploymentInformationMapper.toEntity(employmentInformationRequest)
         );
 
-        auditUtil.audit(
-                UPDATE,
-                id,
-                Optional.of(redact(ORIGINAL_EMPLOYMENT_INFORMATION, REDACTED)),
-                redact(WORKPLACE_DATA, REDACTED),
-                Optional.of(redact(DiffUtil.diff(ORIGINAL_EMPLOYMENT_INFORMATION, WORKPLACE_DATA), REDACTED)),
-                ENTITY_NAME
-        );
-
-        return employmentInformationMapper.toDto(
+        return EmploymentInformationMapper.toDto(
                 employmentInformationRepository.save(WORKPLACE_DATA),
-                false,
-                employeeMapper,
-                idDocumentMapper,
-                employmentInformationSalaryOverrideMapper
+                false
         );
-
     }
 
     @Override
     public boolean delete(String id) {
         findById(id).orElseThrow();
-        auditUtil.audit(
-                DELETE,
-                id,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                ENTITY_NAME
-        );
         employmentInformationRepository.deleteById(id);
-        return true;
+        return !employmentInformationRepository.existsById(id);
     }
 }

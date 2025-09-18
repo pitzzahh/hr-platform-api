@@ -2,7 +2,7 @@ package dev.araopj.hrplatformapi.employee.service;
 
 import dev.araopj.hrplatformapi.employee.dto.request.WorkplaceRequest;
 import dev.araopj.hrplatformapi.employee.dto.response.WorkplaceResponse;
-import org.apache.coyote.BadRequestException;
+import dev.araopj.hrplatformapi.exception.InvalidRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -44,9 +44,9 @@ public interface WorkplaceService {
      * @param id               the unique identifier of the workplace to update
      * @param workplaceRequest the request object containing updated workplace details, excluding employment information ID
      * @return the updated {@link WorkplaceResponse} object
-     * @throws BadRequestException if the provided ID is invalid or the workplace cannot be updated
+     * @throws InvalidRequestException if the provided ID is invalid or the workplace cannot be updated
      */
-    WorkplaceResponse update(String id, WorkplaceRequest.WithoutEmploymentInformationId workplaceRequest) throws BadRequestException;
+    WorkplaceResponse update(String id, WorkplaceRequest workplaceRequest) throws InvalidRequestException;
 
     /**
      * Deletes a workplace by its unique identifier.
