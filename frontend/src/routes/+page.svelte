@@ -106,6 +106,14 @@
 	onMount(() => {
 		console.log('Mounting component, starting poller');
 		poller.start();
+
+		// Set header height for scan line positioning
+		const header = document.getElementById('header');
+		if (header) {
+			const headerHeight = header.offsetHeight;
+			document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+		}
+
 		return () => poller.stop();
 	});
 
@@ -159,11 +167,8 @@
 	<!-- Animated Background Grid -->
 	<div class="cyber-grid absolute inset-0 opacity-30"></div>
 
-	<!-- Scan Line Effect -->
-	<div class="scan-line absolute inset-x-0 pointer-events-none"></div>
-
 	<!-- Header Section -->
-	<div class="relative border-b border-cyan-500/30 bg-black/40 backdrop-blur-md">
+	<div class="relative border-b border-cyan-500/30 bg-black/40 backdrop-blur-md" id="header">
 		<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			<div class="text-center">
 				<!-- Title with Holographic Effect -->
@@ -240,6 +245,9 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Scan Line Effect (starts from bottom of header) -->
+	<div class="scan-line"></div>
 
 	<!-- Main Content -->
 	<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
@@ -543,10 +551,10 @@
 <style>
 	@keyframes scan-line {
 		0% {
-			transform: translateY(-100%);
+			transform: translateY(0);
 		}
 		100% {
-			transform: translateY(100vh);
+			transform: translateY(calc(100vh - var(--header-height, 200px)));
 		}
 	}
 
@@ -588,6 +596,13 @@
 	}
 
 	.scan-line {
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: var(--header-height, 200px);
+		height: 200px;
+		pointer-events: none;
+		z-index: 5;
 		animation: scan-line 8s linear infinite;
 		background: linear-gradient(
 			to bottom,
@@ -597,7 +612,6 @@
 			rgba(0, 255, 255, 0.1),
 			transparent
 		);
-		height: 200px;
 	}
 
 	.glow-text {
