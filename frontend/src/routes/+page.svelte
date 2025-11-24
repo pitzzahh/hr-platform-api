@@ -32,18 +32,23 @@
 	};
 
 	class ApiPoller {
-		response = $state<ApiResponse>({
-			timestamp: '',
-			data: [],
-			pagination: {
-				page: 1,
-				size: 10,
-				totalElements: 0,
-				totalPages: 0
-			}
+		state = $state({
+			response: {
+				timestamp: '',
+				data: [],
+				pagination: {
+					page: 1,
+					size: 10,
+					totalElements: 0,
+					totalPages: 0
+				}
+			} as ApiResponse,
+			page: 1,
+			size: 10,
+			isPolling: false,
+			isLoading: false
 		});
-		page = $state<number>(1);
-		size = $state<number>(10);
+
 		private intervalId: number | null = null;
 		private readonly intervalMs: number;
 		private readonly apiBase: string;
@@ -55,30 +60,39 @@
 
 		async fetchData() {
 			try {
+				this.state.isLoading = true;
 				console.log('Fetching data from API...');
 				const res = await fetch(
-					`${this.apiBase}/api/v1/employees?page=${this.page}&size=${this.size}`
+					`${this.apiBase}/api/v1/employees?page=${this.state.page}&size=${this.state.size}`
 				);
 				const apiResponse = (await res.json()) as ApiResponse;
-				this.response = apiResponse;
+				this.state.response = apiResponse;
 			} catch (error) {
 				console.error('API fetch error:', error);
+			} finally {
+				this.state.isLoading = false;
 			}
 		}
 
 		setPage(newPage: number) {
-			this.page = newPage;
+			this.state.page = newPage;
 			this.fetchData();
 		}
 
 		start() {
+			if (this.state.isPolling) return;
+			this.state.isPolling = true;
 			this.fetchData();
 			this.intervalId = setInterval(() => this.fetchData(), this.intervalMs);
 		}
 
 		stop() {
 			console.log('Stopping poller', this.intervalId);
-			if (this.intervalId) clearInterval(this.intervalId);
+			if (this.intervalId) {
+				clearInterval(this.intervalId);
+				this.intervalId = null;
+			}
+			this.state.isPolling = false;
 		}
 	}
 
@@ -170,17 +184,25 @@
 
 				<!-- Status Indicators -->
 				<div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-					{#if poller.response.timestamp}
+					{#if poller.state.response.timestamp}
 						<div
 							class="flex items-center gap-3 px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg"
 						>
 							<div class="relative">
-								<div class="w-2 h-2 bg-cyan-400 rounded-full animate-ping absolute"></div>
-								<div class="w-2 h-2 bg-cyan-400 rounded-full"></div>
+								<div
+									class="w-2 h-2 bg-cyan-400 rounded-full {poller.state.isPolling
+										? 'animate-ping'
+										: ''} absolute"
+								></div>
+								<div
+									class="w-2 h-2 rounded-full {poller.state.isPolling
+										? 'bg-cyan-400'
+										: 'bg-slate-500'}"
+								></div>
 							</div>
 							<div class="text-cyan-300 text-sm data-readout">
 								<span class="text-cyan-500 font-semibold">SYNC:</span>
-								{formatDateTime(new Date(poller.response.timestamp))}
+								{formatDateTime(new Date(poller.state.response.timestamp))}
 							</div>
 						</div>
 					{/if}
@@ -195,7 +217,23 @@
 						</svg>
 						<div class="text-blue-300 text-sm data-readout">
 							<span class="text-blue-500 font-semibold">PERSONNEL:</span>
-							{poller.response.pagination.totalElements}
+							{poller.state.response.pagination.totalElements}
+						</div>
+					</div>
+
+					<div
+						class="flex items-center gap-3 px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg"
+					>
+						<div class="relative">
+							<div
+								class="w-2 h-2 rounded-full {poller.state.isPolling
+									? 'bg-emerald-400 animate-pulse'
+									: 'bg-slate-500'}"
+							></div>
+						</div>
+						<div class="text-purple-300 text-sm data-readout">
+							<span class="text-purple-500 font-semibold">STATUS:</span>
+							{poller.state.isPolling ? 'ACTIVE' : 'STANDBY'}
 						</div>
 					</div>
 				</div>
@@ -205,7 +243,7 @@
 
 	<!-- Main Content -->
 	<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-		{#if poller.response.data.length === 0}
+		{#if poller.state.response.data.length === 0}
 			<div class="flex flex-col items-center justify-center py-32">
 				<div class="loading-spinner rounded-full h-16 w-16 mb-6"></div>
 				<p class="text-cyan-400 text-xl data-readout tracking-wider">
@@ -222,7 +260,7 @@
 			</div>
 		{:else}
 			<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{#each poller.response.data as employee, index}
+				{#each poller.state.response.data as employee, index}
 					<div
 						class="hologram-card rounded-lg overflow-hidden neon-border corner-accent transform hover:scale-105 transition-all duration-300"
 						style="animation-delay: {index * 0.1}s;"
@@ -409,11 +447,11 @@
 			</div>
 
 			<!-- Pagination Controls -->
-			{#if poller.response.pagination.totalPages > 1}
+			{#if poller.state.response.pagination.totalPages > 1}
 				<div class="mt-12 flex justify-center items-center gap-4">
 					<button
-						onclick={() => poller.setPage(poller.page - 1)}
-						disabled={poller.page === 1}
+						onclick={() => poller.setPage(poller.state.page - 1)}
+						disabled={poller.state.page === 1 || poller.state.isLoading}
 						class="px-6 py-3 bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm"
 					>
 						← PREV
@@ -423,14 +461,15 @@
 						class="px-6 py-3 bg-slate-800/60 border border-cyan-500/30 rounded-lg text-cyan-300 font-mono"
 					>
 						<span class="text-cyan-500">PAGE</span>
-						{poller.response.pagination.page}
+						{poller.state.response.pagination.page}
 						<span class="text-cyan-500/50">/</span>
-						{poller.response.pagination.totalPages}
+						{poller.state.response.pagination.totalPages}
 					</div>
 
 					<button
-						onclick={() => poller.setPage(poller.page + 1)}
-						disabled={poller.page === poller.response.pagination.totalPages}
+						onclick={() => poller.setPage(poller.state.page + 1)}
+						disabled={poller.state.page === poller.state.response.pagination.totalPages ||
+							poller.state.isLoading}
 						class="px-6 py-3 bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm"
 					>
 						NEXT →
@@ -441,21 +480,29 @@
 			<!-- System Controls -->
 			<div class="mt-12 flex justify-center gap-4">
 				<button
-					class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm"
+					disabled={poller.state.isPolling}
+					class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-500/20 disabled:shadow-none"
 					onclick={() => poller.start()}
 				>
 					<span class="inline-flex items-center gap-2">
-						<span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-						START POLLING
+						<span
+							class="w-2 h-2 rounded-full {poller.state.isPolling
+								? 'bg-emerald-400 animate-pulse'
+								: 'bg-emerald-400'}"
+						></span>
+						{poller.state.isPolling ? 'POLLING ACTIVE' : 'START POLLING'}
 					</span>
 				</button>
 				<button
-					class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm"
+					disabled={!poller.state.isPolling}
+					class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-500/20 disabled:shadow-none"
 					onclick={() => poller.stop()}
 				>
 					<span class="inline-flex items-center gap-2">
-						<span class="w-2 h-2 bg-red-400 rounded-full"></span>
-						STOP POLLING
+						<span
+							class="w-2 h-2 rounded-full {!poller.state.isPolling ? 'bg-slate-500' : 'bg-red-400'}"
+						></span>
+						{poller.state.isPolling ? 'STOP POLLING' : 'POLLING STOPPED'}
 					</span>
 				</button>
 			</div>
