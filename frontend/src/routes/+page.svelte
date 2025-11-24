@@ -1,111 +1,165 @@
-<script module lang="ts">
-	type Employee = {
-		id: string;
-		employeeNumber: string;
-		itemNumber: string;
-		firstName: string;
-		middleName: string | null;
-		lastName: string;
-		photo: string | null;
-		dateOfBirth: string;
-		email: string;
-		phoneNumber: string | null;
-		gender: 'MALE' | 'FEMALE' | 'OTHER';
-		taxPayerIdentificationNumber: string;
-		civilStatus: 'SINGLE' | 'MARRIED' | 'WIDOWED';
-		bankAccountNumber: string | null;
-		archived: boolean;
-		userId: string | null;
-		createdAt: string;
-		updatedAt: string;
-	};
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { employeeService } from '$lib/services/employee-service';
+	import type { Employee, EmployeeCreateRequest, EmployeeListResponse } from '$lib/types/employee';
+	import SystemHeader from '$lib/components/system-header.svelte';
+	import EmployeeCard from '$lib/components/employee-card.svelte';
+	import LoadingSpinner from '$lib/components/loading-spinner.svelte';
+	import Pagination from '$lib/components/pagination.svelte';
+	import Modal from '$lib/components/modal.svelte';
+	import EmployeeForm from '$lib/components/employee-form.svelte';
 
-	type ApiResponse = {
-		timestamp: string;
-		data: Employee[];
+	// State management using Svelte 5 runes
+	let {
+		employees,
+		pagination,
+		timestamp,
+		isLoading,
+		isPolling,
+		error,
+		isCreateModalOpen,
+		isEditModalOpen,
+		isViewModalOpen,
+		isDeleteModalOpen,
+		selectedEmployee,
+		isSubmitting
+	} = $state({
+		employees: [] as Employee[],
 		pagination: {
-			page: number;
-			size: number;
-			totalElements: number;
-			totalPages: number;
-		};
-	};
-
-	class ApiPoller {
-		state = $state({
-			response: {
-				timestamp: '',
-				data: [],
-				pagination: {
-					page: 1,
-					size: 10,
-					totalElements: 0,
-					totalPages: 0
-				}
-			} as ApiResponse,
 			page: 1,
-			size: 10,
-			isPolling: false,
-			isLoading: false
-		});
+			size: 9,
+			totalElements: 0,
+			totalPages: 0
+		},
+		timestamp: '',
+		isLoading: false,
+		isPolling: false,
+		error: null as string | null,
+		// Modal states
+		isCreateModalOpen: false,
+		isEditModalOpen: false,
+		isViewModalOpen: false,
+		isDeleteModalOpen: false,
+		selectedEmployee: null as Employee | null,
+		isSubmitting: false
+	});
 
-		private intervalId: number | null = null;
-		private readonly intervalMs: number;
-		private readonly apiBase: string;
+	let pollingInterval: number | null = null;
 
-		constructor(intervalMs: number = 1500) {
-			this.intervalMs = intervalMs;
-			this.apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:8080';
-		}
-
-		async fetchData() {
-			try {
-				this.state.isLoading = true;
-				console.log('Fetching data from API...');
-				const res = await fetch(
-					`${this.apiBase}/api/v1/employees?page=${this.state.page}&size=${this.state.size}`
-				);
-				const apiResponse = (await res.json()) as ApiResponse;
-				this.state.response = apiResponse;
-			} catch (error) {
-				console.error('API fetch error:', error);
-			} finally {
-				this.state.isLoading = false;
-			}
-		}
-
-		setPage(newPage: number) {
-			this.state.page = newPage;
-			this.fetchData();
-		}
-
-		start() {
-			if (this.state.isPolling) return;
-			this.state.isPolling = true;
-			this.fetchData();
-			this.intervalId = setInterval(() => this.fetchData(), this.intervalMs);
-		}
-
-		stop() {
-			console.log('Stopping poller', this.intervalId);
-			if (this.intervalId) {
-				clearInterval(this.intervalId);
-				this.intervalId = null;
-			}
-			this.state.isPolling = false;
+	async function fetchEmployees() {
+		try {
+			isLoading = true;
+			error = null;
+			const response: EmployeeListResponse = await employeeService.getEmployees(
+				pagination.page,
+				pagination.size
+			);
+			employees = response.data;
+			pagination = response.pagination;
+			timestamp = response.timestamp;
+		} catch (error) {
+			error = error instanceof Error ? error.message : 'Failed to fetch employees';
+			console.error('Error fetching employees:', error);
+		} finally {
+			isLoading = false;
 		}
 	}
 
-	const poller = new ApiPoller(5000);
-</script>
+	function startPolling() {
+		if (isPolling) return;
+		isPolling = true;
+		fetchEmployees();
+		pollingInterval = setInterval(() => fetchEmployees(), 5000);
+	}
 
-<script lang="ts">
-	import { formatDate, formatDateTime } from '$lib/utils/format';
-	import { onMount } from 'svelte';
+	function stopPolling() {
+		if (pollingInterval) {
+			clearInterval(pollingInterval);
+			pollingInterval = null;
+		}
+		isPolling = false;
+	}
+
+	function handlePageChange(newPage: number) {
+		pagination.page = newPage;
+		fetchEmployees();
+	}
+
+	// CRUD Operations
+	function openCreateModal() {
+		selectedEmployee = null;
+		isCreateModalOpen = true;
+	}
+
+	function openEditModal(employee: Employee) {
+		selectedEmployee = employee;
+		isEditModalOpen = true;
+	}
+
+	function openViewModal(employee: Employee) {
+		selectedEmployee = employee;
+		isViewModalOpen = true;
+	}
+
+	function openDeleteModal(employee: Employee) {
+		selectedEmployee = employee;
+		isDeleteModalOpen = true;
+	}
+
+	function closeAllModals() {
+		isCreateModalOpen = false;
+		isEditModalOpen = false;
+		isViewModalOpen = false;
+		isDeleteModalOpen = false;
+		selectedEmployee = null;
+	}
+
+	async function handleCreate(formData: EmployeeCreateRequest) {
+		try {
+			isSubmitting = true;
+			await employeeService.createEmployee(formData);
+			closeAllModals();
+			await fetchEmployees();
+		} catch (error) {
+			error = error instanceof Error ? error.message : 'Failed to create employee';
+			console.error('Error creating employee:', error);
+		} finally {
+			isSubmitting = false;
+		}
+	}
+
+	async function handleUpdate(formData: EmployeeCreateRequest) {
+		if (!selectedEmployee) return;
+		try {
+			isSubmitting = true;
+			await employeeService.updateEmployee(selectedEmployee.id, formData);
+			closeAllModals();
+			await fetchEmployees();
+		} catch (error) {
+			error = error instanceof Error ? error.message : 'Failed to update employee';
+			console.error('Error updating employee:', error);
+		} finally {
+			isSubmitting = false;
+		}
+	}
+
+	async function handleDelete() {
+		if (!selectedEmployee) return;
+		try {
+			isSubmitting = true;
+			await employeeService.deleteEmployee(selectedEmployee.id);
+			closeAllModals();
+			await fetchEmployees();
+		} catch (error) {
+			error = error instanceof Error ? error.message : 'Failed to delete employee';
+			console.error('Error deleting employee:', error);
+		} finally {
+			isSubmitting = false;
+		}
+	}
 
 	onMount(() => {
-		console.log('Mounting component, starting poller');
-		poller.start();
+		startPolling();
 
 		// Set header height for scan line positioning
 		const header = document.getElementById('header');
@@ -114,46 +168,8 @@
 			document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
 		}
 
-		return () => poller.stop();
+		return () => stopPolling();
 	});
-
-	function getFullName(employee: Employee): string {
-		return [employee.firstName, employee.middleName, employee.lastName]
-			.filter(Boolean)
-			.join(' ')
-			.trim()
-			.replace(/\s+/g, ' ');
-	}
-
-	function getInitials(employee: Employee): string {
-		const first = employee.firstName.charAt(0);
-		const last = employee.lastName.charAt(0);
-		return `${first}${last}`.toUpperCase();
-	}
-
-	function getGenderColor(gender: string): string {
-		switch (gender) {
-			case 'MALE':
-				return 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50';
-			case 'FEMALE':
-				return 'bg-pink-500/20 text-pink-300 border-pink-500/50';
-			default:
-				return 'bg-purple-500/20 text-purple-300 border-purple-500/50';
-		}
-	}
-
-	function getCivilStatusColor(status: string): string {
-		switch (status) {
-			case 'SINGLE':
-				return 'bg-slate-500/20 text-slate-300 border-slate-500/50';
-			case 'MARRIED':
-				return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50';
-			case 'WIDOWED':
-				return 'bg-amber-500/20 text-amber-300 border-amber-500/50';
-			default:
-				return 'bg-slate-500/20 text-slate-300 border-slate-500/50';
-		}
-	}
 </script>
 
 <svelte:head>
@@ -168,422 +184,311 @@
 	<div class="cyber-grid absolute inset-0 opacity-30"></div>
 
 	<!-- Header Section -->
-	<div class="relative border-b border-cyan-500/30 bg-black/40 backdrop-blur-md" id="header">
-		<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-			<div class="text-center">
-				<!-- Title with Holographic Effect -->
-				<div class="inline-block mb-4">
-					<h1
-						class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 glow-text tracking-wider uppercase"
-					>
-						HR Platform
-					</h1>
-					<div
-						class="h-1 w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent mt-2"
-					></div>
-				</div>
+	<SystemHeader {timestamp} {pagination} {isPolling} />
 
-				<p class="text-xl text-cyan-300/80 mb-6 tracking-wide data-readout">
-					[ EMPLOYEE MANAGEMENT SYSTEM ]
-				</p>
-
-				<!-- Status Indicators -->
-				<div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-					{#if poller.state.response.timestamp}
-						<div
-							class="flex items-center gap-3 px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg"
-						>
-							<div class="relative">
-								<div
-									class="w-2 h-2 bg-cyan-400 rounded-full {poller.state.isPolling
-										? 'animate-ping'
-										: ''} absolute"
-								></div>
-								<div
-									class="w-2 h-2 rounded-full {poller.state.isPolling
-										? 'bg-cyan-400'
-										: 'bg-slate-500'}"
-								></div>
-							</div>
-							<div class="text-cyan-300 text-sm data-readout">
-								<span class="text-cyan-500 font-semibold">SYNC:</span>
-								{formatDateTime(new Date(poller.state.response.timestamp))}
-							</div>
-						</div>
-					{/if}
-
-					<div
-						class="flex items-center gap-3 px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg"
-					>
-						<svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
-							/>
-						</svg>
-						<div class="text-blue-300 text-sm data-readout">
-							<span class="text-blue-500 font-semibold">PERSONNEL:</span>
-							{poller.state.response.pagination.totalElements}
-						</div>
-					</div>
-
-					<div
-						class="flex items-center gap-3 px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg"
-					>
-						<div class="relative">
-							<div
-								class="w-2 h-2 rounded-full {poller.state.isPolling
-									? 'bg-emerald-400 animate-pulse'
-									: 'bg-slate-500'}"
-							></div>
-						</div>
-						<div class="text-purple-300 text-sm data-readout">
-							<span class="text-purple-500 font-semibold">STATUS:</span>
-							{poller.state.isPolling ? 'ACTIVE' : 'STANDBY'}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Scan Line Effect (starts from bottom of header) -->
+	<!-- Scan Line Effect -->
 	<div class="scan-line"></div>
 
 	<!-- Main Content -->
 	<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-		{#if poller.state.response.data.length === 0}
+		<!-- Error Message -->
+		{#if error}
+			<div
+				class="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm flex items-center justify-between"
+			>
+				<span>{error}</span>
+				<button
+					aria-label="Error"
+					onclick={() => (error = null)}
+					class="text-red-300 hover:text-red-100 transition-colors"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				</button>
+			</div>
+		{/if}
+
+		<!-- Action Bar -->
+		<div class="mb-8 flex justify-between items-center">
+			<h2 class="text-2xl font-bold text-cyan-400 uppercase tracking-wider">
+				[ Personnel Database ]
+			</h2>
+			<button
+				onclick={openCreateModal}
+				class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm flex items-center gap-2"
+			>
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 4v16m8-8H4"
+					/>
+				</svg>
+				Add Employee
+			</button>
+		</div>
+
+		{#if isLoading && employees.length === 0}
 			<div class="flex flex-col items-center justify-center py-32">
-				<div class="loading-spinner rounded-full h-16 w-16 mb-6"></div>
-				<p class="text-cyan-400 text-xl data-readout tracking-wider">
-					[ INITIALIZING DATABASE ACCESS ]
-				</p>
-				<div class="mt-4 flex gap-1">
-					<span class="w-2 h-2 bg-cyan-400 rounded-full animate-ping" style="animation-delay: 0s;"
-					></span>
-					<span class="w-2 h-2 bg-cyan-400 rounded-full animate-ping" style="animation-delay: 0.2s;"
-					></span>
-					<span class="w-2 h-2 bg-cyan-400 rounded-full animate-ping" style="animation-delay: 0.4s;"
-					></span>
+				<LoadingSpinner message="[ INITIALIZING DATABASE ACCESS ]" />
+			</div>
+		{:else if employees.length === 0}
+			<div class="flex flex-col items-center justify-center py-32">
+				<div class="text-center p-12 bg-slate-800/40 border border-cyan-500/30 rounded-lg max-w-md">
+					<svg
+						class="w-16 h-16 text-cyan-400/50 mx-auto mb-4"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+						/>
+					</svg>
+					<p class="text-cyan-400 text-lg font-semibold mb-2">NO PERSONNEL RECORDS FOUND</p>
+					<p class="text-cyan-300/60 text-sm">Add your first employee to get started</p>
 				</div>
 			</div>
 		{:else}
 			<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{#each poller.state.response.data as employee, index}
-					<div
-						class="hologram-card rounded-lg overflow-hidden neon-border corner-accent transform hover:scale-105 transition-all duration-300"
-						style="animation-delay: {index * 0.1}s;"
-					>
-						<!-- Header with Holographic Avatar -->
-						<div
-							class="relative bg-gradient-to-br from-cyan-900/50 to-blue-900/50 px-6 py-6 border-b border-cyan-500/30"
-						>
-							<div class="flex items-center gap-4">
-								<div class="relative">
-									{#if employee.photo}
-										<div class="relative">
-											<img
-												src={employee.photo}
-												alt={getFullName(employee)}
-												class="w-20 h-20 rounded-lg border-2 border-cyan-500/50 object-cover shadow-lg shadow-cyan-500/20"
-											/>
-											<div
-												class="absolute inset-0 bg-cyan-400/10 rounded-lg mix-blend-overlay"
-											></div>
-										</div>
-									{:else}
-										<div
-											class="w-20 h-20 rounded-lg border-2 border-cyan-500/50 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-300 font-bold text-2xl shadow-lg shadow-cyan-500/20 backdrop-blur-sm"
-										>
-											{getInitials(employee)}
-										</div>
-									{/if}
-									<div
-										class="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"
-									></div>
-								</div>
-
-								<div class="flex-1 min-w-0">
-									<h2 class="text-lg font-bold text-cyan-100 truncate tracking-wide">
-										{getFullName(employee)}
-									</h2>
-									<div class="flex items-center gap-2 mt-1">
-										<span class="text-cyan-500 text-xs font-mono">#</span>
-										<span class="text-cyan-400/80 text-sm font-mono">{employee.employeeNumber}</span
-										>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- Card Content -->
-						<div class="p-6 space-y-4">
-							<!-- Contact Information -->
-							<div class="space-y-3">
-								<div
-									class="flex items-center gap-3 text-sm bg-slate-800/40 rounded px-3 py-2 border border-slate-700/50"
-								>
-									<svg
-										class="w-4 h-4 text-cyan-400 flex-shrink-0"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-										/>
-									</svg>
-									<span class="text-cyan-100/70 truncate font-mono text-xs">{employee.email}</span>
-								</div>
-
-								{#if employee.phoneNumber}
-									<div
-										class="flex items-center gap-3 text-sm bg-slate-800/40 rounded px-3 py-2 border border-slate-700/50"
-									>
-										<svg
-											class="w-4 h-4 text-cyan-400 flex-shrink-0"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-											/>
-										</svg>
-										<span class="text-cyan-100/70 font-mono text-xs">{employee.phoneNumber}</span>
-									</div>
-								{/if}
-							</div>
-
-							<!-- Data Grid -->
-							<div class="grid grid-cols-2 gap-3 pt-3">
-								<div
-									class="bg-slate-800/40 rounded border border-slate-700/50 p-3 hover:border-cyan-500/30 transition-colors"
-								>
-									<p
-										class="text-[10px] text-cyan-500/70 mb-1 uppercase tracking-wider font-semibold"
-									>
-										DOB
-									</p>
-									<p class="text-xs text-cyan-100 font-mono">
-										{formatDate(employee.dateOfBirth)}
-									</p>
-								</div>
-								<div
-									class="bg-slate-800/40 rounded border border-slate-700/50 p-3 hover:border-cyan-500/30 transition-colors"
-								>
-									<p
-										class="text-[10px] text-cyan-500/70 mb-1 uppercase tracking-wider font-semibold"
-									>
-										ITEM NO
-									</p>
-									<p class="text-xs text-cyan-100 font-mono">{employee.itemNumber}</p>
-								</div>
-							</div>
-
-							<!-- Status Indicators -->
-							<div class="flex flex-wrap gap-2 pt-3">
-								<span
-									class="{getGenderColor(
-										employee.gender
-									)} text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider"
-								>
-									{employee.gender}
-								</span>
-								<span
-									class="{getCivilStatusColor(
-										employee.civilStatus
-									)} text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider"
-								>
-									{employee.civilStatus}
-								</span>
-								{#if employee.archived}
-									<span
-										class="bg-red-500/20 text-red-300 border-red-500/50 text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider animate-pulse"
-									>
-										ARCHIVED
-									</span>
-								{/if}
-							</div>
-
-							<!-- Classified Data Section -->
-							<div class="pt-3 space-y-2">
-								<div
-									class="text-[10px] text-cyan-500/70 uppercase tracking-wider font-semibold mb-2"
-								>
-									[ CLASSIFIED DATA ]
-								</div>
-								<div
-									class="bg-slate-900/60 rounded border border-cyan-500/20 p-3 space-y-2 font-mono"
-								>
-									<div class="flex justify-between items-center">
-										<span class="text-[10px] text-cyan-400/70">TIN:</span>
-										<span class="text-xs text-cyan-200"
-											>{employee.taxPayerIdentificationNumber}</span
-										>
-									</div>
-									{#if employee.bankAccountNumber}
-										<div class="flex justify-between items-center">
-											<span class="text-[10px] text-cyan-400/70">BANK:</span>
-											<span class="text-xs text-cyan-200">{employee.bankAccountNumber}</span>
-										</div>
-									{/if}
-								</div>
-							</div>
-
-							<!-- Timestamps -->
-							<div
-								class="pt-3 border-t border-cyan-500/20 text-[10px] text-cyan-400/50 space-y-1 font-mono"
-							>
-								<div class="flex justify-between">
-									<span>CREATED:</span>
-									<span>{formatDateTime(employee.createdAt)}</span>
-								</div>
-								<div class="flex justify-between">
-									<span>UPDATED:</span>
-									<span>{formatDateTime(employee.updatedAt)}</span>
-								</div>
-							</div>
-						</div>
-					</div>
+				{#each employees as employee, index (employee.id)}
+					<EmployeeCard
+						{employee}
+						{index}
+						onEdit={openEditModal}
+						onDelete={openDeleteModal}
+						onView={openViewModal}
+					/>
 				{/each}
 			</div>
 
-			<!-- Pagination Controls -->
-			{#if poller.state.response.pagination.totalPages > 1}
-				<div class="mt-12 flex justify-center items-center gap-4">
-					<button
-						onclick={() => poller.setPage(poller.state.page - 1)}
-						disabled={poller.state.page === 1 || poller.state.isLoading}
-						class="px-6 py-3 bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm"
-					>
-						← PREV
-					</button>
-
-					<div
-						class="px-6 py-3 bg-slate-800/60 border border-cyan-500/30 rounded-lg text-cyan-300 font-mono"
-					>
-						<span class="text-cyan-500">PAGE</span>
-						{poller.state.response.pagination.page}
-						<span class="text-cyan-500/50">/</span>
-						{poller.state.response.pagination.totalPages}
-					</div>
-
-					<button
-						onclick={() => poller.setPage(poller.state.page + 1)}
-						disabled={poller.state.page === poller.state.response.pagination.totalPages ||
-							poller.state.isLoading}
-						class="px-6 py-3 bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm"
-					>
-						NEXT →
-					</button>
+			<!-- Pagination -->
+			{#if pagination.totalPages > 1}
+				<div class="mt-12">
+					<Pagination {pagination} onPageChange={handlePageChange} {isLoading} />
 				</div>
 			{/if}
+		{/if}
 
-			<!-- System Controls -->
-			<div class="mt-12 flex justify-center gap-4">
-				<button
-					disabled={poller.state.isPolling}
-					class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-500/20 disabled:shadow-none"
-					onclick={() => poller.start()}
-				>
-					<span class="inline-flex items-center gap-2">
-						<span
-							class="w-2 h-2 rounded-full {poller.state.isPolling
-								? 'bg-emerald-400 animate-pulse'
-								: 'bg-emerald-400'}"
-						></span>
-						{poller.state.isPolling ? 'POLLING ACTIVE' : 'START POLLING'}
-					</span>
-				</button>
-				<button
-					disabled={!poller.state.isPolling}
-					class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-500/20 disabled:shadow-none"
-					onclick={() => poller.stop()}
-				>
-					<span class="inline-flex items-center gap-2">
-						<span
-							class="w-2 h-2 rounded-full {!poller.state.isPolling ? 'bg-slate-500' : 'bg-red-400'}"
-						></span>
-						{poller.state.isPolling ? 'STOP POLLING' : 'POLLING STOPPED'}
-					</span>
-				</button>
-			</div>
+		<!-- System Controls -->
+		<div class="mt-12 flex justify-center gap-4">
+			<button
+				disabled={isPolling}
+				class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-500/20 disabled:shadow-none"
+				onclick={startPolling}
+			>
+				<span class="inline-flex items-center gap-2">
+					<span
+						class="w-2 h-2 rounded-full {isPolling
+							? 'bg-emerald-400 animate-pulse'
+							: 'bg-emerald-400'}"
+					></span>
+					{isPolling ? 'POLLING ACTIVE' : 'START POLLING'}
+				</span>
+			</button>
+			<button
+				disabled={!isPolling}
+				class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-500/20 disabled:shadow-none"
+				onclick={stopPolling}
+			>
+				<span class="inline-flex items-center gap-2">
+					<span class="w-2 h-2 rounded-full {!isPolling ? 'bg-slate-500' : 'bg-red-400'}"></span>
+					{isPolling ? 'STOP POLLING' : 'POLLING STOPPED'}
+				</span>
+			</button>
+		</div>
 
-			<!-- Footer Terminal -->
-			<div class="mt-16 max-w-2xl mx-auto">
-				<div class="hologram-card rounded-lg overflow-hidden border border-cyan-500/30">
-					<div class="bg-cyan-500/10 px-4 py-2 border-b border-cyan-500/30 flex items-center gap-2">
-						<div class="flex gap-1.5">
-							<div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div>
-							<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></div>
-							<div class="w-2.5 h-2.5 rounded-full bg-green-500/70"></div>
-						</div>
-						<span class="text-cyan-400/70 text-xs font-mono">system.terminal</span>
+		<!-- Footer Terminal -->
+		<div class="mt-16 max-w-2xl mx-auto">
+			<div class="hologram-card rounded-lg overflow-hidden border border-cyan-500/30">
+				<div class="bg-cyan-500/10 px-4 py-2 border-b border-cyan-500/30 flex items-center gap-2">
+					<div class="flex gap-1.5">
+						<div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div>
+						<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></div>
+						<div class="w-2.5 h-2.5 rounded-full bg-green-500/70"></div>
 					</div>
-					<div class="p-6 space-y-2 font-mono text-sm">
-						<p class="text-cyan-400/70">
-							<span class="text-cyan-500">$</span> System Status:
-							<span class="text-emerald-400">OPERATIONAL</span>
-						</p>
-						<p class="text-cyan-400/70">
-							<span class="text-cyan-500">$</span> Platform:
-							<span class="text-cyan-300">HR Management Interface v2.0</span>
-						</p>
-						<p class="text-cyan-400/70">
-							<span class="text-cyan-500">$</span> Real-time personnel tracking and administration
-						</p>
-						<p class="text-cyan-400/50 text-xs mt-4">
-							© 2025 HR Platform API - All Rights Reserved
-						</p>
-					</div>
+					<span class="text-cyan-400/70 text-xs font-mono">system.terminal</span>
+				</div>
+				<div class="p-6 space-y-2 font-mono text-sm">
+					<p class="text-cyan-400/70">
+						<span class="text-cyan-500">$</span> System Status:
+						<span class="text-emerald-400">OPERATIONAL</span>
+					</p>
+					<p class="text-cyan-400/70">
+						<span class="text-cyan-500">$</span> Platform:
+						<span class="text-cyan-300">HR Management Interface v2.0</span>
+					</p>
+					<p class="text-cyan-400/70">
+						<span class="text-cyan-500">$</span> Real-time personnel tracking and administration
+					</p>
+					<p class="text-cyan-400/50 text-xs mt-4">© 2025 HR Platform API - All Rights Reserved</p>
 				</div>
 			</div>
-		{/if}
+		</div>
 	</div>
 </div>
 
+<!-- Create Employee Modal -->
+<Modal
+	bind:isOpen={isCreateModalOpen}
+	title="Create New Employee"
+	onClose={closeAllModals}
+	size="xl"
+>
+	<EmployeeForm onSubmit={handleCreate} onCancel={closeAllModals} isLoading={isSubmitting} />
+</Modal>
+
+<!-- Edit Employee Modal -->
+<Modal bind:isOpen={isEditModalOpen} title="Edit Employee" onClose={closeAllModals} size="xl">
+	<EmployeeForm
+		employee={selectedEmployee}
+		onSubmit={handleUpdate}
+		onCancel={closeAllModals}
+		isLoading={isSubmitting}
+	/>
+</Modal>
+
+<!-- View Employee Modal -->
+<Modal bind:isOpen={isViewModalOpen} title="Employee Details" onClose={closeAllModals}>
+	{#if selectedEmployee}
+		{@const employee = selectedEmployee}
+		<div class="space-y-6">
+			<!-- Photo and Basic Info -->
+			<div class="flex items-center gap-6 pb-6 border-b border-cyan-500/30">
+				{#if employee.photo}
+					<img
+						src={employee.photo}
+						alt="{employee.firstName} {employee.lastName}"
+						class="w-32 h-32 rounded-lg border-2 border-cyan-500/50 object-cover shadow-lg shadow-cyan-500/20"
+					/>
+				{:else}
+					<div
+						class="w-32 h-32 rounded-lg border-2 border-cyan-500/50 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-300 font-bold text-4xl shadow-lg shadow-cyan-500/20"
+					>
+						{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
+					</div>
+				{/if}
+				<div>
+					<h3 class="text-2xl font-bold text-cyan-100 mb-2">
+						{employee.firstName}
+						{employee.middleName ? employee.middleName : ''}
+						{employee.lastName}
+					</h3>
+					<p class="text-cyan-400 font-mono">#{employee.employeeNumber}</p>
+					<p class="text-cyan-400/70 text-sm font-mono mt-1">{employee.itemNumber}</p>
+				</div>
+			</div>
+
+			<!-- Details Grid -->
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="info-field">
+					<label for="email">Email</label>
+					<p id="email">{employee.email}</p>
+				</div>
+				<div class="info-field">
+					<label for="phoneNumber">Phone</label>
+					<p id="phoneNumber">{employee.phoneNumber || 'N/A'}</p>
+				</div>
+				<div class="info-field">
+					<label for="dob">Date of Birth</label>
+					<p id="dob">{employee.dateOfBirth}</p>
+				</div>
+				<div class="info-field">
+					<label for="gender">Gender</label>
+					<p id="gender">{employee.gender}</p>
+				</div>
+				<div class="info-field">
+					<label for="civilStatus">Civil Status</label>
+					<p id="civilStatus">{employee.civilStatus}</p>
+				</div>
+				<div class="info-field">
+					<label for="status">Status</label>
+					<p id="status">{employee.archived ? 'Archived' : 'Active'}</p>
+				</div>
+				<div class="info-field md:col-span-2">
+					<label for="tin">Tax ID Number</label>
+					<p id="tin" class="font-mono">{employee.taxPayerIdentificationNumber}</p>
+				</div>
+				{#if employee.bankAccountNumber}
+					<div class="info-field md:col-span-2">
+						<label for="bankAccountNumber">Bank Account</label>
+						<p id="bankAccountNumber" class="font-mono">{employee.bankAccountNumber}</p>
+					</div>
+				{/if}
+			</div>
+		</div>
+	{/if}
+</Modal>
+
+<!-- Delete Confirmation Modal -->
+<Modal bind:isOpen={isDeleteModalOpen} title="Confirm Deletion" onClose={closeAllModals} size="sm">
+	{#if selectedEmployee}
+		<div class="space-y-6">
+			<div class="text-center">
+				<div
+					class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-500/20 mb-4"
+				>
+					<svg class="h-8 w-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+						/>
+					</svg>
+				</div>
+				<h3 class="text-lg font-semibold text-red-300 mb-2">Are you sure?</h3>
+				<p class="text-cyan-300/70 text-sm">
+					You are about to delete the employee record for
+					<span class="font-semibold text-cyan-300">
+						{selectedEmployee.firstName}
+						{selectedEmployee.lastName}
+					</span>. This action cannot be undone.
+				</p>
+			</div>
+
+			<div class="flex gap-4 justify-end">
+				<button
+					onclick={closeAllModals}
+					disabled={isSubmitting}
+					class="px-6 py-3 bg-slate-500/20 text-slate-300 border border-slate-500/50 rounded-lg hover:bg-slate-500/30 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
+				>
+					Cancel
+				</button>
+				<button
+					onclick={handleDelete}
+					disabled={isSubmitting}
+					class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
+				>
+					{#if isSubmitting}
+						<div
+							class="w-4 h-4 border-2 border-red-300 border-t-transparent rounded-full animate-spin"
+						></div>
+					{/if}
+					Delete
+				</button>
+			</div>
+		</div>
+	{/if}
+</Modal>
+
 <style>
-	@keyframes scan-line {
-		0% {
-			transform: translateY(0);
-		}
-		100% {
-			transform: translateY(calc(100vh - var(--header-height, 200px)));
-		}
-	}
-
-	@keyframes pulse-glow {
-		0%,
-		100% {
-			opacity: 1;
-		}
-		50% {
-			opacity: 0.5;
-		}
-	}
-
 	@keyframes grid-move {
 		0% {
 			background-position: 0 0;
 		}
 		100% {
 			background-position: 40px 40px;
-		}
-	}
-
-	@keyframes flicker {
-		0%,
-		100% {
-			opacity: 1;
-		}
-		50% {
-			opacity: 0.8;
 		}
 	}
 
@@ -614,117 +519,44 @@
 		);
 	}
 
-	.glow-text {
-		text-shadow:
-			0 0 10px rgba(0, 255, 255, 0.8),
-			0 0 20px rgba(0, 255, 255, 0.4),
-			0 0 30px rgba(0, 255, 255, 0.2);
-	}
-
-	.glow-border {
-		box-shadow:
-			0 0 20px rgba(0, 255, 255, 0.3),
-			inset 0 0 20px rgba(0, 255, 255, 0.1);
+	@keyframes scan-line {
+		0% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(calc(100vh - var(--header-height, 200px)));
+		}
 	}
 
 	.hologram-card {
 		position: relative;
 		background: linear-gradient(135deg, rgba(10, 25, 47, 0.9) 0%, rgba(20, 35, 57, 0.9) 100%);
 		backdrop-filter: blur(10px);
-		border: 1px solid rgba(0, 255, 255, 0.3);
 		box-shadow:
 			0 8px 32px rgba(0, 0, 0, 0.4),
 			0 0 40px rgba(0, 255, 255, 0.1);
 	}
 
-	.hologram-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: linear-gradient(
-			45deg,
-			transparent 30%,
-			rgba(0, 255, 255, 0.05) 50%,
-			transparent 70%
-		);
-		animation: flicker 3s ease-in-out infinite;
-		pointer-events: none;
+	.info-field {
+		background: rgba(15, 23, 42, 0.6);
+		border: 1px solid rgba(100, 116, 139, 0.5);
+		border-radius: 0.5rem;
+		padding: 1rem;
 	}
 
-	.neon-border {
-		position: relative;
-		border: 1px solid rgba(0, 255, 255, 0.5);
-		box-shadow:
-			0 0 10px rgba(0, 255, 255, 0.3),
-			inset 0 0 10px rgba(0, 255, 255, 0.1);
-	}
-
-	.neon-border::before {
-		content: '';
-		position: absolute;
-		top: -2px;
-		left: -2px;
-		right: -2px;
-		bottom: -2px;
-		background: linear-gradient(45deg, #00ffff, #0080ff, #00ffff);
-		border-radius: inherit;
-		opacity: 0;
-		z-index: -1;
-		transition: opacity 0.3s;
-	}
-
-	.neon-border:hover::before {
-		opacity: 0.3;
-		animation: pulse-glow 2s ease-in-out infinite;
-	}
-
-	.data-readout {
-		font-family: 'Courier New', monospace;
+	.info-field label {
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: rgba(103, 232, 249, 0.7);
+		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		margin-bottom: 0.5rem;
+		font-family: 'Courier New', monospace;
 	}
 
-	.corner-accent {
-		position: relative;
-	}
-
-	.corner-accent::before,
-	.corner-accent::after {
-		content: '';
-		position: absolute;
-		width: 20px;
-		height: 20px;
-		border-color: rgba(0, 255, 255, 0.6);
-	}
-
-	.corner-accent::before {
-		top: -1px;
-		left: -1px;
-		border-top: 2px solid;
-		border-left: 2px solid;
-	}
-
-	.corner-accent::after {
-		bottom: -1px;
-		right: -1px;
-		border-bottom: 2px solid;
-		border-right: 2px solid;
-	}
-
-	.loading-spinner {
-		border: 3px solid rgba(0, 255, 255, 0.1);
-		border-top: 3px solid rgba(0, 255, 255, 0.8);
-		animation: spin 1s linear infinite;
-	}
-
-	@keyframes spin {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
+	.info-field p {
+		color: rgba(203, 213, 225, 1);
+		font-size: 0.875rem;
 	}
 </style>
