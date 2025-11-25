@@ -623,7 +623,12 @@
 		}
 	}
 
-	.scan-line.polling {
+	.scan-line {
 		animation: scan-line 8s linear infinite;
+		animation-play-state: paused;
+	}
+
+	.scan-line.polling {
+		animation-play-state: running;
 	}
 </style>
