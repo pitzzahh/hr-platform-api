@@ -6,8 +6,13 @@
 </script>
 
 <svelte:head>
-    <title>Employee Salary Grades</title>
+	<title>HR Platform - Employee Management</title>
 	<link rel="icon" href={favicon} />
+	<meta name="color-scheme" content="light dark" />
 </svelte:head>
 
-{@render children?.()}
+<div
+	class="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300"
+>
+	{@render children?.()}
+</div>

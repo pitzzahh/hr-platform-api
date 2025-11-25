@@ -56,7 +56,9 @@
 	style="animation-delay: {index * 0.1}s;"
 >
 	<!-- Header with Holographic Avatar -->
-	<div class="relative bg-gradient-to-br from-cyan-900/50 to-blue-900/50 px-6 py-6 border-b border-cyan-500/30">
+	<div
+		class="relative bg-gradient-to-br from-cyan-900/50 to-blue-900/50 px-6 py-6 border-b border-cyan-500/30"
+	>
 		<div class="flex items-center gap-4">
 			<div class="relative">
 				{#if employee.photo}
@@ -91,6 +93,7 @@
 			<!-- Action Buttons -->
 			<div class="flex flex-col gap-2">
 				<button
+					aria-label="View"
 					onclick={() => onView(employee)}
 					class="p-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
 					title="View Details"
@@ -111,6 +114,7 @@
 					</svg>
 				</button>
 				<button
+					aria-label="Edit"
 					onclick={() => onEdit(employee)}
 					class="p-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
 					title="Edit Employee"
@@ -125,6 +129,7 @@
 					</svg>
 				</button>
 				<button
+					aria-label="Delete"
 					onclick={() => onDelete(employee)}
 					class="p-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
 					title="Delete Employee"
@@ -144,10 +149,17 @@
 
 	<!-- Card Content -->
 	<div class="p-6 space-y-4">
-		<!-- Contact Information -->
+		<!-- Contact Information -->et/docs/scalar.js
 		<div class="space-y-3">
-			<div class="flex items-center gap-3 text-sm bg-slate-800/40 rounded px-3 py-2 border border-slate-700/50">
-				<svg class="w-4 h-4 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div
+				class="flex items-center gap-3 text-sm bg-slate-800/40 rounded px-3 py-2 border border-slate-700/50"
+			>
+				<svg
+					class="w-4 h-4 text-cyan-400 flex-shrink-0"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -159,8 +171,15 @@
 			</div>
 
 			{#if employee.phoneNumber}
-				<div class="flex items-center gap-3 text-sm bg-slate-800/40 rounded px-3 py-2 border border-slate-700/50">
-					<svg class="w-4 h-4 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div
+					class="flex items-center gap-3 text-sm bg-slate-800/40 rounded px-3 py-2 border border-slate-700/50"
+				>
+					<svg
+						class="w-4 h-4 text-cyan-400 flex-shrink-0"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -175,26 +194,42 @@
 
 		<!-- Data Grid -->
 		<div class="grid grid-cols-2 gap-3 pt-3">
-			<div class="bg-slate-800/40 rounded border border-slate-700/50 p-3 hover:border-cyan-500/30 transition-colors">
+			<div
+				class="bg-slate-800/40 rounded border border-slate-700/50 p-3 hover:border-cyan-500/30 transition-colors"
+			>
 				<p class="text-[10px] text-cyan-500/70 mb-1 uppercase tracking-wider font-semibold">DOB</p>
 				<p class="text-xs text-cyan-100 font-mono">{formatDate(employee.dateOfBirth)}</p>
 			</div>
-			<div class="bg-slate-800/40 rounded border border-slate-700/50 p-3 hover:border-cyan-500/30 transition-colors">
-				<p class="text-[10px] text-cyan-500/70 mb-1 uppercase tracking-wider font-semibold">ITEM NO</p>
+			<div
+				class="bg-slate-800/40 rounded border border-slate-700/50 p-3 hover:border-cyan-500/30 transition-colors"
+			>
+				<p class="text-[10px] text-cyan-500/70 mb-1 uppercase tracking-wider font-semibold">
+					ITEM NO
+				</p>
 				<p class="text-xs text-cyan-100 font-mono">{employee.itemNumber}</p>
 			</div>
 		</div>
 
 		<!-- Status Indicators -->
 		<div class="flex flex-wrap gap-2 pt-3">
-			<span class="{getGenderColor(employee.gender)} text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider">
+			<span
+				class="{getGenderColor(
+					employee.gender
+				)} text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider"
+			>
 				{employee.gender}
 			</span>
-			<span class="{getCivilStatusColor(employee.civilStatus)} text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider">
+			<span
+				class="{getCivilStatusColor(
+					employee.civilStatus
+				)} text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider"
+			>
 				{employee.civilStatus}
 			</span>
 			{#if employee.archived}
-				<span class="bg-red-500/20 text-red-300 border-red-500/50 text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider animate-pulse">
+				<span
+					class="bg-red-500/20 text-red-300 border-red-500/50 text-[10px] font-semibold px-3 py-1.5 rounded border uppercase tracking-wider animate-pulse"
+				>
 					ARCHIVED
 				</span>
 			{/if}

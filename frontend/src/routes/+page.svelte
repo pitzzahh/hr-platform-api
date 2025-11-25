@@ -10,20 +10,7 @@
 	import EmployeeForm from '$lib/components/employee-form.svelte';
 
 	// State management using Svelte 5 runes
-	let {
-		employees,
-		pagination,
-		timestamp,
-		isLoading,
-		isPolling,
-		error,
-		isCreateModalOpen,
-		isEditModalOpen,
-		isViewModalOpen,
-		isDeleteModalOpen,
-		selectedEmployee,
-		isSubmitting
-	} = $state({
+	let state = $state({
 		employees: [] as Employee[],
 		pagination: {
 			page: 1,
@@ -48,26 +35,26 @@
 
 	async function fetchEmployees() {
 		try {
-			isLoading = true;
-			error = null;
+			state.isLoading = true;
+			state.error = null;
 			const response: EmployeeListResponse = await employeeService.getEmployees(
-				pagination.page,
-				pagination.size
+				state.pagination.page,
+				state.pagination.size
 			);
-			employees = response.data;
-			pagination = response.pagination;
-			timestamp = response.timestamp;
-		} catch (error) {
-			error = error instanceof Error ? error.message : 'Failed to fetch employees';
-			console.error('Error fetching employees:', error);
+			state.employees = response.data;
+			state.pagination = response.pagination;
+			state.timestamp = response.timestamp;
+		} catch (err) {
+			state.error = err instanceof Error ? err.message : 'Failed to fetch employees';
+			console.error('Error fetching employees:', err);
 		} finally {
-			isLoading = false;
+			state.isLoading = false;
 		}
 	}
 
 	function startPolling() {
-		if (isPolling) return;
-		isPolling = true;
+		if (state.isPolling) return;
+		state.isPolling = true;
 		fetchEmployees();
 		pollingInterval = setInterval(() => fetchEmployees(), 5000);
 	}
@@ -77,84 +64,84 @@
 			clearInterval(pollingInterval);
 			pollingInterval = null;
 		}
-		isPolling = false;
+		state.isPolling = false;
 	}
 
 	function handlePageChange(newPage: number) {
-		pagination.page = newPage;
+		state.pagination.page = newPage;
 		fetchEmployees();
 	}
 
 	// CRUD Operations
 	function openCreateModal() {
-		selectedEmployee = null;
-		isCreateModalOpen = true;
+		state.selectedEmployee = null;
+		state.isCreateModalOpen = true;
 	}
 
 	function openEditModal(employee: Employee) {
-		selectedEmployee = employee;
-		isEditModalOpen = true;
+		state.selectedEmployee = employee;
+		state.isEditModalOpen = true;
 	}
 
 	function openViewModal(employee: Employee) {
-		selectedEmployee = employee;
-		isViewModalOpen = true;
+		state.selectedEmployee = employee;
+		state.isViewModalOpen = true;
 	}
 
 	function openDeleteModal(employee: Employee) {
-		selectedEmployee = employee;
-		isDeleteModalOpen = true;
+		state.selectedEmployee = employee;
+		state.isDeleteModalOpen = true;
 	}
 
 	function closeAllModals() {
-		isCreateModalOpen = false;
-		isEditModalOpen = false;
-		isViewModalOpen = false;
-		isDeleteModalOpen = false;
-		selectedEmployee = null;
+		state.isCreateModalOpen = false;
+		state.isEditModalOpen = false;
+		state.isViewModalOpen = false;
+		state.isDeleteModalOpen = false;
+		state.selectedEmployee = null;
 	}
 
 	async function handleCreate(formData: EmployeeCreateRequest) {
 		try {
-			isSubmitting = true;
+			state.isSubmitting = true;
 			await employeeService.createEmployee(formData);
 			closeAllModals();
 			await fetchEmployees();
-		} catch (error) {
-			error = error instanceof Error ? error.message : 'Failed to create employee';
-			console.error('Error creating employee:', error);
+		} catch (err) {
+			state.error = err instanceof Error ? err.message : 'Failed to create employee';
+			console.error('Error creating employee:', err);
 		} finally {
-			isSubmitting = false;
+			state.isSubmitting = false;
 		}
 	}
 
 	async function handleUpdate(formData: EmployeeCreateRequest) {
-		if (!selectedEmployee) return;
+		if (!state.selectedEmployee) return;
 		try {
-			isSubmitting = true;
-			await employeeService.updateEmployee(selectedEmployee.id, formData);
+			state.isSubmitting = true;
+			await employeeService.updateEmployee(state.selectedEmployee.id, formData);
 			closeAllModals();
 			await fetchEmployees();
-		} catch (error) {
-			error = error instanceof Error ? error.message : 'Failed to update employee';
-			console.error('Error updating employee:', error);
+		} catch (err) {
+			state.error = err instanceof Error ? err.message : 'Failed to update employee';
+			console.error('Error updating employee:', err);
 		} finally {
-			isSubmitting = false;
+			state.isSubmitting = false;
 		}
 	}
 
 	async function handleDelete() {
-		if (!selectedEmployee) return;
+		if (!state.selectedEmployee) return;
 		try {
-			isSubmitting = true;
-			await employeeService.deleteEmployee(selectedEmployee.id);
+			state.isSubmitting = true;
+			await employeeService.deleteEmployee(state.selectedEmployee.id);
 			closeAllModals();
 			await fetchEmployees();
-		} catch (error) {
-			error = error instanceof Error ? error.message : 'Failed to delete employee';
-			console.error('Error deleting employee:', error);
+		} catch (err) {
+			state.error = err instanceof Error ? err.message : 'Failed to delete employee';
+			console.error('Error deleting employee:', err);
 		} finally {
-			isSubmitting = false;
+			state.isSubmitting = false;
 		}
 	}
 
@@ -162,7 +149,7 @@
 		startPolling();
 
 		// Set header height for scan line positioning
-		const header = document.getElementById('header');
+		const header = document.getElementById('system-header');
 		if (header) {
 			const headerHeight = header.offsetHeight;
 			document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
@@ -178,29 +165,39 @@
 </svelte:head>
 
 <div
-	class="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden"
+	class="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900 relative overflow-hidden"
 >
 	<!-- Animated Background Grid -->
-	<div class="cyber-grid absolute inset-0 opacity-30"></div>
+	<div class="cyber-grid absolute inset-0 opacity-30" aria-hidden="true"></div>
 
-	<!-- Header Section -->
-	<SystemHeader {timestamp} {pagination} {isPolling} />
+	<!-- System Header -->
+	<SystemHeader
+		timestamp={state.timestamp}
+		pagination={state.pagination}
+		isPolling={state.isPolling}
+	/>
 
 	<!-- Scan Line Effect -->
-	<div class="scan-line"></div>
+	<div
+		class="scan-line fixed left-0 right-0 h-48 pointer-events-none z-[5] bg-gradient-to-b from-transparent via-blue-400/15 to-transparent dark:from-transparent dark:via-cyan-400/30 dark:to-transparent"
+		style="top: var(--header-height, 200px)"
+		aria-hidden="true"
+	></div>
 
 	<!-- Main Content -->
-	<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+	<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
 		<!-- Error Message -->
-		{#if error}
-			<div
-				class="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm flex items-center justify-between"
+		{#if state.error}
+			<aside
+				class="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-700 dark:text-red-300 text-sm flex items-center justify-between"
+				role="alert"
 			>
-				<span>{error}</span>
+				<span>{state.error}</span>
 				<button
-					aria-label="Error"
-					onclick={() => (error = null)}
-					class="text-red-300 hover:text-red-100 transition-colors"
+					type="button"
+					onclick={() => (state.error = null)}
+					class="text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 transition-colors"
+					aria-label="Dismiss error"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -211,17 +208,20 @@
 						/>
 					</svg>
 				</button>
-			</div>
+			</aside>
 		{/if}
 
 		<!-- Action Bar -->
-		<div class="mb-8 flex justify-between items-center">
-			<h2 class="text-2xl font-bold text-cyan-400 uppercase tracking-wider">
+		<header class="mb-8 flex justify-between items-center">
+			<h1
+				class="text-2xl font-bold text-blue-700 dark:text-cyan-400 uppercase tracking-wider font-mono"
+			>
 				[ Personnel Database ]
-			</h2>
+			</h1>
 			<button
+				type="button"
 				onclick={openCreateModal}
-				class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm flex items-center gap-2"
+				class="px-6 py-3 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-300/20 dark:hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm flex items-center gap-2"
 			>
 				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
@@ -233,20 +233,24 @@
 				</svg>
 				Add Employee
 			</button>
-		</div>
+		</header>
 
-		{#if isLoading && employees.length === 0}
-			<div class="flex flex-col items-center justify-center py-32">
+		<!-- Content States -->
+		{#if state.isLoading && state.employees.length === 0}
+			<div class="flex flex-col items-center justify-center py-32" role="status" aria-live="polite">
 				<LoadingSpinner message="[ INITIALIZING DATABASE ACCESS ]" />
 			</div>
-		{:else if employees.length === 0}
-			<div class="flex flex-col items-center justify-center py-32">
-				<div class="text-center p-12 bg-slate-800/40 border border-cyan-500/30 rounded-lg max-w-md">
+		{:else if state.employees.length === 0}
+			<section class="flex flex-col items-center justify-center py-32">
+				<div
+					class="text-center p-12 bg-white/80 dark:bg-slate-800/40 border border-blue-300 dark:border-cyan-500/30 rounded-lg max-w-md shadow-lg backdrop-blur-sm"
+				>
 					<svg
-						class="w-16 h-16 text-cyan-400/50 mx-auto mb-4"
+						class="w-16 h-16 text-blue-400 dark:text-cyan-400/50 mx-auto mb-4"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
+						aria-hidden="true"
 					>
 						<path
 							stroke-linecap="round"
@@ -255,13 +259,17 @@
 							d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
 						/>
 					</svg>
-					<p class="text-cyan-400 text-lg font-semibold mb-2">NO PERSONNEL RECORDS FOUND</p>
-					<p class="text-cyan-300/60 text-sm">Add your first employee to get started</p>
+					<p class="text-blue-600 dark:text-cyan-400 text-lg font-semibold mb-2 font-mono">
+						NO PERSONNEL RECORDS FOUND
+					</p>
+					<p class="text-slate-600 dark:text-cyan-300/60 text-sm">
+						Add your first employee to get started
+					</p>
 				</div>
-			</div>
+			</section>
 		{:else}
-			<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{#each employees as employee, index (employee.id)}
+			<section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3" aria-label="Employee list">
+				{#each state.employees as employee, index (employee.id)}
 					<EmployeeCard
 						{employee}
 						{index}
@@ -270,98 +278,118 @@
 						onView={openViewModal}
 					/>
 				{/each}
-			</div>
+			</section>
 
 			<!-- Pagination -->
-			{#if pagination.totalPages > 1}
-				<div class="mt-12">
-					<Pagination {pagination} onPageChange={handlePageChange} {isLoading} />
-				</div>
+			{#if state.pagination.totalPages > 1}
+				<nav class="mt-12" aria-label="Pagination">
+					<Pagination
+						pagination={state.pagination}
+						onPageChange={handlePageChange}
+						isLoading={state.isLoading}
+					/>
+				</nav>
 			{/if}
 		{/if}
 
 		<!-- System Controls -->
-		<div class="mt-12 flex justify-center gap-4">
+		<section class="mt-12 flex justify-center gap-4" aria-label="Polling controls">
 			<button
-				disabled={isPolling}
-				class="px-6 py-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 rounded-lg hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-500/20 disabled:shadow-none"
+				type="button"
+				disabled={state.isPolling}
+				class="px-6 py-3 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-300/20 dark:hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-100 dark:disabled:hover:bg-emerald-500/20 disabled:shadow-none"
 				onclick={startPolling}
 			>
 				<span class="inline-flex items-center gap-2">
 					<span
-						class="w-2 h-2 rounded-full {isPolling
-							? 'bg-emerald-400 animate-pulse'
-							: 'bg-emerald-400'}"
+						class="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400"
+						class:animate-pulse={state.isPolling}
+						aria-hidden="true"
 					></span>
-					{isPolling ? 'POLLING ACTIVE' : 'START POLLING'}
+					{state.isPolling ? 'POLLING ACTIVE' : 'START POLLING'}
 				</span>
 			</button>
 			<button
-				disabled={!isPolling}
-				class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-500/20 disabled:shadow-none"
+				type="button"
+				disabled={!state.isPolling}
+				class="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/50 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-300/20 dark:hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-100 dark:disabled:hover:bg-red-500/20 disabled:shadow-none"
 				onclick={stopPolling}
 			>
 				<span class="inline-flex items-center gap-2">
-					<span class="w-2 h-2 rounded-full {!isPolling ? 'bg-slate-500' : 'bg-red-400'}"></span>
-					{isPolling ? 'STOP POLLING' : 'POLLING STOPPED'}
+					<span
+						class="w-2 h-2 rounded-full"
+						class:bg-slate-400={!state.isPolling}
+						class:dark:bg-slate-500={!state.isPolling}
+						class:bg-red-600={state.isPolling}
+						class:dark:bg-red-400={state.isPolling}
+						aria-hidden="true"
+					></span>
+					{state.isPolling ? 'STOP POLLING' : 'POLLING STOPPED'}
 				</span>
 			</button>
-		</div>
+		</section>
 
 		<!-- Footer Terminal -->
-		<div class="mt-16 max-w-2xl mx-auto">
-			<div class="hologram-card rounded-lg overflow-hidden border border-cyan-500/30">
-				<div class="bg-cyan-500/10 px-4 py-2 border-b border-cyan-500/30 flex items-center gap-2">
-					<div class="flex gap-1.5">
+		<footer class="mt-16 max-w-2xl mx-auto">
+			<div
+				class="rounded-lg overflow-hidden border border-blue-300 dark:border-cyan-500/30 shadow-lg bg-gradient-to-br from-white/95 to-blue-50/95 dark:from-slate-900/90 dark:to-blue-950/90 backdrop-blur-lg"
+			>
+				<div
+					class="bg-blue-100 dark:bg-cyan-500/10 px-4 py-2 border-b border-blue-200 dark:border-cyan-500/30 flex items-center gap-2"
+				>
+					<div class="flex gap-1.5" aria-hidden="true">
 						<div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div>
 						<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></div>
 						<div class="w-2.5 h-2.5 rounded-full bg-green-500/70"></div>
 					</div>
-					<span class="text-cyan-400/70 text-xs font-mono">system.terminal</span>
+					<span class="text-blue-600 dark:text-cyan-400/70 text-xs font-mono">system.terminal</span>
 				</div>
 				<div class="p-6 space-y-2 font-mono text-sm">
-					<p class="text-cyan-400/70">
-						<span class="text-cyan-500">$</span> System Status:
-						<span class="text-emerald-400">OPERATIONAL</span>
+					<p class="text-slate-700 dark:text-cyan-400/70">
+						<span class="text-blue-600 dark:text-cyan-500">$</span> System Status:
+						<span class="text-emerald-600 dark:text-emerald-400">OPERATIONAL</span>
 					</p>
-					<p class="text-cyan-400/70">
-						<span class="text-cyan-500">$</span> Platform:
-						<span class="text-cyan-300">HR Management Interface v2.0</span>
+					<p class="text-slate-700 dark:text-cyan-400/70">
+						<span class="text-blue-600 dark:text-cyan-500">$</span> Platform:
+						<span class="text-blue-700 dark:text-cyan-300">HR Management Interface v2.0</span>
 					</p>
-					<p class="text-cyan-400/70">
-						<span class="text-cyan-500">$</span> Real-time personnel tracking and administration
+					<p class="text-slate-700 dark:text-cyan-400/70">
+						<span class="text-blue-600 dark:text-cyan-500">$</span> Real-time personnel tracking and
+						administration
 					</p>
-					<p class="text-cyan-400/50 text-xs mt-4">© 2025 HR Platform API - All Rights Reserved</p>
+					<p class="text-slate-500 dark:text-cyan-400/50 text-xs mt-4">
+						© 2025 HR Platform API - All Rights Reserved
+					</p>
 				</div>
 			</div>
-		</div>
-	</div>
+		</footer>
+	</main>
 </div>
 
 <!-- Create Employee Modal -->
 <Modal
-	bind:isOpen={isCreateModalOpen}
+	bind:isOpen={state.isCreateModalOpen}
 	title="Create New Employee"
 	onClose={closeAllModals}
 	size="xl"
 >
-	<EmployeeForm onSubmit={handleCreate} onCancel={closeAllModals} isLoading={isSubmitting} />
+	<EmployeeForm onSubmit={handleCreate} onCancel={closeAllModals} isLoading={state.isSubmitting} />
 </Modal>
 
 <!-- Edit Employee Modal -->
-<Modal bind:isOpen={isEditModalOpen} title="Edit Employee" onClose={closeAllModals} size="xl">
+<Modal bind:isOpen={state.isEditModalOpen} title="Edit Employee" onClose={closeAllModals} size="xl">
 	<EmployeeForm
-		employee={selectedEmployee}
+		employee={state.selectedEmployee}
 		onSubmit={handleUpdate}
 		onCancel={closeAllModals}
-		isLoading={isSubmitting}
+		isLoading={state.isSubmitting}
 	/>
 </Modal>
 
 <!-- View Employee Modal -->
-<Modal bind:isOpen={isViewModalOpen} title="Employee Details" onClose={closeAllModals}>
-	{#if selectedEmployee}
-		{@const employee = selectedEmployee}
+<Modal bind:isOpen={state.isViewModalOpen} title="Employee Details" onClose={closeAllModals}>
+	{#if state.selectedEmployee}
+		{@const employee = state.selectedEmployee}
 		<div class="space-y-6">
 			<!-- Photo and Basic Info -->
 			<div class="flex items-center gap-6 pb-6 border-b border-cyan-500/30">
@@ -379,66 +407,133 @@
 					</div>
 				{/if}
 				<div>
-					<h3 class="text-2xl font-bold text-cyan-100 mb-2">
+					<h2 class="text-2xl font-bold text-cyan-100 mb-2">
 						{employee.firstName}
 						{employee.middleName ? employee.middleName : ''}
 						{employee.lastName}
-					</h3>
+					</h2>
 					<p class="text-cyan-400 font-mono">#{employee.employeeNumber}</p>
 					<p class="text-cyan-400/70 text-sm font-mono mt-1">{employee.itemNumber}</p>
 				</div>
 			</div>
 
 			<!-- Details Grid -->
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div class="info-field">
-					<label for="email">Email</label>
-					<p id="email">{employee.email}</p>
+			<dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Email
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.email}</dd>
 				</div>
-				<div class="info-field">
-					<label for="phoneNumber">Phone</label>
-					<p id="phoneNumber">{employee.phoneNumber || 'N/A'}</p>
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Phone
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm">
+						{employee.phoneNumber || 'N/A'}
+					</dd>
 				</div>
-				<div class="info-field">
-					<label for="dob">Date of Birth</label>
-					<p id="dob">{employee.dateOfBirth}</p>
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Date of Birth
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.dateOfBirth}</dd>
 				</div>
-				<div class="info-field">
-					<label for="gender">Gender</label>
-					<p id="gender">{employee.gender}</p>
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Gender
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.gender}</dd>
 				</div>
-				<div class="info-field">
-					<label for="civilStatus">Civil Status</label>
-					<p id="civilStatus">{employee.civilStatus}</p>
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Civil Status
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.civilStatus}</dd>
 				</div>
-				<div class="info-field">
-					<label for="status">Status</label>
-					<p id="status">{employee.archived ? 'Archived' : 'Active'}</p>
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Status
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm">
+						{employee.archived ? 'Archived' : 'Active'}
+					</dd>
 				</div>
-				<div class="info-field md:col-span-2">
-					<label for="tin">Tax ID Number</label>
-					<p id="tin" class="font-mono">{employee.taxPayerIdentificationNumber}</p>
+				<div
+					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 md:col-span-2"
+				>
+					<dt
+						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+					>
+						Tax ID Number
+					</dt>
+					<dd class="text-slate-900 dark:text-slate-200 text-sm font-mono">
+						{employee.taxPayerIdentificationNumber}
+					</dd>
 				</div>
 				{#if employee.bankAccountNumber}
-					<div class="info-field md:col-span-2">
-						<label for="bankAccountNumber">Bank Account</label>
-						<p id="bankAccountNumber" class="font-mono">{employee.bankAccountNumber}</p>
+					<div
+						class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 md:col-span-2"
+					>
+						<dt
+							class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
+						>
+							Bank Account
+						</dt>
+						<dd class="text-slate-900 dark:text-slate-200 text-sm font-mono">
+							{employee.bankAccountNumber}
+						</dd>
 					</div>
 				{/if}
-			</div>
+			</dl>
 		</div>
 	{/if}
 </Modal>
 
 <!-- Delete Confirmation Modal -->
-<Modal bind:isOpen={isDeleteModalOpen} title="Confirm Deletion" onClose={closeAllModals} size="sm">
-	{#if selectedEmployee}
+<Modal
+	bind:isOpen={state.isDeleteModalOpen}
+	title="Confirm Deletion"
+	onClose={closeAllModals}
+	size="sm"
+>
+	{#if state.selectedEmployee}
 		<div class="space-y-6">
 			<div class="text-center">
 				<div
-					class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-500/20 mb-4"
+					class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-500/20 mb-4"
+					aria-hidden="true"
 				>
-					<svg class="h-8 w-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg
+						class="h-8 w-8 text-red-600 dark:text-red-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -447,32 +542,36 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="text-lg font-semibold text-red-300 mb-2">Are you sure?</h3>
-				<p class="text-cyan-300/70 text-sm">
+				<h2 class="text-lg font-semibold text-red-700 dark:text-red-300 mb-2">Are you sure?</h2>
+				<p class="text-slate-700 dark:text-cyan-300/70 text-sm">
 					You are about to delete the employee record for
-					<span class="font-semibold text-cyan-300">
-						{selectedEmployee.firstName}
-						{selectedEmployee.lastName}
+					<span class="font-semibold text-blue-700 dark:text-cyan-300">
+						{state.selectedEmployee.firstName}
+						{state.selectedEmployee.lastName}
 					</span>. This action cannot be undone.
 				</p>
 			</div>
 
 			<div class="flex gap-4 justify-end">
 				<button
+					type="button"
 					onclick={closeAllModals}
-					disabled={isSubmitting}
-					class="px-6 py-3 bg-slate-500/20 text-slate-300 border border-slate-500/50 rounded-lg hover:bg-slate-500/30 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
+					disabled={state.isSubmitting}
+					class="px-6 py-3 bg-slate-100 dark:bg-slate-500/20 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-500/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-500/30 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
 				>
 					Cancel
 				</button>
 				<button
+					type="button"
 					onclick={handleDelete}
-					disabled={isSubmitting}
-					class="px-6 py-3 bg-red-500/20 text-red-300 border border-red-500/50 rounded-lg hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
+					disabled={state.isSubmitting}
+					class="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/50 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-300/20 dark:hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
 				>
-					{#if isSubmitting}
+					{#if state.isSubmitting}
 						<div
-							class="w-4 h-4 border-2 border-red-300 border-t-transparent rounded-full animate-spin"
+							class="w-4 h-4 border-2 border-red-700 dark:border-red-300 border-t-transparent rounded-full animate-spin"
+							role="status"
+							aria-label="Deleting"
 						></div>
 					{/if}
 					Delete
@@ -492,33 +591,6 @@
 		}
 	}
 
-	.cyber-grid {
-		background-image:
-			linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-		background-size: 40px 40px;
-		animation: grid-move 2s linear infinite;
-	}
-
-	.scan-line {
-		position: fixed;
-		left: 0;
-		right: 0;
-		top: var(--header-height, 200px);
-		height: 200px;
-		pointer-events: none;
-		z-index: 5;
-		animation: scan-line 8s linear infinite;
-		background: linear-gradient(
-			to bottom,
-			transparent,
-			rgba(0, 255, 255, 0.1),
-			rgba(0, 255, 255, 0.3),
-			rgba(0, 255, 255, 0.1),
-			transparent
-		);
-	}
-
 	@keyframes scan-line {
 		0% {
 			transform: translateY(0);
@@ -528,35 +600,21 @@
 		}
 	}
 
-	.hologram-card {
-		position: relative;
-		background: linear-gradient(135deg, rgba(10, 25, 47, 0.9) 0%, rgba(20, 35, 57, 0.9) 100%);
-		backdrop-filter: blur(10px);
-		box-shadow:
-			0 8px 32px rgba(0, 0, 0, 0.4),
-			0 0 40px rgba(0, 255, 255, 0.1);
+	.cyber-grid {
+		background-image:
+			linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+		background-size: 40px 40px;
+		animation: grid-move 2s linear infinite;
 	}
 
-	.info-field {
-		background: rgba(15, 23, 42, 0.6);
-		border: 1px solid rgba(100, 116, 139, 0.5);
-		border-radius: 0.5rem;
-		padding: 1rem;
+	:global(.dark) .cyber-grid {
+		background-image:
+			linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
 	}
 
-	.info-field label {
-		display: block;
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: rgba(103, 232, 249, 0.7);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		margin-bottom: 0.5rem;
-		font-family: 'Courier New', monospace;
-	}
-
-	.info-field p {
-		color: rgba(203, 213, 225, 1);
-		font-size: 0.875rem;
+	.scan-line {
+		animation: scan-line 8s linear infinite;
 	}
 </style>
