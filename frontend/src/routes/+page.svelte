@@ -165,10 +165,13 @@
 </svelte:head>
 
 <div
-	class="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900 relative overflow-hidden"
+	class="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 relative overflow-hidden"
 >
 	<!-- Animated Background Grid -->
-	<div class="cyber-grid absolute inset-0 opacity-30" aria-hidden="true"></div>
+	<div
+		class="cyber-grid absolute inset-0 opacity-30 {state.isPolling ? 'scan-line' : ''}"
+		aria-hidden="true"
+	></div>
 
 	<!-- System Header -->
 	<SystemHeader
@@ -179,7 +182,9 @@
 
 	<!-- Scan Line Effect -->
 	<div
-		class="scan-line fixed left-0 right-0 h-48 pointer-events-none z-[5] bg-gradient-to-b from-transparent via-blue-400/15 to-transparent dark:from-transparent dark:via-cyan-400/30 dark:to-transparent"
+		class="scan-line fixed left-0 right-0 h-48 pointer-events-none z-[5] bg-gradient-to-b from-transparent via-blue-400/15 to-transparent dark:from-transparent dark:via-cyan-400/30 dark:to-transparent {state.isPolling
+			? 'polling'
+			: ''}"
 		style="top: var(--header-height, 200px)"
 		aria-hidden="true"
 	></div>
@@ -392,35 +397,37 @@
 		{@const employee = state.selectedEmployee}
 		<div class="space-y-6">
 			<!-- Photo and Basic Info -->
-			<div class="flex items-center gap-6 pb-6 border-b border-cyan-500/30">
+			<div class="flex items-center gap-6 pb-6 border-b border-blue-200 dark:border-cyan-500/30">
 				{#if employee.photo}
 					<img
 						src={employee.photo}
 						alt="{employee.firstName} {employee.lastName}"
-						class="w-32 h-32 rounded-lg border-2 border-cyan-500/50 object-cover shadow-lg shadow-cyan-500/20"
+						class="w-32 h-32 rounded-lg border-2 border-blue-300 dark:border-cyan-500/50 object-cover shadow-lg"
 					/>
 				{:else}
 					<div
-						class="w-32 h-32 rounded-lg border-2 border-cyan-500/50 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-300 font-bold text-4xl shadow-lg shadow-cyan-500/20"
+						class="w-32 h-32 rounded-lg border-2 border-blue-300 dark:border-cyan-500/50 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-500/20 dark:to-blue-500/20 flex items-center justify-center text-cyan-700 dark:text-cyan-300 font-bold text-4xl shadow-lg"
 					>
 						{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
 					</div>
 				{/if}
 				<div>
-					<h2 class="text-2xl font-bold text-cyan-100 mb-2">
+					<h2 class="text-2xl font-bold text-slate-900 dark:text-cyan-100 mb-2">
 						{employee.firstName}
 						{employee.middleName ? employee.middleName : ''}
 						{employee.lastName}
 					</h2>
-					<p class="text-cyan-400 font-mono">#{employee.employeeNumber}</p>
-					<p class="text-cyan-400/70 text-sm font-mono mt-1">{employee.itemNumber}</p>
+					<p class="text-cyan-600 dark:text-cyan-400 font-mono">#{employee.employeeNumber}</p>
+					<p class="text-slate-600 dark:text-cyan-400/70 text-sm font-mono mt-1">
+						{employee.itemNumber}
+					</p>
 				</div>
 			</div>
 
 			<!-- Details Grid -->
 			<dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -430,7 +437,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.email}</dd>
 				</div>
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -442,7 +449,7 @@
 					</dd>
 				</div>
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -452,7 +459,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.dateOfBirth}</dd>
 				</div>
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -462,7 +469,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.gender}</dd>
 				</div>
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -472,7 +479,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.civilStatus}</dd>
 				</div>
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -484,7 +491,7 @@
 					</dd>
 				</div>
 				<div
-					class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 md:col-span-2"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 md:col-span-2 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -497,7 +504,7 @@
 				</div>
 				{#if employee.bankAccountNumber}
 					<div
-						class="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 md:col-span-2"
+						class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 md:col-span-2 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 					>
 						<dt
 							class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -608,13 +615,15 @@
 		animation: grid-move 2s linear infinite;
 	}
 
-	:global(.dark) .cyber-grid {
-		background-image:
-			linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+	@media (prefers-color-scheme: dark) {
+		.cyber-grid {
+			background-image:
+				linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+		}
 	}
 
-	.scan-line {
+	.scan-line.polling {
 		animation: scan-line 8s linear infinite;
 	}
 </style>

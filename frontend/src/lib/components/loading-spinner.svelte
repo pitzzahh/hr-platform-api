@@ -16,23 +16,36 @@
 <div class="flex flex-col items-center justify-center">
 	<div class="loading-spinner rounded-full {sizeClasses[size]} mb-4"></div>
 	{#if message}
-		<p class="text-cyan-400 text-xl data-readout tracking-wider">{message}</p>
+		<p class="text-cyan-600 dark:text-cyan-400 text-xl data-readout tracking-wider">{message}</p>
 	{/if}
 	<div class="mt-4 flex gap-1">
-		<span class="w-2 h-2 bg-cyan-400 rounded-full animate-ping" style="animation-delay: 0s;"
+		<span
+			class="w-2 h-2 bg-cyan-600 dark:bg-cyan-400 rounded-full animate-ping"
+			style="animation-delay: 0s;"
 		></span>
-		<span class="w-2 h-2 bg-cyan-400 rounded-full animate-ping" style="animation-delay: 0.2s;"
+		<span
+			class="w-2 h-2 bg-cyan-600 dark:bg-cyan-400 rounded-full animate-ping"
+			style="animation-delay: 0.2s;"
 		></span>
-		<span class="w-2 h-2 bg-cyan-400 rounded-full animate-ping" style="animation-delay: 0.4s;"
+		<span
+			class="w-2 h-2 bg-cyan-600 dark:bg-cyan-400 rounded-full animate-ping"
+			style="animation-delay: 0.4s;"
 		></span>
 	</div>
 </div>
 
 <style>
 	.loading-spinner {
-		border: 3px solid rgba(0, 255, 255, 0.1);
-		border-top: 3px solid rgba(0, 255, 255, 0.8);
+		border: 3px solid rgba(59, 130, 246, 0.2);
+		border-top: 3px solid rgba(59, 130, 246, 0.8);
 		animation: spin 1s linear infinite;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.loading-spinner {
+			border: 3px solid rgba(0, 255, 255, 0.1);
+			border-top: 3px solid rgba(0, 255, 255, 0.8);
+		}
 	}
 
 	@keyframes spin {

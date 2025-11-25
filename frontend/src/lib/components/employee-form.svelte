@@ -87,7 +87,7 @@
 	<!-- Personal Information Section -->
 	<div class="hologram-section">
 		<div class="section-header">
-			<h3 class="text-cyan-400 font-semibold uppercase tracking-wider text-sm">
+			<h3 class="text-cyan-600 dark:text-cyan-400 font-semibold uppercase tracking-wider text-sm">
 				[ Personal Information ]
 			</h3>
 		</div>
@@ -105,7 +105,7 @@
 					disabled={isLoading}
 				/>
 				{#if errors.employeeNumber}
-					<p class="text-red-400 text-xs mt-1">{errors.employeeNumber}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.employeeNumber}</p>
 				{/if}
 			</div>
 
@@ -121,7 +121,7 @@
 					disabled={isLoading}
 				/>
 				{#if errors.itemNumber}
-					<p class="text-red-400 text-xs mt-1">{errors.itemNumber}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.itemNumber}</p>
 				{/if}
 			</div>
 
@@ -137,7 +137,7 @@
 					disabled={isLoading}
 				/>
 				{#if errors.firstName}
-					<p class="text-red-400 text-xs mt-1">{errors.firstName}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.firstName}</p>
 				{/if}
 			</div>
 
@@ -166,7 +166,7 @@
 					disabled={isLoading}
 				/>
 				{#if errors.lastName}
-					<p class="text-red-400 text-xs mt-1">{errors.lastName}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.lastName}</p>
 				{/if}
 			</div>
 
@@ -181,20 +181,15 @@
 					disabled={isLoading}
 				/>
 				{#if errors.dateOfBirth}
-					<p class="text-red-400 text-xs mt-1">{errors.dateOfBirth}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.dateOfBirth}</p>
 				{/if}
 			</div>
 
 			<!-- Gender -->
 			<div class="form-group">
 				<label for="gender" class="form-label">Gender *</label>
-				<select
-					id="gender"
-					bind:value={formData.gender}
-					class="form-input"
-					disabled={isLoading}
-				>
-					{#each genderOptions as gender}
+				<select id="gender" bind:value={formData.gender} class="form-input" disabled={isLoading}>
+					{#each genderOptions as gender (gender)}
 						<option value={gender}>{gender}</option>
 					{/each}
 				</select>
@@ -209,7 +204,7 @@
 					class="form-input"
 					disabled={isLoading}
 				>
-					{#each civilStatusOptions as status}
+					{#each civilStatusOptions as status (status)}
 						<option value={status}>{status}</option>
 					{/each}
 				</select>
@@ -220,7 +215,7 @@
 	<!-- Contact Information Section -->
 	<div class="hologram-section">
 		<div class="section-header">
-			<h3 class="text-cyan-400 font-semibold uppercase tracking-wider text-sm">
+			<h3 class="text-cyan-600 dark:text-cyan-400 font-semibold uppercase tracking-wider text-sm">
 				[ Contact Information ]
 			</h3>
 		</div>
@@ -238,7 +233,7 @@
 					disabled={isLoading}
 				/>
 				{#if errors.email}
-					<p class="text-red-400 text-xs mt-1">{errors.email}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.email}</p>
 				{/if}
 			</div>
 
@@ -254,7 +249,7 @@
 					disabled={isLoading}
 				/>
 				{#if errors.phoneNumber}
-					<p class="text-red-400 text-xs mt-1">{errors.phoneNumber}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">{errors.phoneNumber}</p>
 				{/if}
 			</div>
 
@@ -276,7 +271,7 @@
 	<!-- Financial Information Section -->
 	<div class="hologram-section">
 		<div class="section-header">
-			<h3 class="text-cyan-400 font-semibold uppercase tracking-wider text-sm">
+			<h3 class="text-cyan-600 dark:text-cyan-400 font-semibold uppercase tracking-wider text-sm">
 				[ Financial Information ]
 			</h3>
 		</div>
@@ -294,7 +289,9 @@
 					disabled={isLoading}
 				/>
 				{#if errors.taxPayerIdentificationNumber}
-					<p class="text-red-400 text-xs mt-1">{errors.taxPayerIdentificationNumber}</p>
+					<p class="text-red-600 dark:text-red-400 text-xs mt-1">
+						{errors.taxPayerIdentificationNumber}
+					</p>
 				{/if}
 			</div>
 
@@ -314,22 +311,24 @@
 	</div>
 
 	<!-- Form Actions -->
-	<div class="flex gap-4 justify-end pt-4">
+	<div class="flex gap-4 justify-end">
 		<button
 			type="button"
 			onclick={onCancel}
 			disabled={isLoading}
-			class="px-6 py-3 bg-slate-500/20 text-slate-300 border border-slate-500/50 rounded-lg hover:bg-slate-500/30 hover:shadow-lg hover:shadow-slate-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+			class="px-6 py-3 bg-slate-200 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600/50 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700/80 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
 		>
 			Cancel
 		</button>
 		<button
 			type="submit"
 			disabled={isLoading}
-			class="px-6 py-3 bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 rounded-lg hover:bg-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2"
+			class="px-6 py-3 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/50 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/30 hover:shadow-lg transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
 		>
 			{#if isLoading}
-				<div class="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin"></div>
+				<div
+					class="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin"
+				></div>
 			{/if}
 			{employee ? 'Update' : 'Create'} Employee
 		</button>
@@ -338,19 +337,42 @@
 
 <style>
 	.hologram-section {
-		background: linear-gradient(135deg, rgba(10, 25, 47, 0.9) 0%, rgba(20, 35, 57, 0.9) 100%);
-		border: 1px solid rgba(0, 255, 255, 0.3);
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.98) 0%,
+			rgba(240, 249, 255, 0.95) 100%
+		);
+		border: 1px solid rgba(59, 130, 246, 0.3);
 		border-radius: 0.5rem;
 		padding: 1.5rem;
 		box-shadow:
-			0 8px 32px rgba(0, 0, 0, 0.4),
-			0 0 20px rgba(0, 255, 255, 0.1);
+			0 4px 6px -1px rgba(0, 0, 0, 0.1),
+			0 0 0 1px rgba(59, 130, 246, 0.1);
+		backdrop-filter: blur(4px);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.hologram-section {
+			background: linear-gradient(135deg, rgba(0, 5, 15, 0.98) 0%, rgba(0, 15, 25, 0.98) 100%);
+			border: 1px solid rgba(6, 182, 212, 0.4);
+			box-shadow:
+				0 8px 32px rgba(0, 0, 0, 0.4),
+				0 0 20px rgba(6, 182, 212, 0.15),
+				inset 0 0 20px rgba(6, 182, 212, 0.05);
+			backdrop-filter: blur(10px);
+		}
 	}
 
 	.section-header {
 		margin-bottom: 1.5rem;
 		padding-bottom: 0.75rem;
-		border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+		border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.section-header {
+			border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+		}
 	}
 
 	.form-group {
@@ -361,29 +383,55 @@
 	.form-label {
 		font-size: 0.75rem;
 		font-weight: 600;
-		color: rgba(103, 232, 249, 0.7);
+		color: #1e40af;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		margin-bottom: 0.5rem;
 		font-family: 'Courier New', monospace;
 	}
 
+	@media (prefers-color-scheme: dark) {
+		.form-label {
+			color: rgba(6, 182, 212, 0.9);
+			text-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+		}
+	}
+
 	.form-input {
-		background: rgba(15, 23, 42, 0.6);
-		border: 1px solid rgba(100, 116, 139, 0.5);
+		background: rgba(255, 255, 255, 0.9);
+		border: 1px solid rgba(59, 130, 246, 0.3);
 		border-radius: 0.5rem;
 		padding: 0.75rem;
-		color: rgba(203, 213, 225, 1);
+		color: #0f172a;
 		font-size: 0.875rem;
 		transition: all 0.3s;
 		font-family: 'Courier New', monospace;
 	}
 
+	@media (prefers-color-scheme: dark) {
+		.form-input {
+			background: rgba(0, 10, 20, 0.7);
+			border: 1px solid rgba(100, 116, 139, 0.6);
+			color: rgba(226, 232, 240, 1);
+			box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.05);
+		}
+	}
+
 	.form-input:focus {
 		outline: none;
-		border-color: rgba(6, 182, 212, 0.5);
-		box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-		background: rgba(15, 23, 42, 0.8);
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+		background: #ffffff;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.form-input:focus {
+			border-color: rgba(6, 182, 212, 0.7);
+			box-shadow:
+				0 0 0 3px rgba(6, 182, 212, 0.2),
+				inset 0 0 15px rgba(6, 182, 212, 0.1);
+			background: rgba(0, 10, 20, 0.9);
+		}
 	}
 
 	.form-input:disabled {
@@ -392,7 +440,13 @@
 	}
 
 	.form-input::placeholder {
-		color: rgba(148, 163, 184, 0.5);
+		color: #94a3b8;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.form-input::placeholder {
+			color: rgba(148, 163, 184, 0.6);
+		}
 	}
 
 	select.form-input {
@@ -400,7 +454,14 @@
 	}
 
 	select.form-input option {
-		background: rgba(15, 23, 42, 1);
-		color: rgba(203, 213, 225, 1);
+		background: #ffffff;
+		color: #0f172a;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		select.form-input option {
+			background: rgba(0, 10, 20, 1);
+			color: rgba(226, 232, 240, 1);
+		}
 	}
 </style>
