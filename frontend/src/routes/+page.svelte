@@ -194,8 +194,8 @@
 		<!-- Error Message -->
 		{#if state.error}
 			<aside
-				class="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-700 dark:text-red-300 text-sm flex items-center justify-between"
-				role="alert"
+				class="mb-6 p-4 bg-red-500/20 border border-red-500/50 text-red-700 dark:text-red-300 text-sm flex items-center justify-between"
+				role="feed"
 			>
 				<span>{state.error}</span>
 				<button
@@ -226,7 +226,7 @@
 			<button
 				type="button"
 				onclick={openCreateModal}
-				class="px-6 py-3 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-300/20 dark:hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm flex items-center gap-2"
+				class="px-6 py-3 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-300/20 dark:hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm flex items-center gap-2"
 			>
 				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
@@ -248,7 +248,7 @@
 		{:else if state.employees.length === 0}
 			<section class="flex flex-col items-center justify-center py-32">
 				<div
-					class="text-center p-12 bg-white/80 dark:bg-slate-800/40 border border-blue-300 dark:border-cyan-500/30 rounded-lg max-w-md shadow-lg backdrop-blur-sm"
+					class="text-center p-12 bg-white/80 dark:bg-slate-800/40 border border-blue-300 dark:border-cyan-500/30 max-w-md shadow-lg backdrop-blur-sm"
 				>
 					<svg
 						class="w-16 h-16 text-blue-400 dark:text-cyan-400/50 mx-auto mb-4"
@@ -302,12 +302,12 @@
 			<button
 				type="button"
 				disabled={state.isPolling}
-				class="px-6 py-3 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-300/20 dark:hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-100 dark:disabled:hover:bg-emerald-500/20 disabled:shadow-none"
+				class="px-6 py-3 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 hover:shadow-lg hover:shadow-emerald-300/20 dark:hover:shadow-emerald-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-emerald-100 dark:disabled:hover:bg-emerald-500/20 disabled:shadow-none"
 				onclick={startPolling}
 			>
 				<span class="inline-flex items-center gap-2">
 					<span
-						class="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400"
+						class="w-2 h-2 bg-emerald-600 dark:bg-emerald-400"
 						class:animate-pulse={state.isPolling}
 						aria-hidden="true"
 					></span>
@@ -317,12 +317,12 @@
 			<button
 				type="button"
 				disabled={!state.isPolling}
-				class="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/50 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-300/20 dark:hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-100 dark:disabled:hover:bg-red-500/20 disabled:shadow-none"
+				class="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/50 hover:bg-red-200 dark:hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-300/20 dark:hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-red-100 dark:disabled:hover:bg-red-500/20 disabled:shadow-none"
 				onclick={stopPolling}
 			>
 				<span class="inline-flex items-center gap-2">
 					<span
-						class="w-2 h-2 rounded-full"
+						class="w-2 h-2"
 						class:bg-slate-400={!state.isPolling}
 						class:dark:bg-slate-500={!state.isPolling}
 						class:bg-red-600={state.isPolling}
@@ -337,15 +337,15 @@
 		<!-- Footer Terminal -->
 		<footer class="mt-16 max-w-2xl mx-auto">
 			<div
-				class="rounded-lg overflow-hidden border border-blue-300 dark:border-cyan-500/30 shadow-lg bg-gradient-to-br from-white/95 to-blue-50/95 dark:from-slate-900/90 dark:to-blue-950/90 backdrop-blur-lg"
+				class="overflow-hidden border border-blue-300 dark:border-cyan-500/30 shadow-lg bg-gradient-to-br from-white/95 to-blue-50/95 dark:from-slate-900/90 dark:to-blue-950/90 backdrop-blur-lg"
 			>
 				<div
 					class="bg-blue-100 dark:bg-cyan-500/10 px-4 py-2 border-b border-blue-200 dark:border-cyan-500/30 flex items-center gap-2"
 				>
 					<div class="flex gap-1.5" aria-hidden="true">
-						<div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div>
-						<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></div>
-						<div class="w-2.5 h-2.5 rounded-full bg-green-500/70"></div>
+						<div class="w-2.5 h-2.5 bg-red-500/70"></div>
+						<div class="w-2.5 h-2.5 bg-yellow-500/70"></div>
+						<div class="w-2.5 h-2.5 bg-green-500/70"></div>
 					</div>
 					<span class="text-blue-600 dark:text-cyan-400/70 text-xs font-mono">system.terminal</span>
 				</div>
@@ -402,11 +402,11 @@
 					<img
 						src={employee.photo}
 						alt="{employee.firstName} {employee.lastName}"
-						class="w-32 h-32 rounded-lg border-2 border-blue-300 dark:border-cyan-500/50 object-cover shadow-lg"
+						class="w-32 h-32 border-2 border-blue-300 dark:border-cyan-500/50 object-cover shadow-lg"
 					/>
 				{:else}
 					<div
-						class="w-32 h-32 rounded-lg border-2 border-blue-300 dark:border-cyan-500/50 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-500/20 dark:to-blue-500/20 flex items-center justify-center text-cyan-700 dark:text-cyan-300 font-bold text-4xl shadow-lg"
+						class="w-32 h-32 border-2 border-blue-300 dark:border-cyan-500/50 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-500/20 dark:to-blue-500/20 flex items-center justify-center text-cyan-700 dark:text-cyan-300 font-bold text-4xl shadow-lg"
 					>
 						{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
 					</div>
@@ -427,7 +427,7 @@
 			<!-- Details Grid -->
 			<dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -437,7 +437,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.email}</dd>
 				</div>
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -449,7 +449,7 @@
 					</dd>
 				</div>
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -459,7 +459,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.dateOfBirth}</dd>
 				</div>
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -469,7 +469,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.gender}</dd>
 				</div>
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -479,7 +479,7 @@
 					<dd class="text-slate-900 dark:text-slate-200 text-sm">{employee.civilStatus}</dd>
 				</div>
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -491,7 +491,7 @@
 					</dd>
 				</div>
 				<div
-					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 md:col-span-2 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+					class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 md:col-span-2 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 				>
 					<dt
 						class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -504,7 +504,7 @@
 				</div>
 				{#if employee.bankAccountNumber}
 					<div
-						class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 rounded-lg p-4 md:col-span-2 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
+						class="bg-white/90 dark:bg-slate-900/70 border border-blue-300/50 dark:border-cyan-500/40 p-4 md:col-span-2 backdrop-blur-sm shadow-sm dark:shadow-cyan-500/10"
 					>
 						<dt
 							class="block text-xs font-semibold text-blue-700 dark:text-cyan-500/70 uppercase tracking-wide mb-2 font-mono"
@@ -532,7 +532,7 @@
 		<div class="space-y-6">
 			<div class="text-center">
 				<div
-					class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-500/20 mb-4"
+					class="mx-auto flex items-center justify-center h-16 w-16 bg-red-100 dark:bg-red-500/20 mb-4"
 					aria-hidden="true"
 				>
 					<svg
@@ -564,7 +564,7 @@
 					type="button"
 					onclick={closeAllModals}
 					disabled={state.isSubmitting}
-					class="px-6 py-3 bg-slate-100 dark:bg-slate-500/20 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-500/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-500/30 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
+					class="px-6 py-3 bg-slate-100 dark:bg-slate-500/20 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-500/50 hover:bg-slate-200 dark:hover:bg-slate-500/30 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
 				>
 					Cancel
 				</button>
@@ -572,11 +572,11 @@
 					type="button"
 					onclick={handleDelete}
 					disabled={state.isSubmitting}
-					class="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/50 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-300/20 dark:hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
+					class="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/50 hover:bg-red-200 dark:hover:bg-red-500/30 hover:shadow-lg hover:shadow-red-300/20 dark:hover:shadow-red-500/20 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
 				>
 					{#if state.isSubmitting}
 						<div
-							class="w-4 h-4 border-2 border-red-700 dark:border-red-300 border-t-transparent rounded-full animate-spin"
+							class="w-4 h-4 border-2 border-red-700 dark:border-red-300 border-t-transparent animate-spin"
 							role="status"
 							aria-label="Deleting"
 						></div>
@@ -628,7 +628,4 @@
 		animation-play-state: paused;
 	}
 
-	.scan-line.polling {
-		animation-play-state: running;
-	}
 </style>

@@ -31,17 +31,17 @@
 			<div class="flex flex-col sm:flex-row gap-4 justify-center items-center" role="status">
 				{#if timestamp}
 					<div
-						class="flex items-center gap-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 rounded-lg shadow-sm"
+						class="flex items-center gap-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 shadow-sm"
 					>
 						<div class="relative w-2 h-2">
 							{#if isPolling}
 								<div
-									class="w-2 h-2 bg-blue-500 dark:bg-cyan-400 rounded-full animate-ping absolute"
+									class="w-2 h-2 bg-blue-500 dark:bg-cyan-400 animate-ping absolute"
 									aria-hidden="true"
 								></div>
 							{/if}
 							<div
-								class="w-2 h-2 rounded-full {isPolling
+								class="w-2 h-2 {isPolling
 									? 'bg-blue-600 dark:bg-cyan-400'
 									: 'bg-slate-400 dark:bg-slate-500'}"
 							></div>
@@ -54,7 +54,7 @@
 				{/if}
 
 				<div
-					class="flex items-center gap-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 rounded-lg shadow-sm"
+					class="flex items-center gap-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 shadow-sm"
 				>
 					<svg
 						class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0"
@@ -73,13 +73,13 @@
 				</div>
 
 				<div
-					class="flex items-center gap-3 px-4 py-2 rounded-lg shadow-sm border {isPolling
+					class="flex items-center gap-3 px-4 py-2 shadow-sm border {isPolling
 						? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-500/30'
 						: 'bg-slate-50 dark:bg-slate-800/20 border-slate-200 dark:border-slate-600/30'}"
 				>
 					<div class="relative w-2 h-2">
 						<div
-							class="w-2 h-2 rounded-full {isPolling
+							class="w-2 h-2 {isPolling
 								? 'bg-green-600 dark:bg-green-400 animate-pulse'
 								: 'bg-slate-400 dark:bg-slate-500'}"
 							aria-hidden="true"

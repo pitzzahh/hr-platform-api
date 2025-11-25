@@ -42,7 +42,7 @@
 		<div
 			class="modal-container {sizeClasses[
 				size
-			]} w-full bg-gradient-to-br from-white/98 to-blue-50/95 dark:from-slate-950 dark:to-slate-900 border-2 border-blue-400/50 dark:border-cyan-500/60 rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 opacity-100 backdrop-blur-lg"
+			]} w-full bg-gradient-to-br from-white/98 to-blue-50/95 dark:from-slate-950 dark:to-slate-900 border-2 border-blue-400/50 dark:border-cyan-500/60 shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 opacity-100 backdrop-blur-lg"
 		>
 			<!-- Modal Header -->
 			<div
@@ -57,7 +57,7 @@
 				</h2>
 				<button
 					onclick={onClose}
-					class="p-2 hover:bg-blue-200 dark:hover:bg-cyan-500/20 rounded-lg transition-colors duration-300 group"
+					class="p-2 hover:bg-blue-200 dark:hover:bg-cyan-500/20 transition-colors duration-300 group"
 					aria-label="Close modal"
 				>
 					<svg

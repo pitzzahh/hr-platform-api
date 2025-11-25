@@ -316,18 +316,18 @@
 			type="button"
 			onclick={onCancel}
 			disabled={isLoading}
-			class="px-6 py-3 bg-slate-200 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600/50 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700/80 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
+			class="px-6 py-3 bg-slate-200 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600/50 hover:bg-slate-300 dark:hover:bg-slate-700/80 transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30"
 		>
 			Cancel
 		</button>
 		<button
 			type="submit"
 			disabled={isLoading}
-			class="px-6 py-3 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/50 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/30 hover:shadow-lg transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
+			class="px-6 py-3 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/50 hover:bg-cyan-200 dark:hover:bg-cyan-500/30 hover:shadow-lg transition-all duration-300 font-semibold uppercase tracking-wider text-sm disabled:opacity-30 flex items-center gap-2"
 		>
 			{#if isLoading}
 				<div
-					class="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin"
+					class="w-4 h-4 border-2 border-cyan-300 border-t-transparent animate-spin"
 				></div>
 			{/if}
 			{employee ? 'Update' : 'Create'} Employee

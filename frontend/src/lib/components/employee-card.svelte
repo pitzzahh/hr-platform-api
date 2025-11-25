@@ -52,7 +52,7 @@
 </script>
 
 <article
-	class="hologram-card rounded-lg overflow-hidden neon-border corner-accent transform hover:scale-105 transition-all duration-300"
+	class="hologram-card overflow-hidden neon-border corner-accent transform hover:scale-105 transition-all duration-300"
 	style="animation-delay: {index * 0.1}s;"
 >
 	<!-- Header with Avatar -->
@@ -66,22 +66,22 @@
 						<img
 							src={employee.photo}
 							alt={getFullName(employee)}
-							class="w-20 h-20 rounded-lg border-2 border-blue-400 dark:border-cyan-500/50 object-cover shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/20"
+							class="w-20 h-20 border-2 border-blue-400 dark:border-cyan-500/50 object-cover shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/20"
 						/>
 						<div
-							class="absolute inset-0 bg-cyan-400/10 rounded-lg mix-blend-overlay"
+							class="absolute inset-0 bg-cyan-400/10 mix-blend-overlay"
 							aria-hidden="true"
 						></div>
 					</div>
 				{:else}
 					<div
-						class="w-20 h-20 rounded-lg border-2 border-blue-400 dark:border-cyan-500/50 bg-gradient-to-br from-blue-200 to-cyan-200 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center text-blue-700 dark:text-cyan-300 font-bold text-2xl shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/20 backdrop-blur-sm"
+						class="w-20 h-20 border-2 border-blue-400 dark:border-cyan-500/50 bg-gradient-to-br from-blue-200 to-cyan-200 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center text-blue-700 dark:text-cyan-300 font-bold text-2xl shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/20 backdrop-blur-sm"
 					>
 						{getInitials(employee)}
 					</div>
 				{/if}
 				<div
-					class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 dark:bg-cyan-400 rounded-full animate-pulse shadow-lg shadow-blue-500/50 dark:shadow-cyan-400/50"
+					class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 dark:bg-cyan-400 animate-pulse shadow-lg shadow-blue-500/50 dark:shadow-cyan-400/50"
 					aria-hidden="true"
 				></div>
 			</div>
@@ -104,7 +104,7 @@
 					type="button"
 					aria-label="View {getFullName(employee)} details"
 					onclick={() => onView(employee)}
-					class="p-2 bg-blue-100/80 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 border border-blue-300 dark:border-blue-500/50 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-500/30"
+					class="p-2 bg-blue-100/80 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 border border-blue-300 dark:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-500/30"
 					title="View Details"
 				>
 					<svg
@@ -131,7 +131,7 @@
 					type="button"
 					aria-label="Edit {getFullName(employee)}"
 					onclick={() => onEdit(employee)}
-					class="p-2 bg-cyan-100/80 dark:bg-cyan-500/20 hover:bg-cyan-200 dark:hover:bg-cyan-500/30 border border-cyan-300 dark:border-cyan-500/50 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 dark:hover:shadow-cyan-500/30"
+					class="p-2 bg-cyan-100/80 dark:bg-cyan-500/20 hover:bg-cyan-200 dark:hover:bg-cyan-500/30 border border-cyan-300 dark:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 dark:hover:shadow-cyan-500/30"
 					title="Edit Employee"
 				>
 					<svg
@@ -152,7 +152,7 @@
 					type="button"
 					aria-label="Delete {getFullName(employee)}"
 					onclick={() => onDelete(employee)}
-					class="p-2 bg-red-100/80 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 border border-red-300 dark:border-red-500/50 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20 dark:hover:shadow-red-500/30"
+					class="p-2 bg-red-100/80 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 border border-red-300 dark:border-red-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20 dark:hover:shadow-red-500/30"
 					title="Delete Employee"
 				>
 					<svg
